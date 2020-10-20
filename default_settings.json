@@ -51,6 +51,11 @@
         "proposalInterval": 5000,
         "missedBlocksInterval": 60000,
         "delegationInterval": 900000
+    },
+    "galaxy.meteor.com": {
+        "env": {
+            "MONGO_URL": "mongodb+srv://<user>:<password>@shareringexplorertest.9enwp.mongodb.net/testdb?retryWrites=true&w=majority"
+        }
     }
 }
 
