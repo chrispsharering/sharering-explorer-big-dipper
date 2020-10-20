@@ -24,7 +24,7 @@ common:
     retry: 'Retry'
     rewards: 'Rewards'
 navbar:
-    siteName: 'BIG DIPPER - SHR'
+    siteName: 'ShareRing Explorer'
     version: 'v0.37.x-p11'
     validators: 'Validators'
     blocks: 'Blocks'
