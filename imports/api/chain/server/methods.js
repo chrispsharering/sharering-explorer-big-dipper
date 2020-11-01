@@ -170,7 +170,8 @@ Meteor.methods({
         else if (Meteor.settings.debug.readGenesis) {
             console.log('=== Start processing genesis file ===');
             let response = HTTP.get(Meteor.settings.genesisFile);
-            let genesis = JSON.parse(response.content);
+            const content = JSON.parse(response.content);
+            let genesis = content.result.genesis;
             let distr = genesis.app_state.distr || genesis.app_state.distribution
             let chainParams = {
                 chainId: genesis.chain_id,
