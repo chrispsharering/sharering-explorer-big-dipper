@@ -38,6 +38,7 @@ Meteor.methods({
             }});
         }
         catch(e){
+            console.log(url);
             console.log(e);
         }
     },
@@ -58,7 +59,9 @@ Meteor.methods({
                 return `no updates (getting block ${chain.latestBlockHeight} at block ${latestState.height})`
             }
 
-            url = RPC+'/validators';
+            // Since Tendermint v0.33, validator page default set to return 30 validators.
+            // Query latest height with page 1 and 100 validators per page.
+            url = RPC+`/validators?height=${chain.latestBlockHeight}&page=1&per_page=100`;
             response = HTTP.get(url);
             let validators = JSON.parse(response.content);
             validators = validators.result.validators;
@@ -87,6 +90,7 @@ Meteor.methods({
                     chainStates.notBondedTokens = parseInt(bonding.not_bonded_tokens);
                 }
                 catch(e){
+                    console.log(url);
                     console.log(e);
                 }
 
@@ -98,6 +102,7 @@ Meteor.methods({
                         chainStates.totalSupply = parseInt(supply);
                     }
                     catch(e){
+                        console.log(url);
                         console.log(e);
                     }
 
@@ -116,32 +121,36 @@ Meteor.methods({
                         }
                     }
                     catch (e){
+                        console.log(url);
                         console.log(e)
                     }
 
-                    url = LCD + '/minting/inflation';
-                    try{
-                        response = HTTP.get(url);
-                        let inflation = JSON.parse(response.content).result;
-                        if (inflation){
-                            chainStates.inflation = parseFloat(inflation)
-                        }
-                    }
-                    catch(e){
-                        console.log(e);
-                    }
+                    // Commented out as Shareledger has no inflation
+                    // url = LCD + '/minting/inflation';
+                    // try{
+                    //     response = HTTP.get(url);
+                    //     let inflation = JSON.parse(response.content).result;
+                    //     if (inflation){
+                    //         chainStates.inflation = parseFloat(inflation)
+                    //     }
+                    // }
+                    // catch(e){
+                    //     console.log(url);
+                    //     console.log(e);
+                    // }
 
-                    url = LCD + '/minting/annual-provisions';
-                    try{
-                        response = HTTP.get(url);
-                        let provisions = JSON.parse(response.content);
-                        if (provisions){
-                            chainStates.annualProvisions = parseFloat(provisions.result)
-                        }
-                    }
-                    catch(e){
-                        console.log(e);
-                    }
+                    // url = LCD + '/minting/annual-provisions';
+                    // try{
+                    //     response = HTTP.get(url);
+                    //     let provisions = JSON.parse(response.content);
+                    //     if (provisions){
+                    //         chainStates.annualProvisions = parseFloat(provisions.result)
+                    //     }
+                    // }
+                    // catch(e){
+                    //     console.log(url);
+                    //     console.log(e);
+                    // }
             		}
 
                 ChainStates.insert(chainStates);
@@ -154,6 +163,7 @@ Meteor.methods({
             return chain.latestBlockHeight;
         }
         catch (e){
+            console.log(url);
             console.log(e);
             return "Error getting chain status.";
         }
@@ -236,12 +246,11 @@ Meteor.methods({
 
                             totalVotingPower += validator.voting_power;
 
-                            let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-                            let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey, pubkeyType);
+                            let pubkeyValue = Meteor.call('bech32ToPubkey', msg[m].value.pubkey);
                             // Validators.upsert({consensus_pubkey:msg[m].value.pubkey},validator);
 
                             validator.pub_key = {
-                                "type":pubkeyType,
+                                "type":"tendermint/PubKeyEd25519",
                                 "value":pubkeyValue
                             }
 
@@ -274,11 +283,10 @@ Meteor.methods({
                     let validator = genValidatorsSet[v];
                     validator.delegator_address = Meteor.call('getDelegator', genValidatorsSet[v].operator_address);
 
-                    let pubkeyType = Meteor.settings.public.secp256k1?'tendermint/PubKeySecp256k1':'tendermint/PubKeyEd25519';
-                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey, pubkeyType);
+                    let pubkeyValue = Meteor.call('bech32ToPubkey', validator.consensus_pubkey);
 
                     validator.pub_key = {
-                        "type":pubkeyType,
+                        "type":"tendermint/PubKeyEd25519",
                         "value":pubkeyValue
                     }
 

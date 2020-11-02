@@ -1,18 +1,34 @@
 # Changelog
 
-## v0.37.x-patch-11
+## kava-3-v1.0.0
+### Release Date: 24 Jul 2020
 
+* [#306] Display errors with SDK v0.38 format
+* [#301] Using Jazzicon as avatar if no Keybase avatar exists
+* [#297] Prettify unrecognized JSON messages
 * [#303] Fixed wrong validator display in unjail message
 * [#294] Fixed cloneDeep typo in Account section for case-sensitve filesystems.
-* [#298] Fixed NaN values for Rewards and Commissions that were displayed after clicking Withdrawal Button
-* [#288] Add Secp256p1 validator pubkey type. A new paramemter in public setting is added to control whether the validator pubkey is seck256p1 or default ed25519. If `secp256k1` in `settings.json` is set to `true`, it will see all validator pubkeys in Secp256k1 format.
+* [#284] Support Tendermint v0.33 block format
 * Fixed Commission bug in AccountTooltip to read rates from validator.commission.commission_rates.rate & validator.commission.rate
 * Added Russian transation
 * Fixed Unjail message with a correct account address.
 * [#323] Display rewards amount in activities list.
-* [#327] Fixed error in Proposals section to accept String and Number as a value in Changes table 
-* Hide Italian it-IT Translation
-* Fixed hash overflow on mobile in Transaction Section (Added scroller)
+* Implemented maximum USDX draw debt amount.
+* Implemented min liquidation ratio & min repay debt value.
+* Updated CDP display in Account to show BNB:USD and BNB:USD:30 price.
+* Updated Withdraw and Repay CDP Price to BNB:USD:30.
+* Updated all Ledger's form styling.
+* Updated buttons size, added padding & transition.
+* Added PeriodicVestingAccount Account Type.
+* Implemented Auctions in Nav and Auction Button.
+* Implemented Incentive Rewards Claim.
+* Change Collateral Deposited and Principal Drawn font to bold in CDP List. 
+* Added increase/reduce arrows in CDP list to indicate if the Collateralization Ratio is higher than or close to 1.5 ratio.
+* Updated total available KAVA value displayed in 'Send' & 'Delegate' form.
+* [#367] Fixed wrong (unbonding) calculation of Total Kava Value.
+* [#372] Fixed Redelegation List showing on all account pages  
+* [#375] Fixed the Commission Value Calculations that caused Account Page to break 
+* [#380] Fixed undefined value of operator_address in withdraw commission
 
 ## v0.37.x-patch-10.1
 

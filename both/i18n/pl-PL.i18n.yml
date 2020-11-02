@@ -24,7 +24,7 @@ common:
     retry: 'Spróbuj ponownie'
     rewards: 'Nagrody'
 navbar:
-    siteName: 'Wielki Wóz'
+    siteName: 'ShareRing Explorer'
     version: 'beta'
     validators: 'Walidatorzy'
     blocks: 'Bloki'

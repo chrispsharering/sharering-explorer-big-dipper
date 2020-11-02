@@ -4,34 +4,31 @@ Block Explorer for Cosmos
 
 ## Projects running on mainnets
 
-[Explore Cosmos Hub with Big Dipper](https://cosmos.bigdipper.live)
+[Explore Cosmos Hub (cosmoshub-3) with Big Dipper](https://cosmos.bigdipper.live)
 
-[Explore IRISnet with Big Dipper](https://iris.bigdipper.live)
+[Explore IRISnet (irishub) with Big Dipper](https://iris.bigdipper.live)
 
-[Explore LikeCoin Chain with Big Dipper](http://likecoin.bigdipper.live/)
+[Explore LikeCoin Chain (sheungwan) with Big Dipper](http://likecoin.bigdipper.live/)
 
-[Explore Kava with Big Dipper](https://kava.bigdipper.live/)
-
-[Explore e-Money with Big Dipper](https://e-money.network/)
-
+[Explore Kava (kava-2) with the Big Dipper](https://kava.bigdipper.live/)
 
 ## Projects with testnets
 
-[Agoric](https://explorer.testnet.agoric.com/)
-
-[Band Protocol](http://scan-bigdipper.bandchain.org/)
+[Desmos Network](https://morpheus.desmos.network/)
 
 [Cyber Congress](https://cyberd.ai/)
 
-[Desmos Network](https://morpheus.desmos.network/)
-
-[Persistence](https://explorer.persistence.one/)
-
-[Regen Network](https://explorer.regen.vitwit.com/)
+[Regen Network](http://bigdipper.regen.network/)
 
 [Sentinel](https://explorer.sentinel.co/)
 
-[Dropil Chain](https://testnet-explorer.dropilchain.com/)
+[e-Money](https://e-money.network/)
+
+[Persistence](https://explorer.persistence.one/)
+
+[TruStory](https://explorer.testnet.trustory.io)
+
+[Agoric](https://explorer.testnet.agoric.com/)
 
 ## How to run The Big Dipper
 

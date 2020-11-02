@@ -51,7 +51,7 @@ export default class AccountTooltip extends Account{
         let moniker = validator.description && validator.description.moniker || validator.address;
         let isActive = validator.status == 2 && !validator.jailed;
 
-        return <UncontrolledPopover className='validator-popover' trigger="hover" placement="right" target={this.ref} key={this.ref}>
+        return <UncontrolledPopover className='validator-popover' key={this.ref} trigger="hover" placement="right" target={this.ref}>
             <Card className='validator-popover-card' body outline color="danger">
         <PopoverHeader>
         <CardTitle className='d-flex justify-content-center'>
@@ -72,7 +72,7 @@ export default class AccountTooltip extends Account{
             numbro(validator.commission.commission_rates.rate).format('0.00%') : numbro(validator.commission.rate).format('0.00%')  }
          </CardText>:null} 
         {(!isActive)?<CardText className="last-seen data">
-        <i className="material-icons">access_time </i>
+        <i class="material-icons">access_time </i>
         {validator.lastSeen?<TimeStamp time={validator.lastSeen}/>:
             (validator.unbonding_time?<TimeStamp time={validator.unbonding_time}/>:null)}
          </CardText>:null}
@@ -93,7 +93,7 @@ export default class AccountTooltip extends Account{
            
         return [
             <span ref={this.ref} key='link' className="validator-popover-row">
-            <Link to={this.state.address}><Avatar moniker={this.state.moniker} profileUrl={this.state.validator?this.state.validator.profile_url:''} address={this.state.address} /> {this.state.moniker} </Link>
+            <Link to={this.state.address}><Avatar moniker={this.state.moniker} profileUrl={this.state.validator?this.state.validator.profile_url:''} address={this.state.address} list={true}/> {this.state.moniker} </Link>
             </span>,
              this.renderDetailTooltip()
         ]

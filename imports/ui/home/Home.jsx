@@ -16,8 +16,8 @@ export default class Home extends Component{
     render() {
         return <div id="home">
             <Helmet>
-                <title>ShareRing Explorer | ShareLedger Block Explorer</title>
-                <meta name="description" content="Cosmos is a decentralized network of independent parallel blockchains, each powered by BFT consensus algorithms like Tendermint consensus." />
+            <title>ShareRing Explorer | ShareLedger Block Explorer</title>
+            <meta name="description" content="Cosmos is a decentralized network of independent parallel blockchains, each powered by BFT consensus algorithms like Tendermint consensus." />
             </Helmet>
             <ChainInfo/>
             <Consensus />
