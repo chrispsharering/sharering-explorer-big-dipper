@@ -14,7 +14,6 @@ export default class TransactionTabs extends Component {
         this.state = {
             activeTab: 'tx-transfer',
             transferTxs: {},
-            cdpTxs: {},
             swapTxs: {},
             priceTxs: {},
             stakingTxs: {},
@@ -22,7 +21,6 @@ export default class TransactionTabs extends Component {
             governanceTxs: {},
             slashingTxs: {},
             incentiveTxs: {},
-            auctionTxs: {},
         }
     }
 
@@ -38,7 +36,6 @@ export default class TransactionTabs extends Component {
         if (this.props != prevProps) {
             this.setState({
                 transferTxs: this.props.transferTxs,
-                cdpTxs: this.props.cdpTxs,
                 swapTxs: this.props.swapTxs,
                 priceTxs: this.props.priceTxs,
                 stakingTxs: this.props.stakingTxs,
@@ -46,7 +43,6 @@ export default class TransactionTabs extends Component {
                 governanceTxs: this.props.governanceTxs,
                 slashingTxs: this.props.slashingTxs,
                 incentiveTxs: this.props.incentiveTxs,
-                auctionTxs: this.props.auctionTxs,
             })
         }
     }

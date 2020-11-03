@@ -10,7 +10,6 @@ export default class ValidatorTransactions extends Component {
         super(props);
         this.state = {
             transferTxs: {},
-            cdpTxs: {},
             swapTxs: {},
             priceTxs: {},
             stakingTxs: {},
@@ -18,7 +17,6 @@ export default class ValidatorTransactions extends Component {
             governanceTxs: {},
             slashingTxs: {},
             incentiveTxs: {},
-            auctionTxs: {},
         };
     }
 
@@ -28,7 +26,6 @@ export default class ValidatorTransactions extends Component {
                 // console.log("have txs.");
                 this.setState({
                     transferTxs: this.props.transferTxs,
-                    cdpTxs: this.props.cdpTxs,
                     swapTxs: this.props.swapTxs,
                     priceTxs: this.props.priceTxs,
                     stakingTxs: this.props.stakingTxs,
@@ -36,7 +33,6 @@ export default class ValidatorTransactions extends Component {
                     governanceTxs: this.props.governanceTxs,
                     slashingTxs: this.props.slashingTxs,
                     incentiveTxs: this.props.incentiveTxs,
-                    auctionTxs: this.props.auctionTxs,
                 })
             }
         }
@@ -49,7 +45,6 @@ export default class ValidatorTransactions extends Component {
         else if (this.props.transactionsExist) {
             return <TransactionTabs
                 transferTxs={this.state.transferTxs}
-                cdpTxs={this.state.cdpTxs}
                 swapTxs={this.state.swapTxs}
                 priceTxs={this.state.priceTxs}
                 stakingTxs={this.state.stakingTxs}
@@ -57,7 +52,6 @@ export default class ValidatorTransactions extends Component {
                 governanceTxs={this.state.governanceTxs}
                 slashingTxs={this.state.slashingTxs}
                 incentiveTxs={this.state.incentiveTxs}
-                auctionTxs={this.state.auctionTxs}
             />
         }
         else {
