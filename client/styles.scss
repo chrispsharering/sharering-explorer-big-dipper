@@ -135,9 +135,18 @@ body {
     margin: 0.5rem auto;
   }
   
-  a.navbar-brand .logo {
-    max-height: 40px;
-    max-width: 40px;
+  a.navbar-brand {
+    span.logo {
+      width: 7em;
+    }
+    
+    img.icon, img.logo {
+      max-height: 40px;
+    }
+
+    img.icon {
+      max-width: 40px;
+    }
   }
   
   #header-search {
