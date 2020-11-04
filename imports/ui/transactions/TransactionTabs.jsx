@@ -64,14 +64,14 @@ export default class TransactionTabs extends Component {
                             <T>transactions.transfer</T> ({numbro(this.state.transferTxs.length).format("0,0")})
                         </NavLink>
                     </NavItem>
-                    <NavItem>
+                    {/* <NavItem>
                         <NavLink
                             className={classnames({ active: this.state.activeTab === 'tx-cdp' })}
                             onClick={() => { this.toggle('tx-cdp'); }}
                         >
                             <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length).format("0,0")})
                         </NavLink>
-                    </NavItem>
+                    </NavItem> */}
                     <NavItem>
                         <NavLink
                             className={classnames({ active: this.state.activeTab === 'tx-swap' })}
@@ -136,7 +136,7 @@ export default class TransactionTabs extends Component {
                             </Col>
                         </Row>
                     </TabPane>
-                    <TabPane tabId="tx-cdp">
+                    {/* <TabPane tabId="tx-cdp">
                         <Row>
                             <Col>
                                 {(this.state.cdpTxs.length > 0) ? this.state.cdpTxs.map((tx, i) => {
@@ -149,7 +149,7 @@ export default class TransactionTabs extends Component {
                                 }) : ''}
                             </Col>
                         </Row>
-                    </TabPane>
+                    </TabPane> */}
                     <TabPane tabId="tx-swap">
                         <Row>
                             <Col>
