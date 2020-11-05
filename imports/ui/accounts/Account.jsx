@@ -708,52 +708,6 @@ export default class AccountDetails extends Component {
                             </CardBody>
                         </Card>
                     </Col></SentryBoundary>
-                    <SentryBoundary><Col md={6}>
-                        <Card>
-                            <CardHeader>CDP</CardHeader>
-                            <CardBody className="cdp-body">
-                                <Nav tabs className="mb-2">
-                                    <NavItem>
-                                        <NavLink
-                                            className={classnames({ active: this.state.cdpActiveTab === 'cdp-bnb' })}
-                                            onClick={() => { this.toggleCDP('cdp-bnb'); }}
-                                        >
-                                            <span className="cdp-logo bnb">BNB</span>
-                                        </NavLink>
-                                    </NavItem>
-                                    {this.state.hasIncentive ?
-                                        <NavItem>
-                                            <NavLink
-                                                className={classnames({ active: this.state.cdpActiveTab === 'cdp-incentive' })}
-                                                onClick={() => { this.toggleCDP('cdp-incentive'); }}
-                                            >
-                                                <span className="cdp-logo ">
-                                                    <i className="material-icons">
-                                                        emoji_events
-                                                    </i> Incentive</span>
-                                            </NavLink>
-                                        </NavItem> : null}
-                                </Nav>
-                                <TabContent activeTab={this.state.cdpActiveTab}>
-                                    <TabPane tabId="cdp-bnb">
-                                        <CDP
-                                            owner={this.state.address}
-                                            collateral='bnb'
-                                            user={this.state.user}
-                                        />
-                                    </TabPane>
-                                    <TabPane tabId="cdp-incentive">
-                                        <Incentive
-                                            owner={this.state.address}
-                                            collateral='bnb'
-                                            user={this.state.user}
-                                        />
-                                    </TabPane>
-                                </TabContent>
-                            </CardBody>
-                        </Card>
-
-                    </Col></SentryBoundary>
                 </Row>
                 <Row>
                     <Col>
