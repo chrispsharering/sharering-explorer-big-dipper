@@ -650,7 +650,7 @@ export default class AccountDetails extends Component {
                     </Card></Col>
                 </Row></SentryBoundary>
                 <Row>
-                    <SentryBoundary><Col md={6}>
+                    <SentryBoundary><Col md={12}>
                         <Card>
                             <CardHeader>
                                 Staking
