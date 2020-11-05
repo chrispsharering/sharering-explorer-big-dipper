@@ -28,6 +28,7 @@ import Incentive from '../cdp/Incentive.jsx';
 const T = i18n.createComponent();
 let timer = 0;
 const coin1 = 'shr'
+// We dont have secondary coins, I don't think...
 const coin2 = 'bnb'
 const coin3 = 'usdx'
 
@@ -116,7 +117,7 @@ export default class AccountDetails extends Component {
                     })
                 } else {
                     let setZeroAmount = [{
-                        denom: "ukava",
+                        denom: "shr",
                         amount: "0.00"
                     }]
 
@@ -133,7 +134,7 @@ export default class AccountDetails extends Component {
                 })
                 if (result.delegations && result.delegations.length > 0) {
                     let delegatedValue = [{
-                        denom: "ukava",
+                        denom: "shr",
                         amount: "0.00"
                     }];
 
@@ -175,7 +176,7 @@ export default class AccountDetails extends Component {
                     unbondingDelegations: result.unbonding || []
                 })
                 const unbondingValue = [{
-                    denom: "ukava",
+                    denom: "shr",
                     amount: "0.00"
                 }];
                 if (result.unbonding && result.unbonding.length > 0) {
@@ -317,15 +318,15 @@ export default class AccountDetails extends Component {
 
                 }
 
-                let calculateKavaInUSD = this.findValue(this.state.total, coin1) * this.state.price;
+                let calculateShrInUSD = this.findValue(this.state.total, coin1) * this.state.price;
                 let calculateBNBInUSD = this.findValue(this.state.total, coin2) * this.state.bnbPrice;
                 let calculateUSDXInUSD = this.findValue(this.state.total, coin3) * this.state.usdxPrice
-                let calculateTotalValueInUSD = calculateKavaInUSD + calculateBNBInUSD + calculateUSDXInUSD;
+                let calculateTotalValueInUSD = calculateShrInUSD + calculateBNBInUSD + calculateUSDXInUSD;
 
                 this.setState({
                     loading: false,
                     accountExists: true,
-                    totalKavaInUSD: calculateKavaInUSD,
+                    totalKavaInUSD: calculateShrInUSD,
                     totalBNBInUSD: calculateBNBInUSD,
                     totalUSDXInUSD: calculateUSDXInUSD,
                     totalValueInUSD: calculateTotalValueInUSD,
@@ -366,21 +367,21 @@ export default class AccountDetails extends Component {
 
         });
 
-
-        Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
-            if (error) {
-                console.warn(error);
-                this.setState({
-                    loading: false,
-                    hasIncentive: false
-                })
-            }
-            if (result && result.length > 0) {
-                this.setState({
-                    hasIncentive: true,
-                })
-            }
-        })
+        // We don't use this...
+        // Meteor.call('account.getIncentive', this.props.match.params.address, coin2, (error, result) => {
+        //     if (error) {
+        //         console.warn(error);
+        //         this.setState({
+        //             loading: false,
+        //             hasIncentive: false
+        //         })
+        //     }
+        //     if (result && result.length > 0) {
+        //         this.setState({
+        //             hasIncentive: true,
+        //         })
+        //     }
+        // })
 
     }
 
@@ -587,12 +588,6 @@ export default class AccountDetails extends Component {
                                         <Progress bar className="unbonding" value={this.findValue(this.state.unbonding, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="rewards" value={this.findValue(this.state.rewards, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
                                         <Progress bar className="commission" value={this.findValue(this.state.commission, coin1) * this.state.price / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_2nd" value={this.findValue(this.state.available, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_2nd" value={this.findValue(this.state.rewards, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_2nd" value={this.findValue(this.state.commission, coin2) * this.state.bnbPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="available_3rd" value={this.findValue(this.state.available, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="rewards_3rd" value={this.findValue(this.state.rewards, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
-                                        <Progress bar className="commission_3rd" value={this.findValue(this.state.commission, coin3) * this.state.usdxPrice / this.state.totalValueInUSD * 100} />
                                     </Progress>
                                 </Col>
                             </Row>
@@ -629,43 +624,6 @@ export default class AccountDetails extends Component {
                                     </Row>
                                     {this.state.commission ? <Row>
                                         <Col xs={12} className="value text-left"><div className="commission infinity" />{this.findCoin(this.state.commission, coin1)}</Col>
-                                    </Row> : null}
-                                </Col>
-                                <Col xs={3} md={2}>
-
-                                    <Row>
-                                        <Col xs={12} className="value text-left"> <div className="available_2nd infinity" />{this.findCoin(this.state.available, coin2)}</Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12} className="value text-left"><div className="infinity" />{' '}</Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12} className="value text-left"><div className="rewards_2nd infinity" />{this.findCoin(this.state.rewards, coin2)}</Col>
-                                    </Row>
-                                    {this.state.commission ? <Row>
-                                        <Col xs={12} className="value text-left"><div className="commission_2nd infinity" />{this.findCoin(this.state.commission, coin2)}</Col>
-                                    </Row> : null}
-                                </Col>
-                                <Col xs={3} md={2} >
-
-                                    <Row>
-                                        <Col xs={12} className="value text-left"> <div className="available_3rd infinity" />{this.findCoin(this.state.available, coin3)}</Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12} className="value text-left"><div className="infinity" />{'  '}</Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12} className="value text-left"><div className="rewards_3rd infinity" />{this.findCoin(this.state.rewards, coin3)}</Col>
-                                    </Row>
-                                    {this.state.commission ? <Row>
-                                        <Col xs={12} className="value text-left
-                                        "><div className="commission_3rd infinity" />{this.findCoin(this.state.commission, coin3)}</Col>
                                     </Row> : null}
                                 </Col>
 
