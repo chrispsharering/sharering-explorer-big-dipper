@@ -458,22 +458,22 @@ export default class AccountDetails extends Component {
     findCoin(coins, requestedDenom) {
         if (coins && coins.length > 1 && requestedDenom) {
             let finder = (coins).find(({ denom }) => denom === requestedDenom);
-            let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(4) : '0.0000 ' + requestedDenom;
+            let coinFinder = finder ? new Coin(finder.amount, finder.denom).toString(2) : '0.00 ' + requestedDenom;
             return coinFinder
         }
         if (coins.length === 1) {
             for (let c in coins) {
                 if (coins[c].denom === requestedDenom) {
-                    return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(4)
+                    return new Coin(parseFloat(coins[c].amount), requestedDenom).toString(2)
                 }
                 else {
-                    return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
+                    return new Coin(parseFloat('0.00'), requestedDenom).toString(2)
                 }
 
             }
         }
         else {
-            return new Coin(parseFloat('0.00'), requestedDenom).toString(4)
+            return new Coin(parseFloat('0.00'), requestedDenom).toString(2)
         }
 
     }
@@ -633,7 +633,7 @@ export default class AccountDetails extends Component {
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value text-right">{this.findCoin(this.state.total, coin1)}</Col>
-                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.0000a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
+                                        <Col xs={12} className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.00a")} ({numbro(this.state.price).format("$0,0.00")}/{Meteor.settings.public.coins[0].displayName})</Col>
                                     </Row>
                                 </Col>
                                 <Col xs={12} className="total d-flex flex-column justify-content-end text-nowrap pt-3">
