@@ -36,7 +36,12 @@ export default class ChainStates extends Component{
             if (this.props.coinStats.usd){
                 this.setState({
                     price: this.props.coinStats.usd,
-                    marketCap: numbro(this.props.coinStats.usd_market_cap).format("$0,0.00")
+                    marketCap: numbro(this.props.coinStats.usd_market_cap).formatCurrency({
+                        average: true,
+                        mantissa: 2,
+                        optionalMantissa: true,
+                        currencyPosition: "prefix"
+                    })
                 })
             }
 
@@ -62,7 +67,12 @@ export default class ChainStates extends Component{
             if (this.props.coinStats.usd){
                 this.setState({
                     price: this.props.coinStats.usd,
-                    marketCap: numbro(this.props.coinStats.usd_market_cap).format("$0,0.00")
+                    marketCap: numbro(this.props.coinStats.usd_market_cap).formatCurrency({
+                        average: true,
+                        mantissa: 2,
+                        optionalMantissa: true,
+                        currencyPosition: "prefix"
+                    })
                 })
             }
         }
@@ -72,8 +82,8 @@ export default class ChainStates extends Component{
     renderValues(propsValue){
             let poolValues = [];
             propsValue.map((pool,i) => {
-                poolValues[i] = new Coin(pool.amount, pool.denom).toString(4)  
-                    })
+                poolValues[i] = new Coin(pool.amount, pool.denom).toString(2)  
+            })
 
             return poolValues.join(', ')
            
