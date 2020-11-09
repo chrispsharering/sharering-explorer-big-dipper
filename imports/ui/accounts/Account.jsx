@@ -335,22 +335,6 @@ export default class AccountDetails extends Component {
             }
         });
 
-        Meteor.call('cdp.getCDPPrice', 'bnb:usd', (error, result) => {
-            if (error) {
-                console.warn(error);
-                this.setState({
-                    loading: false
-                })
-            }
-
-            if (result) {
-                this.setState({
-                    bnbPrice: result
-                })
-            }
-
-        });
-
         Meteor.call('accounts.getRedelegations', this.props.match.params.address, (error, result) => {
             if (error) {
                 console.warn(error);
