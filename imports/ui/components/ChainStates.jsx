@@ -35,7 +35,12 @@ export default class ChainStates extends Component{
 
             if (this.props.coinStats.usd){
                 this.setState({
-                    price: this.props.coinStats.usd,
+                    price: numbro(this.props.coinStats.usd).formatCurrency({
+                        average: true,
+                        mantissa: 6,
+                        optionalMantissa: true,
+                        currencyPosition: "prefix"
+                    }),
                     marketCap: numbro(this.props.coinStats.usd_market_cap).formatCurrency({
                         average: true,
                         mantissa: 2,
@@ -66,7 +71,12 @@ export default class ChainStates extends Component{
         if (this.props.coinStats != prevProps.coinStats){
             if (this.props.coinStats.usd){
                 this.setState({
-                    price: this.props.coinStats.usd,
+                    price: numbro(this.props.coinStats.usd).formatCurrency({
+                        average: true,
+                        mantissa: 6,
+                        optionalMantissa: true,
+                        currencyPosition: "prefix"
+                    }),
                     marketCap: numbro(this.props.coinStats.usd_market_cap).formatCurrency({
                         average: true,
                         mantissa: 2,
@@ -94,7 +104,7 @@ export default class ChainStates extends Component{
         return <Card className="d-lg-inline-block">
             <CardHeader>
                 <Row className="text-nowrap">
-                    <Col xs={4} md="auto"><small><span><T>chainStates.price</T>:</span> <strong>${this.state.price}</strong></small></Col>
+                    <Col xs={4} md="auto"><small><span><T>chainStates.price</T>:</span> <strong>{this.state.price}</strong></small></Col>
                     <Col xs={8} md="auto"><small><span><T>chainStates.marketCap</T>:</span> <strong>{this.state.marketCap}</strong></small></Col>
                     <Col xs={8} md="auto"><small><span><T>chainStates.communityPool</T>:</span> <strong>{(this.renderValues(this.state.communityPool))}</strong></small></Col>
                 </Row>
