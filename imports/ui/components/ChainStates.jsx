@@ -37,7 +37,7 @@ export default class ChainStates extends Component{
                 this.setState({
                     price: numbro(this.props.coinStats.usd).formatCurrency({
                         average: true,
-                        mantissa: 6,
+                        mantissa: 5,
                         optionalMantissa: true,
                         currencyPosition: "prefix"
                     }),
@@ -73,7 +73,7 @@ export default class ChainStates extends Component{
                 this.setState({
                     price: numbro(this.props.coinStats.usd).formatCurrency({
                         average: true,
-                        mantissa: 6,
+                        mantissa: 5,
                         optionalMantissa: true,
                         currencyPosition: "prefix"
                     }),
