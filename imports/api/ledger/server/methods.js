@@ -71,39 +71,6 @@ Meteor.methods({
         }
     },
 
-    'cdp.getCDPPrice': function (market) {
-        this.unblock();
-        let url = LCD + '/pricefeed/price/' + market;
-        let cdpPrice = null;
-
-        try {
-            let response = HTTP.get(url);
-            if (response.statusCode == 200) {
-                cdpPrice = JSON.parse(response.content).result.price;
-                return cdpPrice
-            }
-        }
-        catch (e) {
-            console.log(e.response.content)
-        }
-    },
-
-    'cdp.getDeposits': function (address, collateral) {
-        this.unblock();
-        let url = LCD + '/cdp/cdps/cdp/deposits/' + address + '/' + collateral;
-
-        try {
-            let response = HTTP.get(url);
-            if (response.statusCode == 200) {
-                return JSON.parse(response.content).result
-            }
-        }
-        catch (e) {
-            console.log(url);
-            console.log(e.response.content);
-        }
-    },
-
     'account.getIncentive': function (address, collateral) {
         this.unblock();
         let url = LCD + '/incentive/claims/' + address + '/' + collateral;
