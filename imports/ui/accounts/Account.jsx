@@ -629,23 +629,23 @@ export default class AccountDetails extends Component {
                             </Row> */}
                             <div>
                                 <div>
-                                    <span><div className="available infinity" /><span className="label text-nowrap"><T>accounts.available</T></span> - {this.findValue(this.state.available, coin1) > 0 ? numbro(this.findValue(this.state.available, coin1)).format('0,0') : '0.00'} SHR</span>
+                                    <span><div className="available infinity" /><span className="label text-nowrap"><T>accounts.available</T></span> - {this.findValue(this.state.available, coin1) > 0 ? numbro(this.findValue(this.state.available, coin1)).format({mantissa: 0, thousandSeparated: true}) : '0.00'} SHR</span>
                                 </div>
                                 <div>
-                                    <span><div className="delegated infinity" /><span className="label text-nowrap"><T>accounts.delegated</T></span> - {this.findValue(this.state.delegated, coin1) > 0 ? numbro(this.findValue(this.state.delegated, coin1)).format('0,0') : '0.00'} SHR</span>
+                                    <span><div className="delegated infinity" /><span className="label text-nowrap"><T>accounts.delegated</T></span> - {this.findValue(this.state.delegated, coin1) > 0 ? numbro(this.findValue(this.state.delegated, coin1)).format({mantissa: 0, thousandSeparated: true}) : '0.00'} SHR</span>
                                 </div>
                                 <div>
-                                    <span><div className="unbonding infinity" /><span className="label text-nowrap"><T>accounts.unbonding</T></span> - {this.findValue(this.state.unbonding, coin1) > 0 ? numbro(this.findValue(this.state.unbonding, coin1)).format('0,0') : '0.00'} SHR</span>
+                                    <span><div className="unbonding infinity" /><span className="label text-nowrap"><T>accounts.unbonding</T></span> - {this.findValue(this.state.unbonding, coin1) > 0 ? numbro(this.findValue(this.state.unbonding, coin1)).format({mantissa: 0, thousandSeparated: true}) : '0.00'} SHR</span>
                                 </div>
                                 <div>
-                                    <span><div className="rewards infinity" /><span className="label text-nowrap"><T>accounts.rewards</T></span> - {this.findValue(this.state.rewards, coin1) > 0 ? numbro(this.findValue(this.state.rewards, coin1)).format('0,0') : '0.00'} SHR</span>
+                                    <span><div className="rewards infinity" /><span className="label text-nowrap"><T>accounts.rewards</T></span> - {this.findValue(this.state.rewards, coin1) > 0 ? numbro(this.findValue(this.state.rewards, coin1)).format({mantissa: 0, thousandSeparated: true}) : '0.00'} SHR</span>
                                 </div>
                                 <div>
-                                    <span><div className="commission infinity" /><span className="label text-nowrap"><T>validators.commission</T></span> - {this.findValue(this.state.commission, coin1) > 0 ? numbro(this.findValue(this.state.commission, coin1)).format('0,0') : '0.00'} SHR</span>
+                                    <span><div className="commission infinity" /><span className="label text-nowrap"><T>validators.commission</T></span> - {this.findValue(this.state.commission, coin1) > 0 ? numbro(this.findValue(this.state.commission, coin1)).format({mantissa: 0, thousandSeparated: true}) : '0.00'} SHR</span>
                                 </div>
                                 <div className="text-right total">
                                     <div>Total</div>
-                                    <span className="value">{this.findValue(this.state.total, coin1) > 0 ? numbro(this.findValue(this.state.total, coin1)).format('0,0') : '0.00'} SHR</span>
+                                    <span className="value">{this.findValue(this.state.total, coin1) > 0 ? numbro(this.findValue(this.state.total, coin1)).format({mantissa: 0, thousandSeparated: true}) : '0.00'} SHR</span>
                                     <div className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.00a")} ({numbro(this.state.price).format("$0,0.00")}/SHR)</div>
                                 </div>
                             </div>
