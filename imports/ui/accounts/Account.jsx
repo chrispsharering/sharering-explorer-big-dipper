@@ -545,7 +545,7 @@ export default class AccountDetails extends Component {
         else if (this.state.accountExists) {
             return <div id="account">
                 <Helmet>
-                    <title>Account Details of {this.state.address} | The Big Dipper</title>
+                    <title>Account Details of {this.state.address} | Shareledger Block Explorer</title>
                     <meta name="description" content={"Account Details of " + this.state.address} />
                 </Helmet>
                 <Row>
@@ -573,7 +573,7 @@ export default class AccountDetails extends Component {
                                     </Progress>
                                 </Col>
                             </Row>
-                            <Row>
+                            {/* <Row className="d-none d-lg-block">
                                 <Col xs={2} >
                                     <Row>
                                         <Col xs={12} className="label text-nowrap"><T>accounts.available</T></Col>
@@ -593,7 +593,7 @@ export default class AccountDetails extends Component {
                                 </Col>
                                 <Col xs={3} md={2}>
                                     <Row>
-                                        <Col xs={12} className="value text-left "> <div className="available infinity" />{this.findCoin(this.state.available, coin1)}</Col>
+                                        <Col xs={12} className="value text-left"> <div className="available infinity" />{this.findCoin(this.state.available, coin1)}</Col>
                                     </Row>
                                     <Row>
                                         <Col xs={12} className="value text-left"><div className="delegated infinity" />{this.findCoin(this.state.delegated, coin1)}</Col>
@@ -626,7 +626,29 @@ export default class AccountDetails extends Component {
                                             <TransferButton address={this.state.address} denom={this.state.denom} total={this.state.total} /></Col>
                                     </Row> : null}
                                 </Col>
-                            </Row>
+                            </Row> */}
+                            <div>
+                                <div>
+                                    <span><div className="available infinity" /><span className="label text-nowrap"><T>accounts.available</T></span> - {this.findValue(this.state.available, coin1) > 0 ? numbro(this.findValue(this.state.available, coin1)).format('0,0') : '0.00'} SHR</span>
+                                </div>
+                                <div>
+                                    <span><div className="delegated infinity" /><span className="label text-nowrap"><T>accounts.delegated</T></span> - {this.findValue(this.state.delegated, coin1) > 0 ? numbro(this.findValue(this.state.delegated, coin1)).format('0,0') : '0.00'} SHR</span>
+                                </div>
+                                <div>
+                                    <span><div className="unbonding infinity" /><span className="label text-nowrap"><T>accounts.unbonding</T></span> - {this.findValue(this.state.unbonding, coin1) > 0 ? numbro(this.findValue(this.state.unbonding, coin1)).format('0,0') : '0.00'} SHR</span>
+                                </div>
+                                <div>
+                                    <span><div className="rewards infinity" /><span className="label text-nowrap"><T>accounts.rewards</T></span> - {this.findValue(this.state.rewards, coin1) > 0 ? numbro(this.findValue(this.state.rewards, coin1)).format('0,0') : '0.00'} SHR</span>
+                                </div>
+                                <div>
+                                    <span><div className="commission infinity" /><span className="label text-nowrap"><T>validators.commission</T></span> - {this.findValue(this.state.commission, coin1) > 0 ? numbro(this.findValue(this.state.commission, coin1)).format('0,0') : '0.00'} SHR</span>
+                                </div>
+                                <div className="text-right total">
+                                    <div>Total</div>
+                                    <span className="value">{this.findValue(this.state.total, coin1) > 0 ? numbro(this.findValue(this.state.total, coin1)).format('0,0') : '0.00'} SHR</span>
+                                    <div className="dollar-value text-right text-secondary">~{numbro((this.findValue(this.state.total, coin1)) * this.state.price).format("$0,0.00a")} ({numbro(this.state.price).format("$0,0.00")}/SHR)</div>
+                                </div>
+                            </div>
 
                         </CardBody>
                     </Card></Col>
