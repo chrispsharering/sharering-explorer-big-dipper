@@ -17,7 +17,6 @@ import Redelegations from './Redelegations.jsx';
 import AccountTransactions from '../components/TransactionsContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
-import { WithdrawButton, TransferButton, ClaimSwapButton } from '../ledger/LedgerActions.jsx';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import i18n from 'meteor/universe:i18n';
 import Coin from '/both/utils/coins.js';

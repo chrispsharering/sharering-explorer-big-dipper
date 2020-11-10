@@ -92,7 +92,7 @@ export default class ChainStates extends Component{
     renderValues(propsValue){
             let poolValues = [];
             propsValue.map((pool,i) => {
-                poolValues[i] = new Coin(pool.amount, pool.denom).toString(2)  
+                poolValues[i] = `${numbro(pool.amount).format({average: true, mantissa: 1})} SHR`
             })
 
             return poolValues.join(', ')
