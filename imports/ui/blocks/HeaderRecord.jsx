@@ -6,7 +6,6 @@ const T = i18n.createComponent();
 class HeaderRecord extends Component {
     constructor(props) {
         super(props);
-        console.log(props)
     }
     render() {
         return(this.props.isHomePage?
