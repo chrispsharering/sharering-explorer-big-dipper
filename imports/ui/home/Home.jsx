@@ -13,6 +13,9 @@ import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 export default class Home extends Component{
+    // constructor(props){
+    //     super(props);
+    // }
     constructor(props){
         super(props);
         this.state = {

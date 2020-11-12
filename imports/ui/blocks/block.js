@@ -7,12 +7,26 @@ import TimeStamp from '../components/TimeStamp.jsx';
 import moment from 'moment';
 
 export default class Block extends Component {
+    current = FlowRouter.getRouteName();
+    
     constructor(props){
         super(props);
+        // console.log('Blocks props')
+        // console.log(props)
+        // i need to find out how to alter the props being passed into this component
+        // to include the boolean isHomePage, then if it is we can alter the columsn shown
+        // same needed for HeaderRecord.jsx
+        // also, need to work out how to use FlowRouter or generally how to get the route, or maybe
+        // i could just manually pass it alll the way down from the parent component
+        // being home or BlocksTable.jsx
     }
 
     render() {
-        let proposer = this.props.block.proposer();
+        console.log('current route:')
+        console.log(this.current);
+        console.log(this.props)
+        // let proposer = this.props.block.proposer();
+        let proposer = false;
         if (proposer){
             let moniker = (proposer.description&&proposer.description.moniker)?proposer.description.moniker:proposer.address;
             return (true?
