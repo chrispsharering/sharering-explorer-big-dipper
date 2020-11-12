@@ -3,6 +3,7 @@ _namespace: ''
 
 common:
     height: 'Height'
+    age: 'Age'
     voter: 'Voter'
     votingPower: 'Voting Power'
     addresses: 'Addresses'
@@ -120,8 +121,7 @@ validators:
 blocks:
     block: 'Block'
     proposer: 'Proposer'
-    latestBlocks: 'Latest blocks'
-    age: 'Age'
+    latestBlocks: 'Latest Blocks'
     noBlock: 'No block.'
     numOfTxs: 'No. of Txs'
     numOfTransactions: 'No. of Transactions'

@@ -101,8 +101,8 @@ export default class BlocksTable extends Component {
                 </Sidebar>} />
             </Switch>
             <Container fluid id="block-table">
-                <HeaderRecord />
-                <Blocks limit={this.state.limit} />
+                <HeaderRecord isHomePage={false}/>
+                <Blocks limit={this.state.limit} isHomePage={false}/>
             </Container>
             <LoadMore show={this.state.loadmore} />
         </div>

@@ -19,7 +19,7 @@ export default class Blocks extends Component {
     componentDidUpdate(prevProps){
         if (this.props.blocks != prevProps.blocks){
             if (this.props.blocks.length > 0){
-                let blocks = this.props.blocks.map((block) => (<Block key={block.height} hash={block.hash} block={block}/>));
+                let blocks = this.props.blocks.map((block) => (<Block key={block.height} hash={block.hash} block={block} isHomePage={this.props.isHomePage} />));
                 this.setState(
                     {
                         blocks: blocks,

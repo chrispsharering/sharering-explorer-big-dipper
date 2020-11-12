@@ -13,24 +13,18 @@ import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 export default class Home extends Component{
-    // constructor(props){
-    //     super(props);
-    // }
     constructor(props){
         super(props);
         this.state = {
-            limit: Meteor.settings.public.homePageBlockCount,
-            // sidebarOpen: (props.location.pathname.split("/blocks/").length == 2)
+            limit: Meteor.settings.public.homePageBlockCount
         };
-
-        // this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     }
 
     render() {
         return <div id="home">
             <Helmet>
-            <title>ShareRing Explorer | ShareLedger Block Explorer</title>
-            <meta name="description" content="Cosmos is a decentralized network of independent parallel blockchains, each powered by BFT consensus algorithms like Tendermint consensus." />
+                <title>ShareRing Explorer | ShareLedger Block Explorer</title>
+                <meta name="description" content="Cosmos is a decentralized network of independent parallel blockchains, each powered by BFT consensus algorithms like Tendermint consensus." />
             </Helmet>
             <ChainInfo/>
             <Consensus />

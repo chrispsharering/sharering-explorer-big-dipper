@@ -3,6 +3,7 @@ _namespace: ''
 
 common:
     height: 'Wysokość'
+    age: 'Wiek'
     voter: 'Głosujący'
     votingPower: 'Siła Głosu'
     addresses: 'Adres'

@@ -3,6 +3,7 @@ _namespace: ''
 
 common:
     height: 'высота блока'
+    age: 'возраст'
     voter: 'избиратель'
     votingPower: 'право голоса'
     addresses: 'Адреса'

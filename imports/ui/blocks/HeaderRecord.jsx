@@ -13,7 +13,7 @@ class HeaderRecord extends Component {
             <Row className="header text-nowrap d-flex">
                 <Col><i className="fas fa-database"></i> <span className="d-none d-md-inline"><T>common.height</T></span></Col>
                 <Col><i className="fas fa-sync d-none d-md-inline"></i> <span><T>blocks.numOfTxs</T></span></Col>
-                <Col><i className="far fa-clock"></i> <span className="d-none d-md-inline"><T>blocks.age</T></span></Col>
+                <Col><i className="far fa-clock"></i> <span className="d-none d-md-inline"><T>common.age</T></span></Col>
             </Row>
             :
             <Row className="header text-nowrap d-none d-sm-flex">
