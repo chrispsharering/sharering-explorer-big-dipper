@@ -121,6 +121,7 @@ blocks:
     block: 'Block'
     proposer: 'Proposer'
     latestBlocks: 'Latest blocks'
+    age: 'Age'
     noBlock: 'No block.'
     numOfTxs: 'No. of Txs'
     numOfTransactions: 'No. of Transactions'
