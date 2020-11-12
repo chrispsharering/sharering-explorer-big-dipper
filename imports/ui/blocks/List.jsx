@@ -8,8 +8,11 @@ const T = i18n.createComponent();
 export default class Blocks extends Component {
     constructor(props) {
         super(props);
+        console.log('in list props..........')
+        console.log(props)
         this.state = {
-            blocks: ""
+            blocks: "",
+            isHomePage: props.isHomePage
         }
     }
 
@@ -18,7 +21,10 @@ export default class Blocks extends Component {
             if (this.props.blocks.length > 0){
                 let blocks = this.props.blocks.map((block) => (<Block key={block.height} hash={block.hash} block={block}/>));
                 this.setState(
-                    {blocks: blocks}
+                    {
+                        blocks: blocks,
+                        isHomePage: true
+                    }
                 )
             }
         }
@@ -33,6 +39,7 @@ export default class Blocks extends Component {
             )
         }
         else if (this.props.blocks.length > 0) {
+            // return { blocks: this.state.blocks, isHomePage: this.state.isHomePage};
             return this.state.blocks;
         }
         else{

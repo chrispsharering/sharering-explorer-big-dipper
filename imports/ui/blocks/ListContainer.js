@@ -32,6 +32,7 @@ export default BlocksContainer = withTracker((props) => {
     return {
         loading,
         blocksExist,
-        blocks: blocksExist ? blocks : {}
+        blocks: blocksExist ? blocks : {},
+        isHomePage: props.isHomePage
     };
 })(Blocks);
