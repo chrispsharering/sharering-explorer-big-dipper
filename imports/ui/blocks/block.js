@@ -14,6 +14,7 @@ export default class Block extends Component {
 
     render() {
         let proposer = this.props.block.proposer();
+        console.log(this.props)
         if (proposer){
             let moniker = (proposer.description&&proposer.description.moniker)?proposer.description.moniker:proposer.address;
             return (this.props.isHomePage?
@@ -29,6 +30,7 @@ export default class Block extends Component {
                     <Col xs={4} sm={2} className="text-truncate"><i className="fas fa-hashtag d-sm-none"></i> { this.props.block.hash}</Col>
                     <Col xs={8}sm={3} md={2} lg={3} className="text-truncate"><Link to={"/validator/"+this.props.block.proposerAddress}><Avatar moniker={moniker} profileUrl={proposer.profile_url} address={this.props.block.proposerAddress} list={true} /> {moniker}</Link></Col>
                     <Col xs={4} sm={1} md={2}><i className="fas fa-sync d-sm-none"></i> {numbro(this.props.block.transNum).format('0,0')}</Col>
+                    <Col xs={4} sm={1} md={2}><i className="fas fa-sync d-sm-none"></i> {this.props.block.txFees}</Col>
                 </Row>
             )}
         else{

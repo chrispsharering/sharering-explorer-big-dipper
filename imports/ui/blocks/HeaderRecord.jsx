@@ -7,6 +7,7 @@ class HeaderRecord extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         return(this.props.isHomePage?
             <Row className="header text-nowrap d-flex">

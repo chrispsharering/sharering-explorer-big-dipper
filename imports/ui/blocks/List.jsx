@@ -8,8 +8,6 @@ const T = i18n.createComponent();
 export default class Blocks extends Component {
     constructor(props) {
         super(props);
-        console.log('in list props..........')
-        console.log(props)
         this.state = {
             blocks: "",
             isHomePage: props.isHomePage
