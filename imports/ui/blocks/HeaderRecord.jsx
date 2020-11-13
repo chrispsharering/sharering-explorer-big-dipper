@@ -28,7 +28,7 @@ class HeaderRecord extends Component {
                 </Col>
                 <Col sm={1} md={1} lg={2}>
                     <span className="d-none d-lg-inline"><T>transactions.fee</T> (</span>
-                    <span>$</span>
+                    <span>USD</span>
                     <span className="d-none d-lg-inline">)</span>
                 </Col>
             </Row>

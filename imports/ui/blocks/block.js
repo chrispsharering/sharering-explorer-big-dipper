@@ -28,8 +28,8 @@ export default class Block extends Component {
                     <Col xs={8} sm={4} lg={2}><i className="far fa-clock d-sm-none"></i><TimeStamp time={this.props.block.time}/></Col>
                     <Col xs={8} sm={3} md={2} lg={2} className="text-truncate"><Link to={"/validator/"+this.props.block.proposerAddress}><Avatar moniker={moniker} profileUrl={proposer.profile_url} address={this.props.block.proposerAddress} list={true} /> {moniker}</Link></Col>
                     <Col xs={4} sm={1} md={2}><i className="fas fa-sync d-sm-none"></i> {numbro(this.props.block.transNum).format('0,0')}</Col>
-                    <Col xs={8} sm={1} md={1} lg={2}><span className="fas d-sm-none">SHR:</span> {this.props.block.txFees}</Col>
-                    <Col xs={4} sm={1} md={1} lg={2}><span className="fas d-sm-none">$:</span> {this.props.block.txFees}</Col>
+                    <Col xs={8} sm={1} md={1} lg={2}><span className="fas d-sm-none">Fee:</span> {this.props.block.txFeeShr} SHR</Col>
+                    <Col xs={4} sm={1} md={1} lg={2}><span className="fas d-sm-none">Fee:</span> ${numbro(this.props.block.txFeeUsd).format({ mantissa: 2 })}</Col>
                 </Row>
             )}
         else{
