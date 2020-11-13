@@ -28,8 +28,6 @@ export default BlocksContainer = withTracker((props) => {
             blocks.forEach(b => {
                 transactions = Transactions.find({height: b.height}).fetch();
                 b.txFees = 0;
-                // b.txFees = transactions.length > 0 ? transactions.tx.value.fee.amount[0].amount : 0;
-                console.log(transactions)
                 if(transactions && transactions.length > 0) {
                     transactions.forEach(t => {
                         // b.txFees += t.tx.value.fee.amount[0].amount;
