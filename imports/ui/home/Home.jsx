@@ -24,7 +24,7 @@ export default class Home extends Component{
         return <div id="home">
             <Helmet>
                 <title>ShareRing Explorer | ShareLedger Block Explorer</title>
-                <meta name="description" content="Cosmos is a decentralized network of independent parallel blockchains, each powered by BFT consensus algorithms like Tendermint consensus." />
+                <meta name="description" content="ShareLedger is the custom Tendemint blockchain built for the ShareRing ecosystem." />
             </Helmet>
             <ChainInfo/>
             <Consensus />
@@ -32,7 +32,7 @@ export default class Home extends Component{
             <Row>
                 <Col md={6}>
                     <Card>
-                        <div className="card-header"><T>blocks.latestBlocks</T></div>
+                        <div className="card-header"><T>blocks.latestBlocks</T> <span>(beta Explorer Syncing)</span></div>
                         <CardBody>
                             <HeaderRecord isHomePage={true}/>
                             <Blocks limit={this.state.limit} isHomePage={true}/>
@@ -44,7 +44,7 @@ export default class Home extends Component{
                 </Col>
             </Row>
             <Row>
-                <Col md={6}>
+                <Col md={12}>
                     <TopValidators />
                 </Col>
             </Row>

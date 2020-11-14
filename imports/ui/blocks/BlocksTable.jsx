@@ -81,8 +81,8 @@ export default class BlocksTable extends Component {
                 <meta name="description" content="Latest blocks committed by validators on ShareLedger" />
             </Helmet>
             <Row>
-                <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>blocks.latestBlocks</T></h1></Col>
-                <Col md={9} xs={12} className="text-md-right"><ChainStates /></Col>
+                <Col lg={6} md={3} xs={12}><h1 className="d-none d-inline"><T>blocks.latestBlocks</T></h1> <span className="d-none d-inline">(beta Explorer Syncing)</span></Col>
+                <Col lg={6} md={9} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Switch>
                 <Route path="/blocks/:blockId" render={(props)=> <Sidebar 
