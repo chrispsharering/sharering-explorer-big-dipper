@@ -10,7 +10,7 @@ export default class TimeStamp extends Component{
     }
 
     render(){
-        let format = "D MMM YYYY, hh:mm:ss z";
+        let format = "D MMM YYYY, H:mm:ss z";
         let timezone = moment.tz.guess()
         let time = moment.utc(this.props.time);
         return <span>
