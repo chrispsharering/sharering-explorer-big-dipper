@@ -59,7 +59,7 @@ export default class VotingPower extends Component{
                     tooltips: {
                         callbacks: {
                             label: function(tooltipItem, data) {
-                                return numbro(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+(numbro(data.datasets[0].data[tooltipItem.index]/totalVotingPower).format("0.00%")+", "+numbro(accumulatePower[tooltipItem.index]/totalVotingPower).format("0.00%"))+")";
+                                return numbro(data.datasets[0].data[tooltipItem.index]).format("0,0")+" ("+ data.labels[tooltipItem.index] + ": "+(numbro(data.datasets[0].data[tooltipItem.index]/totalVotingPower).format("0.00%")+", Cumulative: "+numbro(accumulatePower[tooltipItem.index]/totalVotingPower).format("0.00%"))+")";
                             }
                         }
                     },

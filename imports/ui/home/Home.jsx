@@ -32,7 +32,7 @@ export default class Home extends Component{
             <Row>
                 <Col md={6}>
                     <Card>
-                        <div className="card-header"><T>blocks.latestBlocks</T> <span>(beta Explorer Syncing)</span></div>
+                        <div className="card-header"><T>blocks.latestBlocks</T> <span>(beta Explorer Syncing...)</span></div>
                         <CardBody>
                             <HeaderRecord isHomePage={true}/>
                             <Blocks limit={this.state.limit} isHomePage={true}/>
