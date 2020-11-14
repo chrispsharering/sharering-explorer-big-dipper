@@ -35,7 +35,7 @@ export default BlocksContainer = withTracker((props) => {
                 b.txFeeShr = 0;
                 if(transactions && transactions.length > 0) {
                     transactions.forEach(t => {
-                        b.txFeeShr += parseInt(t.tx.value.fee.amount[0].amount);
+                        // b.txFeeShr += parseInt(t.tx.value.fee.amount[0].amount);
                     })
                 }
                 b.txFeeUsd = b.txFeeShr * coinStats.usd;

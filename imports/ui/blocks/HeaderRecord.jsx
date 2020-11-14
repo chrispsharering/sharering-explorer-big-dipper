@@ -22,14 +22,10 @@ class HeaderRecord extends Component {
                 <Col sm={3} md={2} lg={2}><i className="material-icons">perm_contact_calendar</i> <span className="d-none d-md-inline"><T>blocks.proposer</T></span></Col>
                 <Col sm={1} md={2}><i className="fas fa-sync"></i> <span className="d-none d-md-inline"><T>blocks.numOfTxs</T></span></Col>
                 <Col sm={1} md={1} lg={2}>
-                    <span className="d-none d-lg-inline"><T>transactions.fee</T> (</span>
-                    <span>SHR</span>
-                    <span className="d-none d-lg-inline">)</span>
+                    <img src="/img/logo-sharering-black.png" height="20" width="20" /> <span className="d-none d-md-inline"><T>transactions.fee</T></span>
                 </Col>
                 <Col sm={1} md={1} lg={2}>
-                    <span className="d-none d-lg-inline"><T>transactions.fee</T> (</span>
-                    <span>USD</span>
-                    <span className="d-none d-lg-inline">)</span>
+                    <img src="/img/monetization_on.png" height="24" width="24" /><span className="d-none d-md-inline"><T>transactions.fee</T></span>
                 </Col>
             </Row>
         );
