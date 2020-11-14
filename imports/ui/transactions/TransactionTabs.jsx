@@ -61,7 +61,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-transfer' })}
                             onClick={() => { this.toggle('tx-transfer'); }}
                         >
-                            <T>transactions.transfer</T> ({numbro(this.state.transferTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.transfer</T> ({numbro(this.state.transferTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                     {/* <NavItem>
@@ -69,7 +69,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-cdp' })}
                             onClick={() => { this.toggle('tx-cdp'); }}
                         >
-                            <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.cdp</T> ({numbro(this.state.cdpTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem> */}
                     <NavItem>
@@ -77,7 +77,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-swap' })}
                             onClick={() => { this.toggle('tx-swap'); }}
                         >
-                            <T>transactions.swap</T> ({numbro(this.state.swapTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.swap</T> ({numbro(this.state.swapTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -85,7 +85,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-price' })}
                             onClick={() => { this.toggle('tx-price'); }}
                         >
-                            <T>transactions.priceFeed</T> ({numbro(this.state.priceTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.priceFeed</T> ({numbro(this.state.priceTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -93,7 +93,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-staking' })}
                             onClick={() => { this.toggle('tx-staking'); }}
                         >
-                            <T>transactions.staking</T> ({numbro(this.state.stakingTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.staking</T> ({numbro(this.state.stakingTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -101,7 +101,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-distr' })}
                             onClick={() => { this.toggle('tx-distr'); }}
                         >
-                            <T>transactions.distribution</T> ({numbro(this.state.distributionTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.distribution</T> ({numbro(this.state.distributionTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -109,7 +109,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-gov' })}
                             onClick={() => { this.toggle('tx-gov'); }}
                         >
-                            <T>transactions.governance</T> ({numbro(this.state.governanceTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.governance</T> ({numbro(this.state.governanceTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -117,7 +117,7 @@ export default class TransactionTabs extends Component {
                             className={classnames({ active: this.state.activeTab === 'tx-slashing' })}
                             onClick={() => { this.toggle('tx-slashing'); }}
                         >
-                            <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format({thousandSeparated: true, mantissa: 2})})
+                            <T>transactions.slashing</T> ({numbro(this.state.slashingTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                 </Nav>
