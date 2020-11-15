@@ -130,6 +130,7 @@ blocks:
 transactions:
     transaction: 'Transaction'
     transactions: 'Transactions'
+    latestTransactions: 'Latest Transactions'
     notFound: 'No transaction found.'
     activities: 'Activities'
     txHash: 'Tx Hash'

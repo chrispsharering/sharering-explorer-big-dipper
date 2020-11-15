@@ -129,6 +129,7 @@ blocks:
 transactions:
     transaction: 'Сделка'
     transactions: 'Сделки'
+    latestTransactions: 'Последние транзакции'
     notFound: 'Не найдено.' 
     activities: 'Деятельность'
     txHash: 'хэш сделки'

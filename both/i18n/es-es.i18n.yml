@@ -128,6 +128,7 @@ blocks:
 transactions:
     transaction: 'Transacción'
     transactions: 'Transacciones'
+    latestTransactions: 'Últimas Transacciones'
     notFound: 'No se encuentra la transacción.'
     activities: 'Movimientos'
     txHash: 'Tx Hash'

@@ -9,6 +9,7 @@ import Chart from './ChartContainer.js';
 import { Helmet } from "react-helmet";
 import HeaderRecord from '../blocks/HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/ListContainer.js';
+import Transactions from '/imports/ui/transactions/ListContainer.js';
 import i18n from 'meteor/universe:i18n';
 import { Link } from 'react-router-dom';
 
@@ -45,12 +46,24 @@ export default class Home extends Component{
                     </Card>
                 </Col>
                 <Col md={6}>
-                    <Chart />
+                    <Card>
+                        <div className="card-header"><T>transactions.latestTransactions</T> <span>(beta Explorer Syncing...)</span>
+                            <span className="float-right">
+                                <NavLink tag={Link} to="/transactions" className="view-all-button"><T>common.viewAll</T> >></NavLink>
+                            </span>
+                        </div>
+                        <CardBody>
+                            <Transactions limit={this.state.limit} isHomePage={true}/>
+                        </CardBody>
+                    </Card>
                 </Col>
             </Row>
             <Row>
-                <Col md={12}>
+                <Col md={6}>
                     <TopValidators />
+                </Col>
+                <Col md={6}>
+                    <Chart />
                 </Col>
             </Row>
         </div>

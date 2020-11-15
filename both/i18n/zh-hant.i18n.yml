@@ -128,6 +128,7 @@ blocks:
 transactions:
     transaction: '交易'
     transactions: '交易'
+    latestTransactions: '最新交易'
     notFound: '沒有交易。'
     activities: '活動'
     txHash: '交易哈希'

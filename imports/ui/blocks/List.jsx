@@ -37,7 +37,6 @@ export default class Blocks extends Component {
             )
         }
         else if (this.props.blocks.length > 0) {
-            // return { blocks: this.state.blocks, isHomePage: this.state.isHomePage};
             return this.state.blocks;
         }
         else{

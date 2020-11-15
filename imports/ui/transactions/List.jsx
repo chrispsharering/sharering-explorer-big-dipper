@@ -14,7 +14,8 @@ export default class Transactions extends Component{
     constructor(props){
         super(props);
         this.state = {
-            txs: ""
+            txs: "",
+            isHomePage: props.isHomePage
         }
     }
 
@@ -26,9 +27,11 @@ export default class Transactions extends Component{
                         return <TransactionRow 
                             key={i} 
                             index={i} 
-                            tx={tx} 
+                            tx={tx}
+                            isHomePage={this.props.isHomePage}
                         />
-                    })
+                    }),
+                    isHomePage: this.props.isHomePage
                 })    
             }
         }
@@ -42,16 +45,27 @@ export default class Transactions extends Component{
             return <div><T>transactions.notFound</T></div>
         }
         else{
-            return <div className="transactions-list">
-                <Row className="header text-nowrap d-none d-lg-flex">
-                    <Col xs={9} lg={7}><i className="material-icons">message</i> <span className="d-none d-md-inline-block"><T>transactions.activities</T></span></Col>
-                    <Col xs={3} lg={{size:1,order:"last"}}><i className="fas fa-hashtag"></i> <span className="d-none d-md-inline-block"><T>transactions.txHash</T></span></Col>
-                    <Col xs={4} md={2} lg={1}><i className="fas fa-database"></i> <span className="d-none d-md-inline-block"><T>common.height</T></span></Col>
-                    <Col xs={2} md={1} className="text-nowrap"><i className="material-icons">check_circle</i> <span className="d-none d-lg-inline-block"><T>transactions.valid</T></span></Col>
-                    <Col xs={12} lg={2}><i className="material-icons">monetization_on</i> <span className="d-none d-md-inline-block"><T>transactions.fee</T></span></Col>
-                </Row>
-                {this.state.txs}
-            </div>
+            return (this.props.isHomePage?
+                <div>
+                    <Row className="header text-nowrap d-flex">
+                        <Col><i className="fas fa-hashtag"></i> <span className="d-none d-md-inline"><T>transactions.txHash</T></span></Col>
+                        <Col><i className="material-icons">monetization_on</i> <span><T>transactions.fee</T></span></Col>
+                        <Col><i className="far fa-clock"></i> <span className="d-none d-md-inline"><T>common.age</T></span></Col>
+                    </Row>
+                    {this.state.txs}
+                </div>
+            :
+                <div className="transactions-list">
+                    <Row className="header text-nowrap d-none d-lg-flex">
+                        <Col xs={9} lg={7}><i className="material-icons">message</i> <span className="d-none d-md-inline-block"><T>transactions.activities</T></span></Col>
+                        <Col xs={3} lg={{size:1,order:"last"}}><i className="fas fa-hashtag"></i> <span className="d-none d-md-inline-block"><T>transactions.txHash</T></span></Col>
+                        <Col xs={4} md={2} lg={1}><i className="fas fa-database"></i> <span className="d-none d-md-inline-block"><T>common.height</T></span></Col>
+                        <Col xs={2} md={1} className="text-nowrap"><i className="material-icons">check_circle</i> <span className="d-none d-lg-inline-block"><T>transactions.valid</T></span></Col>
+                        <Col xs={12} lg={2}><i className="material-icons">monetization_on</i> <span className="d-none d-md-inline-block"><T>transactions.fee</T></span></Col>
+                    </Row>
+                    {this.state.txs}
+                </div>
+            )
         }
     }
 }
