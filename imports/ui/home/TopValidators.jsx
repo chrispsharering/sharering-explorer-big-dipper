@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
+    CardTitle, CardSubtitle, Button, Progress, Spinner, NavLink } from 'reactstrap';
 import numbro from 'numbro';
 import Avatar from '../components/Avatar.jsx';
 import i18n from 'meteor/universe:i18n';
@@ -63,7 +63,11 @@ export default class TopValidators extends Component{
         else{
             if (this.props.validatorsExist && this.props.status.prevotes){
                 return <Card>
-                    <div className="card-header"><T>validators.randomValidators</T></div>
+                    <div className="card-header"><T>validators.randomValidators</T>
+                        <span className="float-right">
+                            <NavLink tag={Link} to="/validators" className="view-all-button"><T>common.viewAll</T> >></NavLink>
+                        </span>
+                    </div>
                     <CardBody>
                         <Table striped className="random-validators">
                             <thead>
