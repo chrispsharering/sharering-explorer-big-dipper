@@ -23,6 +23,7 @@ common:
     searchPlaceholder: 'Buscar con el tx hash / altura de bloque / dirección'
     cancel: 'Cancelar'
     retry: 'Reintentar'
+    viewAll: 'Ver Todo'
 navbar:
     siteName: 'ShareRing Explorer'
     version: 'beta'

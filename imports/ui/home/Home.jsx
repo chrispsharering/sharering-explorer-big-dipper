@@ -1,6 +1,6 @@
   
 import React, { Component } from 'react';
-import {Container, Row, Col, Card, CardBody } from 'reactstrap';
+import {Container, Row, Col, Card, CardBody, NavLink } from 'reactstrap';
 import ChainStatus from './ChainStatusContainer.js';
 import ChainInfo from '../components/ChainInfo.jsx'
 import Consensus from './ConsensusContainer.js';
@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet";
 import HeaderRecord from '../blocks/HeaderRecord.jsx';
 import Blocks from '/imports/ui/blocks/ListContainer.js';
 import i18n from 'meteor/universe:i18n';
+import { Link } from 'react-router-dom';
 
 const T = i18n.createComponent();
 export default class Home extends Component{
@@ -32,7 +33,11 @@ export default class Home extends Component{
             <Row>
                 <Col md={6}>
                     <Card>
-                        <div className="card-header"><T>blocks.latestBlocks</T> <span>(beta Explorer Syncing...)</span></div>
+                        <div className="card-header"><T>blocks.latestBlocks</T> <span>(beta Explorer Syncing...)</span>
+                            <span className="float-right">
+                                <NavLink tag={Link} to="/blocks" className="view-all-button"><T>common.viewAll</T> >></NavLink>
+                            </span>
+                        </div>
                         <CardBody>
                             <HeaderRecord isHomePage={true}/>
                             <Blocks limit={this.state.limit} isHomePage={true}/>

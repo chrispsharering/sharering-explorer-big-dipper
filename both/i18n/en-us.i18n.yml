@@ -25,6 +25,7 @@ common:
     retry: 'Retry'
     rewards: 'Rewards'
     lastUpdated: 'Last Updated:'
+    viewAll: 'View All'
 navbar:
     siteName: 'ShareRing Explorer'
     version: 'beta'

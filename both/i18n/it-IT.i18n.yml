@@ -24,6 +24,7 @@ common:
     cancel: 'Annulla'
     retry: 'Riprova'
     rewards: 'Reward'
+    viewAll: 'Mostra Tutto'
 navbar:
     siteName: 'ShareRing Explorer'
     version: 'beta'

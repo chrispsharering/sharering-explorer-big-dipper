@@ -345,6 +345,10 @@ body {
   #home .card, #transaction .card, #block .card, #account .card {
     /* margin: 0 0 0.75em 0; */
     margin-bottom: 0.75em;
+    
+    .view-all-button {
+      padding: 0 0 0 0;
+    }
   }
   
   .progress {

@@ -23,6 +23,7 @@ common:
     searchPlaceholder: '搜寻交易哈希 / 区块高度 / 地址'
     cancel: '取消'
     retry: '重试'
+    viewAll: '查看全部'
 navbar:
     siteName: 'ShareRing Explorer'
     version: 'beta'
