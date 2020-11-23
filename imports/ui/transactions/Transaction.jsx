@@ -51,7 +51,7 @@ export default class Transaction extends Component{
                         <CardBody>
                             <Row>
                                 <Col md={4} className="label"><T>common.hash</T></Col>
-                                <Col md={8} className="value text-nowrap address">{tx.txhash}</Col>
+                                <Col md={8} className="value address">{tx.txhash}</Col>
                                 <Col md={4} className="label"><T>common.height</T></Col>
                                 <Col md={8} className="value">
                                     <Link to={"/blocks/"+tx.height}>{numbro(tx.height).format("0,0")}</Link>
@@ -61,10 +61,12 @@ export default class Transaction extends Component{
                                 <Col md={8} className="value">{(tx.tx.value.fee.amount.length > 0)?tx.tx.value.fee.amount.map((fee,i) => {
                                     return <span className="text-nowrap" key={i}> {((fee.amount/Meteor.settings.public.stakingFraction)>=1)?(new Coin(parseFloat(fee.amount), fee.denom)).stakeString():(new Coin(parseFloat(fee.amount), fee.denom)).mintString()} </span>
                                 }):<span><T>transactions.noFee</T></span>}</Col>
-                                <Col md={4} className="label"><T>transactions.gasUsedWanted</T></Col>
-                                <Col md={8} className="value">{numbro(tx.gas_used).format("0,0")} / {numbro(tx.gas_wanted).format("0,0")}</Col>
-                                <Col md={4} className="label"><T>transactions.memo</T></Col>
-                                <Col md={8} className="value"><Markdown markup={ tx.tx.value.memo } /></Col>
+                                {tx.tx.value.memo ?
+                                    <div>
+                                        <Col md={4} className="label"><T>transactions.memo</T></Col>
+                                        <Col md={8} className="value"><Markdown markup={ tx.tx.value.memo } /></Col>
+                                    </div>
+                                : null}
                               
                             </Row>
                         </CardBody>
