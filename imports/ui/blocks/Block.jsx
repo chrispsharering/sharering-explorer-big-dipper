@@ -4,7 +4,7 @@ import { Link, } from 'react-router-dom';
 import numbro from 'numbro';
 import moment from 'moment';
 import Avatar from '../components/Avatar.jsx';
-import TranactionTabs from '../transactions/TransactionTabs.jsx';
+import TransactionTabs from '../transactions/TransactionTabs.jsx';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 import TimeStamp from '../components/TimeStamp.jsx';
@@ -25,13 +25,13 @@ export default class Block extends Component {
             slashingTxs: {},
             incentiveTxs: {},
             auctionTxs: {},
+            loadShrTxs: {}
         };
     }
 
     componentDidUpdate(prevProps) {
         if (this.props != prevProps) {
             if (this.props.transactionsExist) {
-                // console.log("have txs.");
                 this.setState({
                     transferTxs: this.props.transferTxs,
                     cdpTxs: this.props.cdpTxs,
@@ -43,6 +43,7 @@ export default class Block extends Component {
                     slashingTxs: this.props.slashingTxs,
                     incentiveTxs: this.props.incentiveTxs,
                     auctionTxs: this.props.auctionTxs,
+                    loadShrTxs: this.props.loadShrTxs
                 })
             }
         }
@@ -56,11 +57,24 @@ export default class Block extends Component {
         }
         else {
             if (this.props.blockExist) {
-                // console.log(this.props.block);
                 let block = this.props.block;
+                const txs = this.props.txs;
                 let proposer = block.proposer();
                 let moniker = proposer ? proposer.description.moniker : '';
                 let profileUrl = proposer ? proposer.profile_url : '';
+                let transactionsRows;
+                if(txs && txs.length > 0) {
+                    transactionsRows = txs.map(tx => {
+                        return <Row className="block-info">
+                            <Col sm={6} md={3} lg={3} className="text-truncate"><Link to={"/transactions/" + tx.txhash}>{tx.txhash}</Link></Col>
+                            <Col sm={6} md={3} lg={3}>{tx.tx.value.msg[0].type}</Col>
+                            <Col md={2} lg={2} className="d-none d-md-inline">{moment(tx.timestamp).fromNow()}</Col>
+                            <Col xs={8} sm={6} md={2} lg={2}><span className="fas d-md-none">Fee:</span> {tx.feeShr} SHR</Col>
+                            <Col xs={4} sm={6} md={2} lg={2}><span className="fas d-md-none">Fee:</span> ${numbro(tx.feeUsd).format({ mantissa: 2 })}</Col>
+                            {/* Add hover over tooltip explaining type of transaction */}
+                        </Row>
+                    });
+                }
 
                 return <Container id="block">
                     <Helmet>
@@ -83,11 +97,31 @@ export default class Block extends Component {
                             </Row>
                         </CardBody>
                     </Card>
-                    <TranactionTabs
+                    {txs.length > 0 ?
+                        <Card>
+                            <div className="card-header"><T>transactions.transactions</T> <small>(<T>blocks.inBlock</T> {numbro(block.height).format("0,0")})</small></div>
+                            <CardBody>
+                                <Row className="block-info d-none d-md-flex">
+                                    <Col md={3} lg={3} className="text-truncate">TX Hash</Col>
+                                    <Col md={3} lg={3}>Type</Col>
+                                    <Col md={2} lg={2}><i className="far fa-clock"></i> <T>common.time</T> (UTC)</Col>
+                                    <Col md={2} lg={2}>
+                                        <img src="/img/logo-sharering-black.png" height="20" width="20" /> <span><T>transactions.fee</T></span>
+                                    </Col>
+                                    <Col md={2} lg={2}>
+                                        <img src="/img/monetization_on.png" height="24" width="24" /><span><T>transactions.fee</T></span>
+                                    </Col>
+                                </Row>
+                                {transactionsRows}
+                            </CardBody>
+                        </Card>
+                    : null }
+                    <TransactionTabs
                         transferTxs={this.state.transferTxs}
                         cdpTxs={this.state.cdpTxs}
                         swapTxs={this.state.swapTxs}
                         priceTxs={this.state.priceTxs}
+                        loadShrTxs={this.state.loadShrTxs}
                         stakingTxs={this.state.stakingTxs}
                         distributionTxs={this.state.distributionTxs}
                         governanceTxs={this.state.governanceTxs}

@@ -19,10 +19,12 @@ export default class ValidatorTransactions extends Component {
             slashingTxs: {},
             incentiveTxs: {},
             auctionTxs: {},
+            loadShrTxs: {}
         };
     }
 
     componentDidUpdate(prevProps) {
+        console.log(this.props)
         if (this.props != prevProps) {
             if (this.props.transactionsExist) {
                 // console.log("have txs.");
@@ -31,6 +33,7 @@ export default class ValidatorTransactions extends Component {
                     cdpTxs: this.props.cdpTxs,
                     swapTxs: this.props.swapTxs,
                     priceTxs: this.props.priceTxs,
+                    loadShrTxs: this.props.loadShrTxs,
                     stakingTxs: this.props.stakingTxs,
                     distributionTxs: this.props.distributionTxs,
                     governanceTxs: this.props.governanceTxs,
@@ -52,6 +55,7 @@ export default class ValidatorTransactions extends Component {
                 cdpTxs={this.state.cdpTxs}
                 swapTxs={this.state.swapTxs}
                 priceTxs={this.state.priceTxs}
+                loadShrTxs={this.state.loadShrTxs}
                 stakingTxs={this.state.stakingTxs}
                 distributionTxs={this.state.distributionTxs}
                 governanceTxs={this.state.governanceTxs}

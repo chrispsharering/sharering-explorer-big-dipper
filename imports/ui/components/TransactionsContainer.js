@@ -96,6 +96,11 @@ export default TransactionsContainer = withTracker((props) => {
                 {"tx.value.msg.type":"cosmos-sdk/IBCTransferMsg"},
                 {"tx.value.msg.type":"cosmos-sdk/IBCReceiveMsg"}
             ]
+        }).fetch() : {},
+        loadShrTxs: transactionsExist ? Transactions.find({
+            $or: [
+                { "tx.value.msg.type": "gentlemint/LoadSHR" },
+            ]
         }).fetch() : {}
     };
 })(ValidatorTransactions);

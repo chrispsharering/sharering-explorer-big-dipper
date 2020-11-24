@@ -23,6 +23,7 @@ export default class TransactionTabs extends Component {
             slashingTxs: {},
             incentiveTxs: {},
             auctionTxs: {},
+            loadShrTxs: {}
         }
     }
 
@@ -35,6 +36,7 @@ export default class TransactionTabs extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log(this.props)
         if (this.props != prevProps) {
             this.setState({
                 transferTxs: this.props.transferTxs,
@@ -47,6 +49,7 @@ export default class TransactionTabs extends Component {
                 slashingTxs: this.props.slashingTxs,
                 incentiveTxs: this.props.incentiveTxs,
                 auctionTxs: this.props.auctionTxs,
+                loadShrTxs: this.props.loadShrTxs
             })
         }
     }
@@ -86,6 +89,14 @@ export default class TransactionTabs extends Component {
                             onClick={() => { this.toggle('tx-price'); }}
                         >
                             <T>transactions.priceFeed</T> ({numbro(this.state.priceTxs.length).format({thousandSeparated: true})})
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === 'tx-loadShr' })}
+                            onClick={() => { this.toggle('tx-loadShr'); }}
+                        >
+                            <T>transactions.loadShr</T> ({numbro(this.state.loadShrTxs.length).format({thousandSeparated: true})})
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -154,6 +165,20 @@ export default class TransactionTabs extends Component {
                         <Row>
                             <Col>
                                 {(this.state.swapTxs.length > 0) ? this.state.swapTxs.map((tx, i) => {
+                                    return <TransactionRow
+                                        key={i}
+                                        index={i}
+                                        tx={tx}
+                                        blockList
+                                    />
+                                }) : ''}
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="tx-loadShr">
+                        <Row>
+                            <Col>
+                                {(this.state.loadShrTxs.length > 0) ? this.state.loadShrTxs.map((tx, i) => {
                                     return <TransactionRow
                                         key={i}
                                         index={i}
@@ -256,6 +281,10 @@ TransactionTabs.propTypes = {
         PropTypes.object.isRequired,
     ]),
     slashingTxs: PropTypes.oneOfType([
+        PropTypes.array.isRequired,
+        PropTypes.object.isRequired,
+    ]),
+    loadShrTxs: PropTypes.oneOfType([
         PropTypes.array.isRequired,
         PropTypes.object.isRequired,
     ])

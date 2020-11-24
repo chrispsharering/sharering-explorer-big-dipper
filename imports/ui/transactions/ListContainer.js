@@ -19,10 +19,10 @@ export default ValidatorDetailsContainer = withTracker((props) => {
         coinStats = CoinStats.findOne({}, {sort:{last_updated_at:-1}, limit:1});
         transactions = Transactions.find({}, {sort:{height:-1}}).fetch();
 
-        // Fetch the transactions for each block
+        // Fetch the transactions fee for each tx
         if(transactions && transactions.length > 0) {
             transactions.forEach(t => {
-                t.feeShr = parseInt(t.tx.value.fee.amount[0].amount);
+                t.feeShr = t.tx.value.fee.amount.length > 0 ? parseInt(t.tx.value.fee.amount[0].amount) : 0;
                 t.feeUsd = t.feeShr * coinStats.usd;
             })
         }
