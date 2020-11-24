@@ -49,6 +49,60 @@ export default class Block extends Component {
         }
     }
 
+    buildTransactionsRows(txs) {
+        if(txs && txs.length > 0) {
+            return txs.map(tx => {
+                tx.type = this.getTxType(tx);
+                return <Row className="block-info">
+                    <Col sm={6} md={3} lg={3} className="text-truncate"><Link to={"/transactions/" + tx.txhash}>{tx.txhash}</Link></Col>
+                    <Col sm={6} md={3} lg={3}>{tx.type}</Col>
+                    <Col md={2} lg={2} className="d-none d-md-inline">{moment(tx.timestamp).fromNow()}</Col>
+                    <Col xs={8} sm={6} md={2} lg={2}><span className="fas d-md-none">Fee:</span> {tx.feeShr} SHR</Col>
+                    <Col xs={4} sm={6} md={2} lg={2}><span className="fas d-md-none">Fee:</span> ${numbro(tx.feeUsd).format({ mantissa: 2 })}</Col>
+                    {/* Add hover over tooltip explaining type of transaction */}
+                </Row>
+            });
+        } else {
+            return null;
+        }
+    }
+
+    // TODO This can be used later to add description for each tx type
+    getTxType(tx) {
+        const txType = tx.tx.value.msg[0].type;
+        switch(txType) {
+            case 'asset/msgCreateAsset':
+                return 'msgCreateAsset';
+            case 'asset/msgDeleteAsset':
+                return 'msgDeleteAsset';
+            case 'asset/msgUpdateAsset':
+                return 'msgUpdateAsset';
+            case 'booking/msgBookBook':
+                return 'msgBookBook';
+            case 'booking/msgBookComplete':
+                return 'msgBookComplete';
+            case 'gentlemint/msgLoadSHR':
+                return 'msgLoadSHR';
+            case 'gentlemint/msgLoadSHRP':
+                return 'msgLoadSHRP';
+            case 'gentlemint/msgSendSHR':
+                return 'msgSendSHR';
+            case 'gentlemint/msgSendSHRP':
+                return 'msgSendSHRP';
+            case 'id/msgCreateId':
+                return 'msgCreateId';
+            case 'id/msgDeleteId':
+                return 'msgDeleteId';
+            case 'id/msgUpdateId':
+                return 'msgUpdateId';
+            default:
+                if(txType.includes('/')) {
+                    return txType.substring(txType.indexOf('/') + 1, txType.length);
+                }
+                return 'Transaction';
+        }
+    }
+
     render() {
         if (this.props.loading) {
             return <Container id="block">
@@ -62,19 +116,7 @@ export default class Block extends Component {
                 let proposer = block.proposer();
                 let moniker = proposer ? proposer.description.moniker : '';
                 let profileUrl = proposer ? proposer.profile_url : '';
-                let transactionsRows;
-                if(txs && txs.length > 0) {
-                    transactionsRows = txs.map(tx => {
-                        return <Row className="block-info">
-                            <Col sm={6} md={3} lg={3} className="text-truncate"><Link to={"/transactions/" + tx.txhash}>{tx.txhash}</Link></Col>
-                            <Col sm={6} md={3} lg={3}>{tx.tx.value.msg[0].type}</Col>
-                            <Col md={2} lg={2} className="d-none d-md-inline">{moment(tx.timestamp).fromNow()}</Col>
-                            <Col xs={8} sm={6} md={2} lg={2}><span className="fas d-md-none">Fee:</span> {tx.feeShr} SHR</Col>
-                            <Col xs={4} sm={6} md={2} lg={2}><span className="fas d-md-none">Fee:</span> ${numbro(tx.feeUsd).format({ mantissa: 2 })}</Col>
-                            {/* Add hover over tooltip explaining type of transaction */}
-                        </Row>
-                    });
-                }
+                const transactionsRows = this.buildTransactionsRows(txs);
 
                 return <Container id="block">
                     <Helmet>
