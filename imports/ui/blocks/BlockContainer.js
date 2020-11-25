@@ -26,14 +26,8 @@ export default BlockContainer = withTracker((props) => {
             txs.forEach(t => {
                 t.feeShr = t.tx.value.fee.amount.length > 0 ? parseInt(t.tx.value.fee.amount[0].amount) : 0;
                 t.feeUsd = t.feeShr * coinStats.usd;
-                console.log(t.feeShr)
-                console.log(t.feeUsd)
             })
         }
-        console.log('block:')
-        console.log(block)
-        console.log('txs:')
-        console.log(txs)
 
         if (Meteor.isServer) {
             loading = false;

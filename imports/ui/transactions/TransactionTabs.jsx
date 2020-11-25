@@ -36,7 +36,6 @@ export default class TransactionTabs extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        console.log(this.props)
         if (this.props != prevProps) {
             this.setState({
                 transferTxs: this.props.transferTxs,

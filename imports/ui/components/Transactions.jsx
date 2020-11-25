@@ -24,7 +24,6 @@ export default class ValidatorTransactions extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        console.log(this.props)
         if (this.props != prevProps) {
             if (this.props.transactionsExist) {
                 // console.log("have txs.");
