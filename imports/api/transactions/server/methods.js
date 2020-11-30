@@ -121,8 +121,21 @@ Meteor.methods({
             // }
         ];
 
+        var stringToDateConversionStage = {
+            $addFields: {
+               timestamp: { $toDate: "$timestamp" }
+            }
+         };
+         var stringToIntShrFeeConversionState = {
+            $addFields: {
+               feeShr: { $toInt: "$tx.value.fee.amount['0'].amount" } //TODO figure out how to get this to then sum the daily fees
+            // feeShr: { $toInt: "$tx.value.fee.gas" }
+            }
+         };
+
         var pipeline2 = 
         [
+            stringToIntShrFeeConversionState,
             {
               $match: {
                 height: {
@@ -135,30 +148,30 @@ Meteor.methods({
             }
           ];
 
-        var stringToDateConversionStage = {
-            $addFields: {
-               timestamp: { $toDate: "$timestamp" }
-            }
-         };
-
         var pipeline3 = 
         [
             stringToDateConversionStage,
+            stringToIntShrFeeConversionState,
             {
                 $project:
                 {
                     date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    feeShr: "$feeShr",
+                    "height": 1
                 }
             },
             {
                 $group: {
                     _id: "$date",
-                    count: { $sum: 1 }
+                    txs: { $sum: 1 },
+                    sumHeight: { $sum: "$height" },
+                    sumFeeShr: { $sum: "$feeShr" }
+
                  }
             },
             {
                 $addFields: {
-                    createdAt: "$_id"
+                    date: "$_id"
                 }
             },
             // {
