@@ -126,16 +126,86 @@ Meteor.methods({
                timestamp: { $toDate: "$timestamp" }
             }
          };
+         var getFeeShrAmountAsString = {
+            $addFields: {
+               feeShrString: { $arrayElemAt: [ "$tx.value.fee.amount", 0 ] }, 
+            //    how do i get element 0 . amount and then toInt it so i can sum all the amounts of shr fees?... keep fiddling
+            //    feeShr: { $toInt: "$tx.value.fee.amount['0'].amount" } //TODO figure out how to get this to then sum the daily fees
+            // feeShr: { $toInt: "$tx.value.fee.gas" }
+            }
+         };
          var stringToIntShrFeeConversionState = {
             $addFields: {
-               feeShr: { $toInt: "$tx.value.fee.amount['0'].amount" } //TODO figure out how to get this to then sum the daily fees
+               feeShr: { $toInt: "$feeShrString.amount" }, 
+            //    how do i get element 0 . amount and then toInt it so i can sum all the amounts of shr fees?... keep fiddling
+            //    feeShr: { $toInt: "$tx.value.fee.amount['0'].amount" } //TODO figure out how to get this to then sum the daily fees
+            // feeShr: { $toInt: "$tx.value.fee.gas" }
+            }
+         };
+
+         var getLogsZeros = {
+            $addFields: {
+               feeShr: { $arrayElemAt: [ "$logs", 0 ] }, 
+            //    how do i get element 0 . amount and then toInt it so i can sum all the amounts of shr fees?... keep fiddling
+            //    feeShr: { $toInt: "$tx.value.fee.amount['0'].amount" } //TODO figure out how to get this to then sum the daily fees
+            // feeShr: { $toInt: "$tx.value.fee.gas" }
+            }
+         };
+         var getLogEventsZeros = {
+            $addFields: {
+               logEventsZero: { $arrayElemAt: [ "$feeShr.events", 0 ] }, 
+            //    how do i get element 0 . amount and then toInt it so i can sum all the amounts of shr fees?... keep fiddling
+            //    feeShr: { $toInt: "$tx.value.fee.amount['0'].amount" } //TODO figure out how to get this to then sum the daily fees
+            // feeShr: { $toInt: "$tx.value.fee.gas" }
+            }
+         };
+
+         var getEventsZero = {
+            $addFields: {
+               eventsZero: { $arrayElemAt: [ "$events", 0 ] }, 
+            }
+         };
+
+         var getEventsAttributesZeros = {
+            $addFields: {
+               eventsAttributesZero: { $arrayElemAt: [ "$eventsZero.attributes", 0 ] }, 
+            }
+         };
+
+         var getTxValue = {
+            $addFields: {
+               txValue: "$tx.value", 
+            }
+         };
+
+         var getTxValueMsgZero = {
+            $addFields: {
+               txValueMsgZero: { $arrayElemAt: ["$txValue.msg", 0 ] }, 
+            }
+         };
+         var getTxValueMsgValueAmount = {
+            $addFields: {
+               txValueMsgValueAmount: { $toInt: "$txValueMsgZero.value.amount.amount" }, 
+            }
+         };
+
+         var stringToIntShrFeeConversionState1 = {
+            $addFields: {
+               feeShr: { $toInt: "$amount.amount" } //TODO figure out how to get this to then sum the daily fees
             // feeShr: { $toInt: "$tx.value.fee.gas" }
             }
          };
 
         var pipeline2 = 
         [
-            stringToIntShrFeeConversionState,
+            getLogsZeros,
+            getLogEventsZeros,
+            getEventsZero,
+            getEventsAttributesZeros,
+            getTxValue,
+            getTxValueMsgZero,
+            getTxValueMsgValueAmount,
+            // stringToIntShrFeeConversionState,
             {
               $match: {
                 height: {
@@ -144,14 +214,25 @@ Meteor.methods({
               }
             },
             {
-              $count: "passing_scores"
-            }
+                $group: {
+                    _id: "$height",
+                    // txs: { $sum: 1 },
+                    sumHeight: { $sum: "$height" },
+                    sumFeeShr: { $sum: "$txValueMsgValueAmount" }
+
+                 }
+            },
+            // {
+            //   $count: "passing_scores"
+            // }
           ];
 
         var pipeline3 = 
         [
             stringToDateConversionStage,
+            getFeeShrAmountAsString,
             stringToIntShrFeeConversionState,
+            // stringToIntShrFeeConversionState1,
             {
                 $project:
                 {
@@ -167,6 +248,38 @@ Meteor.methods({
                     sumHeight: { $sum: "$height" },
                     sumFeeShr: { $sum: "$feeShr" }
 
+                 }
+            },
+            {
+                $addFields: {
+                    date: "$_id"
+                }
+            },
+            // {
+            //   $count: "passing_scores"
+            // }
+          ];
+
+          var pipeline4 = 
+        [
+            stringToDateConversionStage,
+            getFeeShrAmountAsString,
+            stringToIntShrFeeConversionState,
+            // stringToIntShrFeeConversionState1,
+            {
+                $project:
+                {
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    feeShr: "$feeShr",
+                    "height": 1
+                }
+            },
+            {
+                $group: {
+                    _id: "$date",
+                    txs: { $sum: 1 },
+                    sumHeight: { $sum: "$height" },
+                    sumFeeShr: { $sum: "$feeShr" }
                  }
             },
             {
@@ -217,7 +330,7 @@ Meteor.methods({
         //   }];
 
         // return Promise.await(transactions.aggregate(pipeline).toArray());
-        return Promise.await(transactions.aggregate(pipeline3).toArray());
+        return Promise.await(transactions.aggregate(pipeline4).toArray());
         // return .aggregate()
     },
 });
