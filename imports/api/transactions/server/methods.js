@@ -3,6 +3,7 @@ import { HTTP } from 'meteor/http';
 import { Transactions } from '../../transactions/transactions.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
+import { object } from 'prop-types';
 
 const AddressLength = 40;
 
@@ -148,6 +149,12 @@ Meteor.methods({
             }
          };
 
+         var getSumFeesForTxType = {
+            $addFields: {
+               sumFeeShr1: { $sum: [ "$tx.value.msg", 0 ] }
+            }
+         };
+
          var getShrTxFee = {
             $addFields: {
                txValue: "$tx.value",
@@ -262,13 +269,11 @@ Meteor.methods({
             // }
           ];
 
-          var pipeline41 = 
+          var pipeline41 = // works perfectly for grouping by day and getting the feeShr and txs
         [
             stringToDateConversionStage,
             getFeeShrAmountAsString,
-            // stringToIntShrFeeConversionState,
             getTxMsgObj,
-            // getTxType,
             // stringToIntShrFeeConversionState1,
             {
                 $project:
@@ -287,22 +292,107 @@ Meteor.methods({
                     sumFeeShr: { $sum: "$feeShr" }
                  }
             },
-            // {
-            //     $group: {
-            //         _id: "$txType",
-            //         txs: { $sum: 1 },
-            //         sumHeight: { $sum: "$height" },
-            //         sumFeeShr: { $sum: "$feeShr" }
-            //      }
-            // },
             {
                 $addFields: {
                     date: "$_id"
                 }
             },
+            { $sort: { "date": 1 } },
             // {
             //   $count: "passing_scores"
             // }
+          ];
+
+          var pipeline42 = [
+            stringToDateConversionStage,
+            getFeeShrAmountAsString,
+            getTxMsgObj,
+            // stringToIntShrFeeConversionState1,
+            {
+                $project:
+                {
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    txType: "$txMsg.type",
+                    feeShr: { $toInt: "$feeShrString.amount" }, 
+                    "height": 1
+                }
+            },
+            // {
+            //     $group: {
+            //         _id: "$date",
+            //         txs: { $sum: 1 },
+            //         sumHeight: { $sum: "$height" },
+            //         sumFeeShr: { $sum: "$feeShr" }
+            //      }
+            // },
+            { $sort: { "txs": -1 } },
+            { $limit: 200 },
+            { $lookup: {
+              "from": "books",
+              "let": {
+                "date": "$_id"
+              },
+              "pipeline": [
+                { $match: { 
+                  $expr: { $eq: [ "$date", "$$date"] }
+                }},
+                { $group: {
+                  "_id": "$txType",
+                  "count": { $sum: 1 }
+                }},
+                { $sort: { "count": -1  } },
+                { $limit: 200 }
+              ],
+              "as": "books"
+            }}
+          ];
+
+          // This gets daily: txs, txTypes + breakdown, sumFeeShr, date...
+          var pipeline43 = [
+            stringToDateConversionStage,
+            getFeeShrAmountAsString,
+            getTxMsgObj,
+            {
+                $project:
+                {
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    txType: "$txMsg.type",
+                    feeShr: { $toInt: "$feeShrString.amount" }, 
+                    height: 1,
+                }
+            },
+            { $group: {
+                _id: {
+                    date: "$date",
+                    txType: "$txType"
+                },
+                txs: { $sum: 1 },
+                sumHeight: { $sum: "$height" },
+                sumFeeShr: { $sum: "$feeShr" },
+            }},
+            { $group: {
+                _id: "$_id.date",
+                txTypes: { 
+                    $push: { 
+                        txType: "$_id.txType",
+                        txs: "$txs",
+                        sumHeight: "$sumHeight",
+                        sumFeeShr: "$sumFeeShr",
+                    },
+                },
+                txs: { $sum: "$txs" },
+                sumHeight: { $sum: "$sumHeight" },
+                sumFeeShr: { $sum: "$sumFeeShr" },
+
+            }},
+            { $project: {
+                date: "$_id",
+                txTypes: 1,
+                txs: 1,
+                sumHeight: 1,
+                sumFeeShr: 1,
+            }},
+            { $sort: { date: 1 } },
           ];
 
           var pipeline5 = 
@@ -343,7 +433,7 @@ Meteor.methods({
         //   }];
 
         // return Promise.await(transactions.aggregate(pipeline).toArray());
-        return Promise.await(transactions.aggregate(pipeline41).toArray());
+        return Promise.await(transactions.aggregate(pipeline43).toArray());
         // return .aggregate()
     },
 });
