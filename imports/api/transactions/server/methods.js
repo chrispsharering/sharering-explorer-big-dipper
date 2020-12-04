@@ -87,194 +87,30 @@ Meteor.methods({
 
     },
     'Transactions.txHistory'(){
-        let transactions = Transactions.rawCollection();
-        // let aggregateQuery = Meteor.wrapAsync(collection.aggregate, collection);
-        const address = 'abc123';
-        // var pipeline = [
-        //     {$match:{"address":address}},
-        //     // {$project:{address:1,height:1,exists:1}},
-        //     {$sort:{"height":-1}},
-        //     {$limit:(Meteor.settings.public.uptimeWindow-1)},
-        //     {$unwind: "$_id"},
-        //     {$group:{
-        //         "_id": "$address",
-        //         "uptime": {
-        //             "$sum":{
-        //                 $cond: [{$eq: ['$exists', true]}, 1, 0]
-        //             }
-        //         }
-        //     }
-        //     }];
-        var pipeline = [
-            {$match:{"height":946014}},
-            // {$project:{address:1,height:1,exists:1}},
-            // {$sort:{"height":-1}},
-            // {$limit:(Meteor.settings.public.uptimeWindow-1)},
-            // {$unwind: "$_id"},
-            // {$group:{
-            //     "_id": "$address",
-            //     "uptime": {
-            //         "$sum":{
-            //             $cond: [{$eq: ['$exists', true]}, 1, 0]
-            //         }
-            //     }
-            // }
-            // }
-        ];
+        const transactions = Transactions.rawCollection();
 
-        var stringToDateConversionStage = {
+        const stringToDateConversionStage = {
             $addFields: {
                timestamp: { $toDate: "$timestamp" }
             }
          };
-         var getFeeShrAmountAsString = {
+         const getFeeShrAmountAsString = {
             $addFields: {
                feeShrString: { $arrayElemAt: [ "$tx.value.fee.amount", 0 ] }
             }
          };
-         var stringToIntShrFeeConversionState = {
-            $addFields: {
-               feeShr: { $toInt: "$feeShrString.amount" }, 
-            }
-         };
 
-         var getTxMsgObj = {
+         const getTxMsgObj = {
             $addFields: {
                txMsg: { $arrayElemAt: [ "$tx.value.msg", 0 ] }
             }
          };
-         var getTxType = {
-            $addFields: {
-               txType: "$txMsg.type",
-            }
-         };
 
-         var getSumFeesForTxType = {
-            $addFields: {
-               sumFeeShr1: { $sum: [ "$tx.value.msg", 0 ] }
-            }
-         };
-
-         var getShrTxFee = {
-            $addFields: {
-               txValue: "$tx.value",
-               txValueMsgZero: { $arrayElemAt: ["$txValue.msg", 0 ] }, 
-            },
-         };
-
-         var getTxValueMsgZero = {
-            $addFields: {
-               txValueMsgZero: { $arrayElemAt: ["$txValue.msg", 0 ] }, 
-            }
-         };
-         var getTxValueMsgValueAmount = {
-            $addFields: {
-               txValueMsgValueAmount: { $toInt: "$txValueMsgZero.value.amount.amount" }, 
-            }
-         };
-
-         var stringToIntShrFeeConversionState1 = {
-            $addFields: {
-               feeShr: { $toInt: "$amount.amount" } //TODO figure out how to get this to then sum the daily fees
-            // feeShr: { $toInt: "$tx.value.fee.gas" }
-            }
-         };
-
-        var pipeline2 = 
-        [
-            // stringToIntShrFeeConversionState,
-            {
-              $match: {
-                height: {
-                  $gt: 1
-                }
-              }
-            },
-            {
-                $group: {
-                    _id: "$height",
-                    // txs: { $sum: 1 },
-                    sumHeight: { $sum: "$height" },
-                    sumFeeShr: { $sum: "$txValueMsgValueAmount" }
-
-                 }
-            },
-            // {
-            //   $count: "passing_scores"
-            // }
-          ];
-
-        var pipeline3 = 
-        [
-            stringToDateConversionStage,
-            getFeeShrAmountAsString,
-            stringToIntShrFeeConversionState,
-            // stringToIntShrFeeConversionState1,
-            {
-                $project:
-                {
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
-                    feeShr: "$feeShr",
-                    "height": 1
-                }
-            },
-            {
-                $group: {
-                    _id: "$date",
-                    txs: { $sum: 1 },
-                    sumHeight: { $sum: "$height" },
-                    sumFeeShr: { $sum: "$feeShr" }
-
-                 }
-            },
-            {
-                $addFields: {
-                    date: "$_id"
-                }
-            },
-            // {
-            //   $count: "passing_scores"
-            // }
-          ];
-
-          var pipeline4 = 
-        [
-            stringToDateConversionStage,
-            getFeeShrAmountAsString,
-            stringToIntShrFeeConversionState,
-            // stringToIntShrFeeConversionState1,
-            {
-                $project:
-                {
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
-                    feeShr: "$feeShr",
-                    "height": 1
-                }
-            },
-            {
-                $group: {
-                    _id: "$date",
-                    txs: { $sum: 1 },
-                    sumHeight: { $sum: "$height" },
-                    sumFeeShr: { $sum: "$feeShr" }
-                 }
-            },
-            {
-                $addFields: {
-                    date: "$_id"
-                }
-            },
-            // {
-            //   $count: "passing_scores"
-            // }
-          ];
-
-          var pipeline41 = // works perfectly for grouping by day and getting the feeShr and txs
+          const aggregateDailyTxAndFeePipeline = // works perfectly for grouping by day and getting the feeShr and txs
         [
             stringToDateConversionStage,
             getFeeShrAmountAsString,
             getTxMsgObj,
-            // stringToIntShrFeeConversionState1,
             {
                 $project:
                 {
@@ -298,57 +134,10 @@ Meteor.methods({
                 }
             },
             { $sort: { "date": 1 } },
-            // {
-            //   $count: "passing_scores"
-            // }
-          ];
-
-          var pipeline42 = [
-            stringToDateConversionStage,
-            getFeeShrAmountAsString,
-            getTxMsgObj,
-            // stringToIntShrFeeConversionState1,
-            {
-                $project:
-                {
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
-                    txType: "$txMsg.type",
-                    feeShr: { $toInt: "$feeShrString.amount" }, 
-                    "height": 1
-                }
-            },
-            // {
-            //     $group: {
-            //         _id: "$date",
-            //         txs: { $sum: 1 },
-            //         sumHeight: { $sum: "$height" },
-            //         sumFeeShr: { $sum: "$feeShr" }
-            //      }
-            // },
-            { $sort: { "txs": -1 } },
-            { $limit: 200 },
-            { $lookup: {
-              "from": "books",
-              "let": {
-                "date": "$_id"
-              },
-              "pipeline": [
-                { $match: { 
-                  $expr: { $eq: [ "$date", "$$date"] }
-                }},
-                { $group: {
-                  "_id": "$txType",
-                  "count": { $sum: 1 }
-                }},
-                { $sort: { "count": -1  } },
-                { $limit: 200 }
-              ],
-              "as": "books"
-            }}
           ];
 
           // This gets daily: txs, txTypes + breakdown, sumFeeShr, date...
-          var pipeline43 = [
+          const aggregateDailyTxDataPipeline = [
             stringToDateConversionStage,
             getFeeShrAmountAsString,
             getTxMsgObj,
@@ -395,45 +184,6 @@ Meteor.methods({
             { $sort: { date: 1 } },
           ];
 
-          var pipeline5 = 
-        [
-            // First Stage
-            {
-                $group :
-                {
-                    _id : "$height",
-                    totalSaleAmount: { $sum: { $multiply: [ "$gas_used", "$gas_wanted" ] } }
-                }
-            },
-            // Second Stage
-            {
-                $match: { "totalSaleAmount": { $gte: 100 } }
-            }
-          ];
-        // let result = aggregateQuery(pipeline, { cursor: {} });
-
-        // var pipeline4 = [{
-        //     $project: {
-        //       year: {$year: timestamp},
-        //       month: {$month: timestamp},
-        //       dayOfMonth: {$dayOfMonth: timestamp}
-        //     }
-        //   },
-        //   {
-        //     $group: {
-        //       _id: {
-        //         year: '$year',
-        //         month: '$month',
-        //         dayOfMonth: '$dayOfMonth'
-        //       },
-        //       count: {
-        //         $sum: 1
-        //       }
-        //     }
-        //   }];
-
-        // return Promise.await(transactions.aggregate(pipeline).toArray());
-        return Promise.await(transactions.aggregate(pipeline43).toArray());
-        // return .aggregate()
+        return Promise.await(transactions.aggregate(aggregateDailyTxDataPipeline).toArray());
     },
 });
