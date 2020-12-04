@@ -6,6 +6,7 @@ import VotingPower from './VotingPowerContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
+import TransactionCountBarChart from './TransactionCountBarChartContainer.js';
 
 const T = i18n.createComponent();
 
@@ -17,7 +18,7 @@ export default class Distribution extends Component{
     render(){
         return <div id="voting-power-dist">
             <Helmet>
-                <title>Voting Power Distribution on Cosmos Hub | The Big Dipper</title>
+                <title>Voting Power Distribution on ShareLedger | ShareLedger Explorer</title>
                 <meta name="description" content="We would like to keep track how voting power are distributed over time among validators." />
             </Helmet>
             <Row>
@@ -31,6 +32,11 @@ export default class Distribution extends Component{
             <Row>
                 <Col>
                     <VotingPower />
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <TransactionCountBarChart />
                 </Col>
             </Row>
 
