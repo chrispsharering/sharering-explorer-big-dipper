@@ -6,7 +6,7 @@ import VotingPower from './VotingPowerContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
-import TransactionCountBarChart from './TransactionCountBarChart.jsx';
+import TransactionCountLineChart from './TransactionCountLineChart.jsx';
 
 const T = i18n.createComponent();
 
@@ -36,7 +36,7 @@ export default class Distribution extends Component{
             </Row>
             <Row>
                 <Col>
-                    <TransactionCountBarChart />
+                    <TransactionCountLineChart />
                 </Col>
             </Row>
 

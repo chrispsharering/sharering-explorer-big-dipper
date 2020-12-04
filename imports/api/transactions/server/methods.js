@@ -147,7 +147,7 @@ Meteor.methods({
                     date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
                     txType: "$txMsg.type",
                     feeShr: { $toInt: "$feeShrString.amount" }, 
-                    height: 1,
+                    // height: 1,
                 }
             },
             { $group: {
@@ -156,7 +156,7 @@ Meteor.methods({
                     txType: "$txType"
                 },
                 txs: { $sum: 1 },
-                sumHeight: { $sum: "$height" },
+                // sumHeight: { $sum: "$height" },
                 sumFeeShr: { $sum: "$feeShr" },
             }},
             { $group: {
@@ -165,12 +165,12 @@ Meteor.methods({
                     $push: { 
                         txType: "$_id.txType",
                         txs: "$txs",
-                        sumHeight: "$sumHeight",
+                        // sumHeight: "$sumHeight",
                         sumFeeShr: "$sumFeeShr",
                     },
                 },
                 txs: { $sum: "$txs" },
-                sumHeight: { $sum: "$sumHeight" },
+                // sumHeight: { $sum: "$sumHeight" },
                 sumFeeShr: { $sum: "$sumFeeShr" },
 
             }},
