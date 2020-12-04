@@ -53,7 +53,7 @@ chainStates:
     communityPool: '社區儲備'
 chainStatus:
     startMessage: '這鏈將還有以下時間便會開始'
-    stopWarning: '這鏈似乎已經停了 <em>{$time}</em>！ 請繼續餵我吃新的區塊 😭!'
+    stopWarning: '正在維護-稍後再檢查'
     latestHeight: '最新區塊高度'
     averageBlockTime: '平均區塊時間'
     all: '全部'

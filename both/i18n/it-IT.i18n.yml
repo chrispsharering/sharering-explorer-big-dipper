@@ -54,7 +54,7 @@ chainStates:
     communityPool: 'Community Pool'
 chainStatus:
     startMessage: 'The chain partirà tra'
-    stopWarning: 'La chain sembra essersi fermata per <em>{$time}</em>! Dammi nuovi blocchi 😭!'
+    stopWarning: 'In manutenzione: ricontrolla più tardi'
     latestHeight: 'Ultima Altezza di Blocco'
     averageBlockTime: 'Tempo di Blocco Medio'
     all: 'Tutti'

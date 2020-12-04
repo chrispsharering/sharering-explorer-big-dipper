@@ -93,20 +93,20 @@ Meteor.methods({
             $addFields: {
                timestamp: { $toDate: "$timestamp" }
             }
-         };
-         const getFeeShrAmountAsString = {
+        };
+        const getFeeShrAmountAsString = {
             $addFields: {
                feeShrString: { $arrayElemAt: [ "$tx.value.fee.amount", 0 ] }
             }
-         };
+        };
 
-         const getTxMsgObj = {
+        const getTxMsgObj = {
             $addFields: {
                txMsg: { $arrayElemAt: [ "$tx.value.msg", 0 ] }
             }
-         };
+        };
 
-          const aggregateDailyTxAndFeePipeline = // works perfectly for grouping by day and getting the feeShr and txs
+        const aggregateDailyTxAndFeePipeline = // works perfectly for grouping by day and getting the feeShr and txs
         [
             stringToDateConversionStage,
             getFeeShrAmountAsString,

@@ -67,7 +67,7 @@ export default class TransactionCountBarChart extends Component{
                 labels:labels,
                 datasets: [
                     {
-                        label: "Voting Power 1",
+                        label: "Transactions",
                         data: data,
                         backgroundColor: backgroundColors
                     }
@@ -96,7 +96,7 @@ export default class TransactionCountBarChart extends Component{
             }
         });
 
-        $("#transaction-count-bar-chart").height(16*data.length);
+        // $("#transaction-count-bar-chart").height(16*data.length);
         this.isLoading = false;
         return txData;
     }
@@ -112,7 +112,8 @@ export default class TransactionCountBarChart extends Component{
                 <Card>
                     <div className="card-header"><T>Transaction History</T></div>
                     <CardBody id="transaction-count-bar-chart">
-                        <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary>
+                        {/* <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary> */}
+                        <SentryBoundary><Line data={this.state.data} /></SentryBoundary>
                     </CardBody>
                 </Card>
             );

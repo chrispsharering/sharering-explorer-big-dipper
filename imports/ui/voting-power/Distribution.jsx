@@ -6,7 +6,7 @@ import VotingPower from './VotingPowerContainer.js';
 import ChainStates from '../components/ChainStatesContainer.js'
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
-import TransactionCountBarChart from './TransactionCountBarChartContainer.js';
+import TransactionCountBarChart from './TransactionCountBarChart.jsx';
 
 const T = i18n.createComponent();
 

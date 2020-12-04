@@ -26,7 +26,7 @@ export default class Home extends Component{
         return <div id="home">
             <Helmet>
                 <title>ShareRing Explorer | ShareLedger Block Explorer</title>
-                <meta name="description" content="ShareLedger is the custom Tendemint blockchain built for the ShareRing ecosystem." />
+                <meta name="description" content="ShareLedger is the custom Tendermint blockchain built for the ShareRing ecosystem." />
             </Helmet>
             <ChainInfo/>
             <Consensus />
