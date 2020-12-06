@@ -108,46 +108,40 @@ Meteor.methods({
 
         const aggregateDailyTxAndFeePipeline = // works perfectly for grouping by day and getting the feeShr and txs
         [
-            stringToDateConversionStage,
-            getFeeShrAmountAsString,
-            getTxMsgObj,
+            // stringToDateConversionStage,
+            // getFeeShrAmountAsString,
+            // getTxMsgObj,
             {
                 $project:
                 {
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
-                    txType: "$txMsg.type",
-                    feeShr: { $toInt: "$feeShrString.amount" }, 
-                    "height": 1
+                    // date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    date: { $substr: [ "$timestamp", 0, 10 ] }
+                    // txType: "$txMsg.type",
+                    // feeShr: { $toInt: "$feeShrString.amount" }, 
+                    // "height": 1
                 }
             },
             {
                 $group: {
                     _id: "$date",
                     txs: { $sum: 1 },
-                    sumHeight: { $sum: "$height" },
-                    sumFeeShr: { $sum: "$feeShr" }
+                    // sumHeight: { $sum: "$height" },
+                    // sumFeeShr: { $sum: "$feeShr" }
                  }
             },
-            {
-                $addFields: {
-                    date: "$_id"
-                }
-            },
-            { $sort: { "date": 1 } },
+            { $sort: { _id: 1 } },
           ];
 
           // This gets daily: txs, txTypes + breakdown, sumFeeShr, date...
           const aggregateDailyTxDataPipeline = [
-            stringToDateConversionStage,
             getFeeShrAmountAsString,
             getTxMsgObj,
             {
                 $project:
                 {
-                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    date: { $substr: [ "$timestamp", 0, 10 ] },
                     txType: "$txMsg.type",
                     feeShr: { $toInt: "$feeShrString.amount" }, 
-                    // height: 1,
                 }
             },
             { $group: {
@@ -156,7 +150,6 @@ Meteor.methods({
                     txType: "$txType"
                 },
                 txs: { $sum: 1 },
-                // sumHeight: { $sum: "$height" },
                 sumFeeShr: { $sum: "$feeShr" },
             }},
             { $group: {
@@ -165,25 +158,20 @@ Meteor.methods({
                     $push: { 
                         txType: "$_id.txType",
                         txs: "$txs",
-                        // sumHeight: "$sumHeight",
                         sumFeeShr: "$sumFeeShr",
                     },
                 },
                 txs: { $sum: "$txs" },
-                // sumHeight: { $sum: "$sumHeight" },
                 sumFeeShr: { $sum: "$sumFeeShr" },
 
             }},
             { $project: {
-                date: "$_id",
                 txTypes: 1,
                 txs: 1,
-                sumHeight: 1,
                 sumFeeShr: 1,
             }},
-            { $sort: { date: 1 } },
+            { $sort: { _id: 1 } },
           ];
-
-        return Promise.await(transactions.aggregate(aggregateDailyTxDataPipeline).toArray());
+        return Promise.await(transactions.aggregate(aggregateDailyTxAndFeePipeline).toArray());
     },
 });

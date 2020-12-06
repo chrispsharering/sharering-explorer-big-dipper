@@ -24,13 +24,32 @@ export default class TransactionCountBarChart extends Component{
 
     getTxHistory = () => {
         const self = this;
+        var currentdate = new Date(); 
+var datetime = "Last Sync: " + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+                console.log('before call to db')
+          console.log(datetime)
         Meteor.call('Transactions.txHistory', (error, result) => {
+            var currentdate = new Date(); 
+var datetime = "Last Sync: " + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+                console.log('after call to db')
+          console.log(datetime)
             if (error) {
-                console.log("Transactions.txHistory: " + error);
+                console.error("Transactions.txHistory: " + error);
                 self.txHistoryGlobal = false;
                 self.isLoading = true;
             }
             else {
+                console.log(result)
                 const resultAsArray = Object.values(result);
                 const chartData = this.buildChart(resultAsArray);
                 self.setState(chartData);
@@ -57,7 +76,7 @@ export default class TransactionCountBarChart extends Component{
                 accumulatePower[i] = txData[i].txs;
             }
 
-            labels.push(txData[i].date);
+            labels.push(txData[i]._id);
             data.push(txData[i].txs);
             let alpha = (txData.length+1-i)/txData.length*0.8+0.2;
             backgroundColors.push('rgba(71, 131, 196,'+alpha+')');
