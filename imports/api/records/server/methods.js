@@ -426,7 +426,7 @@ Meteor.methods({
                 limit: 1
             },
         ).fetch();
-        
+
         const lastDailyTransactionDataDate = lastDailyTransactionData.length > 0 ? lastDailyTransactionData[0]._id : '';
 
         const transactions = Transactions.rawCollection();
@@ -543,9 +543,6 @@ Meteor.methods({
             else {
                 console.log("getting aggregate transaction data ok:" + result);
                 this.unblock();
-                for(let i = 0; i < result.length; i++) {
-                    console.log(result[i])
-                }
                 for(let i = 0; i < result.length; i++) {
                     DailyTransactionData.insert(result[i])
                 }

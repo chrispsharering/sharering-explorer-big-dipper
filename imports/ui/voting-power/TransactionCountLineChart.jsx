@@ -19,37 +19,17 @@ export default class TransactionCountBarChart extends Component{
     }
 
     componentDidMount(){
-        this.getTxHistory();
+        this.getDailyTxData();
     }
 
-    getTxHistory = () => {
+    getDailyTxData = () => {
         const self = this;
-        var currentdate = new Date(); 
-var datetime = "Last Sync: " + currentdate.getDate() + "/"
-                + (currentdate.getMonth()+1)  + "/" 
-                + currentdate.getFullYear() + " @ "  
-                + currentdate.getHours() + ":"  
-                + currentdate.getMinutes() + ":" 
-                + currentdate.getSeconds();
-                console.log('before call to db')
-          console.log(datetime)
-        Meteor.call('Transactions.txHistory', (error, result) => {
-            var currentdate = new Date(); 
-var datetime = "Last Sync: " + currentdate.getDate() + "/"
-                + (currentdate.getMonth()+1)  + "/" 
-                + currentdate.getFullYear() + " @ "  
-                + currentdate.getHours() + ":"  
-                + currentdate.getMinutes() + ":" 
-                + currentdate.getSeconds();
-                console.log('after call to db')
-          console.log(datetime)
+        Meteor.call('Transactions.getDailyTxData', (error, result) => {
             if (error) {
-                console.error("Transactions.txHistory: " + error);
-                self.txHistoryGlobal = false;
+                console.error("Transactions.getDailyTxData: " + error);
                 self.isLoading = true;
             }
             else {
-                console.log(result)
                 const resultAsArray = Object.values(result);
                 const chartData = this.buildChart(resultAsArray);
                 self.setState(chartData);
@@ -58,8 +38,6 @@ var datetime = "Last Sync: " + currentdate.getDate() + "/"
     }
 
     buildChart(txData){
-        console.log('in buildChart')
-
         let labels = [];
         let data = [];
         let totalVotingPower = 0;
@@ -67,7 +45,6 @@ var datetime = "Last Sync: " + currentdate.getDate() + "/"
         let backgroundColors = [];
         
         for (let i in txData){
-            console.log(txData[i]);
             totalVotingPower += txData[i].txs;
             if (i > 0){
                 accumulatePower[i] = accumulatePower[i-1] + txData[i].txs;
@@ -121,8 +98,6 @@ var datetime = "Last Sync: " + currentdate.getDate() + "/"
     }
 
     render(){
-        console.log('state:')
-        console.log(this.state)
         if (this.isLoading){
             return <Spinner type="grow" color="primary" />
         }

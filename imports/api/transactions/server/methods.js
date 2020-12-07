@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { HTTP } from 'meteor/http';
 import { Transactions } from '../../transactions/transactions.js';
+import { DailyTransactionData } from '../../records/records.js';
 import { Validators } from '../../validators/validators.js';
 import { VotingPowerHistory } from '../../voting-power/history.js';
 import { object } from 'prop-types';
@@ -86,92 +87,8 @@ Meteor.methods({
         return false;
 
     },
-    'Transactions.txHistory'(){
-        const transactions = Transactions.rawCollection();
-
-        const stringToDateConversionStage = {
-            $addFields: {
-               timestamp: { $toDate: "$timestamp" }
-            }
-        };
-        const getFeeShrAmountAsString = {
-            $addFields: {
-               feeShrString: { $arrayElemAt: [ "$tx.value.fee.amount", 0 ] }
-            }
-        };
-
-        const getTxMsgObj = {
-            $addFields: {
-               txMsg: { $arrayElemAt: [ "$tx.value.msg", 0 ] }
-            }
-        };
-
-        const aggregateDailyTxAndFeePipeline = // works perfectly for grouping by day and getting the feeShr and txs
-        [
-            // stringToDateConversionStage,
-            // getFeeShrAmountAsString,
-            // getTxMsgObj,
-            {
-                $project:
-                {
-                    // date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
-                    date: { $substr: [ "$timestamp", 0, 10 ] }
-                    // txType: "$txMsg.type",
-                    // feeShr: { $toInt: "$feeShrString.amount" }, 
-                    // "height": 1
-                }
-            },
-            {
-                $group: {
-                    _id: "$date",
-                    txs: { $sum: 1 },
-                    // sumHeight: { $sum: "$height" },
-                    // sumFeeShr: { $sum: "$feeShr" }
-                 }
-            },
-            { $sort: { _id: 1 } },
-          ];
-
-          // This gets daily: txs, txTypes + breakdown, sumFeeShr, date...
-          const aggregateDailyTxDataPipeline = [
-            getFeeShrAmountAsString,
-            getTxMsgObj,
-            {
-                $project:
-                {
-                    date: { $substr: [ "$timestamp", 0, 10 ] },
-                    txType: "$txMsg.type",
-                    feeShr: { $toInt: "$feeShrString.amount" }, 
-                }
-            },
-            { $group: {
-                _id: {
-                    date: "$date",
-                    txType: "$txType"
-                },
-                txs: { $sum: 1 },
-                sumFeeShr: { $sum: "$feeShr" },
-            }},
-            { $group: {
-                _id: "$_id.date",
-                txTypes: { 
-                    $push: { 
-                        txType: "$_id.txType",
-                        txs: "$txs",
-                        sumFeeShr: "$sumFeeShr",
-                    },
-                },
-                txs: { $sum: "$txs" },
-                sumFeeShr: { $sum: "$sumFeeShr" },
-
-            }},
-            { $project: {
-                txTypes: 1,
-                txs: 1,
-                sumFeeShr: 1,
-            }},
-            { $sort: { _id: 1 } },
-          ];
-        return Promise.await(transactions.aggregate(aggregateDailyTxAndFeePipeline).toArray());
+    'Transactions.getDailyTxData': function(){
+        console.log('inside getTxhistory')
+        return DailyTransactionData.find().fetch();
     },
 });
