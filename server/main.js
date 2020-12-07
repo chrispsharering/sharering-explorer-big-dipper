@@ -157,6 +157,15 @@ aggregateDaily = () => {
             console.log("aggregate validators block time ok:" + result);
         }
     });
+
+    Meteor.call('Analytics.persistAggregateTransactionData', (error, result) => {
+        if (error) {
+            console.log("persisting aggregate transaction data error:" + error)
+        }
+        else {
+            console.log("persisting aggregate transaction data ok:" + result);
+        }
+    });
 }
 
 
@@ -232,14 +241,4 @@ Meteor.startup(function () {
             }
         }
     });
-
-    Meteor.call('Analytics.persistAggregateTransactionData', (error, result) => {
-        if (error) {
-            console.log("persisting aggregate transaction data error:" + error)
-        }
-        else {
-            console.log("persisting aggregate transaction data ok:" + result);
-        }
-    });
-
 });
