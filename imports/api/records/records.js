@@ -8,6 +8,8 @@ export const MissedBlocks = new  Mongo.Collection('missed_blocks');
 export const VPDistributions = new Mongo.Collection('voting_power_distributions');
 export const AverageData = new Mongo.Collection('average_data');
 export const AverageValidatorData = new Mongo.Collection('average_validator_data');
+export const DailyTransactionData = new Mongo.Collection('daily_transaction_data');
+
 
 MissedBlocksStats.helpers({
     proposerMoniker(){

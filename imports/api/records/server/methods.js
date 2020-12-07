@@ -1,8 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { ValidatorRecords, Analytics, AverageData, AverageValidatorData } from '../records.js';
+import { ValidatorRecords, Analytics, AverageData, AverageValidatorData, DailyTransactionData } from '../records.js';
 import { Validators } from '../../validators/validators.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
+import { Transactions } from '../../transactions/transactions.js';
 import { Status } from '../../status/status.js';
 import { MissedBlocksStats } from '../records.js';
 import { MissedBlocks } from '../records.js';
@@ -10,6 +11,20 @@ import { Blockscon } from '../../blocks/blocks.js';
 import { Chain } from '../../chain/chain.js';
 import _ from 'lodash';
 const BULKUPDATEMAXSIZE = 1000;
+
+const getTodaysDateString = () => {
+    var d = new Date(),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
 
 const getBlockStats = (startHeight, latestHeight) => {
     let blockStats = {};
@@ -362,5 +377,180 @@ Meteor.methods({
         }
 
         return true;
-    }
+    },
+    'Analytics.aggregateTransactionDataOld': function(){
+        this.unblock();
+        let validators = Validators.find({}).fetch();
+        let now = new Date();
+        for (i in validators){
+            let averageBlockTime = 0;
+
+            let blocks = Blockscon.find({proposerAddress:validators[i].address, "time": { $gt: new Date(Date.now() - 24*60*60 * 1000) }}, {fields:{height:1}}).fetch();
+
+            if (blocks.length > 0){
+                let blockHeights = [];
+                for (b in blocks){
+                    blockHeights.push(blocks[b].height);
+                }
+
+                let analytics = Analytics.find({height: {$in:blockHeights}}, {fields:{height:1,timeDiff:1}}).fetch();
+
+
+                for (a in analytics){
+                    averageBlockTime += analytics[a].timeDiff;
+                }
+
+                averageBlockTime = averageBlockTime / analytics.length;
+            }
+
+            AverageValidatorData.insert({
+                proposerAddress: validators[i].address,
+                averageBlockTime: averageBlockTime,
+                type: 'ValidatorDailyAverageBlockTime',
+                createdAt: now
+            })
+        }
+
+        return true;
+    },
+    'Analytics.getAggregateTransactionData'(){
+        const todaysDateString = getTodaysDateString();
+        // Get the most recent date of DailyTransactions persisted
+        const lastDailyTransactionData = DailyTransactionData.find(
+            {
+                _id: { $lt: todaysDateString }
+            },
+            {
+                fields: { _id:1 },
+                sort: { _id: -1 },
+                limit: 1
+            },
+        ).fetch();
+        
+        const lastDailyTransactionDataDate = lastDailyTransactionData.length > 0 ? lastDailyTransactionData[0]._id : '';
+
+        const transactions = Transactions.rawCollection();
+
+        const stringToDateConversionStage = {
+            $addFields: {
+               timestamp: { $toDate: "$timestamp" }
+            }
+        };
+        const getFeeShrAmountAsString = {
+            $addFields: {
+               feeShrString: { $arrayElemAt: [ "$tx.value.fee.amount", 0 ] }
+            }
+        };
+
+        const getTxMsgObj = {
+            $addFields: {
+               txMsg: { $arrayElemAt: [ "$tx.value.msg", 0 ] }
+            }
+        };
+
+        // works perfectly for grouping by day and getting the feeShr and txs
+        const aggregateDailyTxAndFeePipeline =
+        [
+            // stringToDateConversionStage,
+            // getFeeShrAmountAsString,
+            // getTxMsgObj,
+            {
+                $project:
+                {
+                    // date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+                    date: { $substr: [ "$timestamp", 0, 10 ] }
+                    // txType: "$txMsg.type",
+                    // feeShr: { $toInt: "$feeShrString.amount" }, 
+                    // "height": 1
+                }
+            },
+            {
+                $match: {
+                    $and: [
+                        { date : { $gt: lastDailyTransactionDataDate } },
+                        { date : { $lt: todaysDateString } } 
+                    ]
+                }
+            },
+            {
+                $group: {
+                    _id: "$date",
+                    txs: { $sum: 1 },
+                    // sumHeight: { $sum: "$height" },
+                    // sumFeeShr: { $sum: "$feeShr" }
+                 }
+            },
+            { $sort: { _id: 1 } },
+          ];
+
+          // This gets daily: txs, txTypes + breakdown, sumFeeShr, date...
+          // Only gets daily data after the last DailyTransactions persisted
+          // and before todays date
+          const aggregateDailyTxDataPipeline = [
+            getFeeShrAmountAsString,
+            getTxMsgObj,
+            {
+                $project:
+                {
+                    date: { $substr: [ "$timestamp", 0, 10 ] },
+                    txType: "$txMsg.type",
+                    feeShr: { $toInt: "$feeShrString.amount" }, 
+                }
+            },
+            {
+                $match: {
+                    $and: [
+                        { date : { $gt: lastDailyTransactionDataDate } },
+                        { date : { $lt: todaysDateString } }
+                    ]
+                }
+            },
+            { $group: {
+                _id: {
+                    date: "$date",
+                    txType: "$txType"
+                },
+                txs: { $sum: 1 },
+                sumFeeShr: { $sum: "$feeShr" },
+            }},
+            { $group: {
+                _id: "$_id.date",
+                txTypes: { 
+                    $push: { 
+                        txType: "$_id.txType",
+                        txs: "$txs",
+                        sumFeeShr: "$sumFeeShr",
+                    },
+                },
+                txs: { $sum: "$txs" },
+                sumFeeShr: { $sum: "$sumFeeShr" },
+
+            }},
+            { $project: {
+                txTypes: 1,
+                txs: 1,
+                sumFeeShr: 1,
+            }},
+            { $sort: { _id: 1 } },
+          ];
+        return Promise.await(transactions.aggregate(aggregateDailyTxDataPipeline).toArray());
+    },
+    'Analytics.persistAggregateTransactionData': function(){
+        Meteor.call('Analytics.getAggregateTransactionData', (error, result) => {
+            if (error) {
+                console.log("getting aggregate transaction data error:" + error)
+            }
+            else {
+                console.log("getting aggregate transaction data ok:" + result);
+                this.unblock();
+                for(let i = 0; i < result.length; i++) {
+                    console.log(result[i])
+                }
+                for(let i = 0; i < result.length; i++) {
+                    DailyTransactionData.insert(result[i])
+                }
+            }
+        }); 
+        return true;
+    },
 })
