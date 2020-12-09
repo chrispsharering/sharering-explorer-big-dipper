@@ -19,7 +19,9 @@ function yAxesTickCallback(value, index, values) {
 export default class TransactionCountBarChart extends Component{
     isLoading = true;
     transactionsColor = 'rgba(0, 158, 115, 1)';
-    feeShrColor = 'rgb(71, 131, 196)';
+    transactionsLineColor = 'rgba(0, 158, 115, 0.7)';
+    feeShrColor = 'rgba(71, 131, 196, 1)';
+    feeShrLineColor = 'rgba(71, 131, 196, 0.7)';
     labelFontFamily = '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sa';
 
     constructor(props){
@@ -213,23 +215,27 @@ export default class TransactionCountBarChart extends Component{
                     yAxisID: 'Transactions',
                     data: txData,
                     fill: false,
-                    borderColor: this.transactionsColor,
-                    backgroundColor: this.transactionsColor
+                    borderColor: this.transactionsLineColor,
+                    backgroundColor: this.transactionsColor,
+                    pointRadius: 1.5
                 },
                 {
                     label: 'Fee SHR',
                     yAxisID: 'Fee-SHR',
                     data: feeShrData,
                     fill: false,
-                    borderColor: this.feeShrColor,
+                    borderColor: this.feeShrLineColor,
                     backgroundColor: this.feeShrColor,
+                    pointRadius: 1.5
                 }
             ]
         }
       }
 
       buildChartOptions() {
+        //   add the hover over line which brings up the tooltip
           return {
+            responsive: true,
             tooltips: {
                 displayColors: false,
                 callbacks: {
@@ -257,7 +263,8 @@ export default class TransactionCountBarChart extends Component{
                 }
             },
             // this changes the height of the chart
-            // maintainAspectRatio: false,
+            maintainAspectRatio: false,
+            aspectRatio: 0.75,
             scales: {
                 xAxes: [
                     {
@@ -359,6 +366,11 @@ export default class TransactionCountBarChart extends Component{
     }
 
     render(){
+        let aStyle = {
+            position: 'relative',
+            height: '40vh',
+            width:'80vw'
+        }
         if (this.isLoading){
             return <Spinner type="grow" color="primary" />
         }
@@ -368,7 +380,7 @@ export default class TransactionCountBarChart extends Component{
                     <div className="card-header"><T>Transaction History</T></div>
                     <CardBody id="transaction-count-bar-chart">
                         {/* <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary> */}
-                        <SentryBoundary><Line data={this.state.data} options={this.state.options} /></SentryBoundary>
+                        <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
                 </Card>
             );
