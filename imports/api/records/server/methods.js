@@ -429,34 +429,7 @@ Meteor.methods({
         ).fetch();
 
         const lastDailyTransactionDataDate = lastDailyTransactionData.length > 0 ? lastDailyTransactionData[0]._id : '';
-        // if(lastDailyTransactionDataDate !== '') {
-        //     console.log(lastDailyTransactionDataDate)
-        //     const lastDate = new Date(lastDailyTransactionDataDate);
-        //     const middayNextDay = new Date(lastDate.setDate(lastDate.getDate() + 1));
-        //     middayNextDay.setHours(13, 0, 0, 0);
-        //     const midnightJustGone = new Date();
-        //     midnightJustGone.setHours(0, 0, 0, 0);
-        //     const midnightJustGoneSeconds = midnightJustGone.getTime() / 1000;
-        //     console.log(midnightJustGoneSeconds)
-        //     const shrPrices = [];
-        //     for(let middaySeconds = middayNextDay.getTime() / 1000; middaySeconds < midnightJustGoneSeconds; middaySeconds += 86400) {
-        //         console.log(middaySeconds)
-        //         const shrPricesResult = CoinStats.find(
-        //             {
-        //                 last_updated_at: { $gt: middaySeconds }
-        //             },
-        //             {
-        //                 fields: { usd:1 },
-        //                 sort: { _id: -1 },
-        //                 limit: 1
-        //             },
-        //         ).fetch();
-        //         shrPrices.push({date: new Date(middaySeconds * 1000), usd: shrPricesResult[0].usd});
-        //         console.log(shrPricesResult)
-        //         // middayNextDay.setDate(middayNextDay.getDate() + 1);
-        //     }
-        //     console.log(shrPrices)
-        // }
+        
         const transactions = Transactions.rawCollection();
 
         const stringToDateConversionStage = {
@@ -570,10 +543,8 @@ Meteor.methods({
             }
             else {
                 console.log("getting aggregate transaction data ok:" + result);
-                // console.log(result)
                 this.unblock();
                 const shrPrices = [];
-                                    // DailyTransactionData.remove({}); 
                 if(result.length > 0 && result[0]._id) {
                     const lastDate = new Date(result[0]._id);
                     const middayNextDay = new Date(lastDate.setDate(lastDate.getDate() + 1));
@@ -583,8 +554,9 @@ Meteor.methods({
                     const hourInSec = 3600;
                     for(let i = 0; i < result.length; i++) {
                         const middayDate = new Date(result[i]._id);
-                        middayDate.setHours(13, 0, 0, 0);
+                        middayDate.setHours(12, 0, 0, 0);
                         const middayTimeSec = middayDate.getTime() / 1000;
+                        // Gets the price of SHR in USD at midday for each day in the dailyTx result
                         const shrPricesResult = CoinStats.find(
                             {
                                 $and: [ //Between midday and 1300
@@ -593,8 +565,8 @@ Meteor.methods({
                                 ]
                             },
                             {
-                                fields: { usd:1 },
-                                sort: { last_updated_at: -1 },
+                                fields: { usd: 1 },
+                                sort: { last_updated_at: 1 },
                                 limit: 1
                             },
                         ).fetch();
@@ -602,15 +574,10 @@ Meteor.methods({
                             date: result[i]._id,
                             usd: shrPricesResult && shrPricesResult.length === 1 ? shrPricesResult[0].usd : 0
                         });
-                        console.log(shrPricesResult)
                     }
-                    // console.log(shrPrices)
                 }
-                // console.log(result)
-                console.log(shrPrices)
                 for(let i = 0; i < result.length; i++) {
                     const dailyTxRecord = result[i];
-                    // console.log(dailyTxRecord._id)
                     const shrPriceObj = shrPrices.find(shrPriceObj => {
                         return shrPriceObj.date === dailyTxRecord._id;
                     });
@@ -618,15 +585,10 @@ Meteor.methods({
                         const shrPriceUsd = shrPriceObj.usd; 
                         dailyTxRecord.shrPriceUsd = shrPriceUsd;
                         dailyTxRecord.sumFeeUsd = dailyTxRecord.sumFeeShr * shrPriceUsd;
-                        console.log('about to')
-                        console.log(dailyTxRecord.sumFeeShr)
-                        console.log(dailyTxRecord.sumFeeUsd)
-                        console.log(dailyTxRecord.shrPriceUsd)
                         for(let j = 0; j < dailyTxRecord.txTypes.length; j++) {
                             dailyTxRecord.txTypes[j].sumFeeUsd = dailyTxRecord.txTypes[j].sumFeeShr * shrPriceUsd;
                         }
                     }
-                    // console.log(dailyTxRecord) 
                     DailyTransactionData.insert(dailyTxRecord); 
                 }
             }
