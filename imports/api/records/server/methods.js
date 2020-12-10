@@ -575,44 +575,41 @@ Meteor.methods({
                 const shrPrices = [];
                                     // DailyTransactionData.remove({}); 
                 if(result.length > 0 && result[0]._id) {
-                    // console.log(result[result.length - 1]._id)
-                    const lastDate = new Date(result[0]._id); 
+                    const lastDate = new Date(result[0]._id);
                     const middayNextDay = new Date(lastDate.setDate(lastDate.getDate() + 1));
                     middayNextDay.setHours(13, 0, 0, 0);
                     const midnightJustGone = new Date();
                     midnightJustGone.setHours(0, 0, 0, 0);
-                    const midnightJustGoneSeconds = midnightJustGone.getTime() / 1000;
-                    // console.log(midnightJustGoneSeconds)
+                    const hourInSec = 3600;
                     for(let i = 0; i < result.length; i++) {
-                        console.log('inside ' + i)
                         const middayDate = new Date(result[i]._id);
                         middayDate.setHours(13, 0, 0, 0);
-
-                    // for(let middaySeconds = middayNextDay.getTime() / 1000; middaySeconds < midnightJustGoneSeconds; middaySeconds += 86400) {
-                    //     console.log(middaySeconds)
+                        const middayTimeSec = middayDate.getTime() / 1000;
                         const shrPricesResult = CoinStats.find(
                             {
-                                last_updated_at: { $gt: middayDate.getTime() / 1000 }
-                                // last_updated_at: { $gt: middaySeconds }
+                                $and: [ //Between midday and 1300
+                                    {last_updated_at: { $gt: middayTimeSec }},
+                                    {last_updated_at: { $lt: middayTimeSec + hourInSec }}
+                                ]
                             },
                             {
                                 fields: { usd:1 },
-                                sort: { _id: -1 },
+                                sort: { last_updated_at: -1 },
                                 limit: 1
                             },
                         ).fetch();
                         shrPrices.push({
                             date: result[i]._id,
-                            usd: shrPricesResult[0].usd
+                            usd: shrPricesResult && shrPricesResult.length === 1 ? shrPricesResult[0].usd : 0
                         });
-                        // console.log(shrPricesResult)
+                        console.log(shrPricesResult)
                     }
                     // console.log(shrPrices)
                 }
                 // console.log(result)
+                console.log(shrPrices)
                 for(let i = 0; i < result.length; i++) {
                     const dailyTxRecord = result[i];
-                    // console.log(shrPrices)
                     // console.log(dailyTxRecord._id)
                     const shrPriceObj = shrPrices.find(shrPriceObj => {
                         return shrPriceObj.date === dailyTxRecord._id;
@@ -622,14 +619,14 @@ Meteor.methods({
                         dailyTxRecord.shrPriceUsd = shrPriceUsd;
                         dailyTxRecord.sumFeeUsd = dailyTxRecord.sumFeeShr * shrPriceUsd;
                         console.log('about to')
-                        console.log(dailyTxRecord.txTypes[0].sumFeeShr)
+                        console.log(dailyTxRecord.sumFeeShr)
+                        console.log(dailyTxRecord.sumFeeUsd)
+                        console.log(dailyTxRecord.shrPriceUsd)
                         for(let j = 0; j < dailyTxRecord.txTypes.length; j++) {
-                            console.log('txtype')
-                            console.log(dailyTxRecord.txTypes[j])
                             dailyTxRecord.txTypes[j].sumFeeUsd = dailyTxRecord.txTypes[j].sumFeeShr * shrPriceUsd;
                         }
                     }
-                    console.log(dailyTxRecord)
+                    // console.log(dailyTxRecord) 
                     DailyTransactionData.insert(dailyTxRecord); 
                 }
             }
