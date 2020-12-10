@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card, CardBody, NavLink } from 'reactstrap';
 import ChainStatus from './ChainStatusContainer.js';
 import ChainInfo from '../components/ChainInfo.jsx'
+import TransactionCountLineChart from '../transaction-history/TransactionCountLineChart.jsx';
 import Consensus from './ConsensusContainer.js';
 import TopValidators from './TopValidatorsContainer.js';
 import Chart from './ChartContainer.js';
@@ -31,6 +32,11 @@ export default class Home extends Component{
             <ChainInfo/>
             <Consensus />
             <ChainStatus />
+            <Row>
+                <Col>
+                    <TransactionCountLineChart />
+                </Col>
+            </Row>
             <Row>
                 <Col md={6}>
                     <Card>
