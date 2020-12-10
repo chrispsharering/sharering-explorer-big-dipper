@@ -9,19 +9,22 @@ import { buildBlockchainDatasets, buildBlockchainOptions } from './ChartService.
 
 const T = i18n.createComponent();
 
-function yAxesTickCallback(value, index, values) {
-    return numbro(value).format({
+function yAxesTickCallback(value, index, values, currencyCharacter) {
+    const number = numbro(value).format({
         spaceSeparated: false,
         average: true
     });
+    return currencyCharacter ? `${currencyCharacter}${number}` : number;
 }
 
 export default class TransactionCountBarChart extends Component{
     isLoading = true;
-    transactionsColor = 'rgba(0, 158, 115, 1)';
-    transactionsLineColor = 'rgba(0, 158, 115, 0.7)';
+    transactionsColor = 'rgba(255, 159, 0, 1)';
+    transactionsLineColor = 'rgba(255, 159, 0, 0.7)';
     feeShrColor = 'rgba(71, 131, 196, 1)';
     feeShrLineColor = 'rgba(71, 131, 196, 0.7)';
+    flowbacksUsdColor = 'rgba(0, 158, 115, 1)';
+    flowbacksUsdLineColor = 'rgba(0, 158, 115, 0.7)';
     fontFamily = '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sa';
     colorScheme = {
         fontColor: 'rgb(0, 0, 0)',
@@ -152,11 +155,13 @@ export default class TransactionCountBarChart extends Component{
     buildChartData(data) {
           const txData = [];
           const feeShrData = [];
+          const flowbacksUsdData = [];
           const chartLabels = [];
           for (let i in data){
             chartLabels.push(new Date(data[i]._id));
             txData.push(data[i].txs);
             feeShrData.push(data[i].sumFeeShr);
+            flowbacksUsdData.push(data[i].sumFeeUsd);
         }
 
         return {
@@ -186,6 +191,22 @@ export default class TransactionCountBarChart extends Component{
                     fill: false,
                     borderColor: this.feeShrLineColor,
                     backgroundColor: this.feeShrColor,
+                    pointRadius: 1.5,
+                    pointHitRadius: 1,
+                    gridLines: {
+                        drawBorder: false,
+                        display: true,
+                        color: this.colorScheme.gridLinesColor,
+                        zeroLineColor: this.colorScheme.gridLinesColor
+                    },
+                },
+                {
+                    label: 'Flowbacks USD',
+                    yAxisID: 'Flowbacks-USD',
+                    data: flowbacksUsdData,
+                    fill: false,
+                    borderColor: this.flowbacksUsdLineColor,
+                    backgroundColor: this.flowbacksUsdColor,
                     pointRadius: 1.5,
                     pointHitRadius: 1,
                     gridLines: {
@@ -236,15 +257,17 @@ export default class TransactionCountBarChart extends Component{
                     },
                     label: function(tooltipItem, data) {
                         // Ensures this is only called once for the first dataset (0)
-                        if(tooltipItem.datasetIndex === 1) {
+                        if(tooltipItem.datasetIndex !== 0) {
                             return;
                         }
                         this.tooltipCalledAlready = true;
                         const dataIndex = tooltipItem.index;
                         const primaryValue = data.datasets[0].data[dataIndex];
                         const secondaryValue = data.datasets[1].data[dataIndex];
+                        const ternaryValue = data.datasets[2].data[dataIndex];
                         const primaryMantissa = primaryValue >= 1000 ? 2 : 0;
                         const secondaryMantissa = secondaryValue >= 1000 ? 2 : 0;
+                        const ternaryMantissa = ternaryValue >= 1000 ? 2 : 0;
                         const primaryValueFormatted = numbro(primaryValue).format({
                             average: true,
                             mantissa: primaryMantissa,
@@ -253,8 +276,13 @@ export default class TransactionCountBarChart extends Component{
                             average: true,
                             mantissa: secondaryMantissa,
                         });
-                        return [`• TXs: ${primaryValueFormatted}`,
-                                `• Fee: ${secondaryValueFormatted} SHR`];
+                        const ternaryValueFormatted = numbro(ternaryValue).format({
+                            average: true,
+                            mantissa: ternaryMantissa,
+                        });
+                        return [`• TXs:             ${primaryValueFormatted}`,
+                                `• Fee:             ${secondaryValueFormatted} SHR`,
+                                `• Flowbacks:  $${ternaryValueFormatted}`];
                     }
                 },
             },
@@ -315,6 +343,29 @@ export default class TransactionCountBarChart extends Component{
                                 fontColor: this.feeShrColor,
                                 callback: function(value, index, values) {
                                     return yAxesTickCallback(value, index, values);
+                                }
+                            }
+                        },
+                        {
+                            id: 'Flowbacks-USD',
+                            type: 'linear',
+                            position: 'right',
+                            gridLines: {
+                                drawBorder: false
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Flowbacks USD',
+                                fontColor: this.flowbacksUsdColor,
+                                fontSize: 12,
+                                fontStyle: 'bold',
+                                fontFamily: this.fontFamily,
+                            },
+                            ticks: {
+                                maxTicksLimit: 5,
+                                fontColor: this.flowbacksUsdColor,
+                                callback: function(value, index, values) {
+                                    return yAxesTickCallback(value, index, values, '$');
                                 }
                             }
                         }
