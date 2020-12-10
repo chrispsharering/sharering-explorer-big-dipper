@@ -546,36 +546,36 @@ Meteor.methods({
                 this.unblock();
                 const shrPrices = [];
                 if(result.length > 0 && result[0]._id) {
-                    const lastDate = new Date(result[0]._id);
-                    const middayNextDay = new Date(lastDate.setDate(lastDate.getDate() + 1));
-                    middayNextDay.setHours(13, 0, 0, 0);
-                    const midnightJustGone = new Date();
-                    midnightJustGone.setHours(0, 0, 0, 0);
-                    const hourInSec = 3600;
+                    const dayInSec = 86400;
                     for(let i = 0; i < result.length; i++) {
-                        const middayDate = new Date(result[i]._id);
-                        middayDate.setHours(12, 0, 0, 0);
-                        const middayTimeSec = middayDate.getTime() / 1000;
-                        // Gets the price of SHR in USD at midday for each day in the dailyTx result
+                        const midnightDate = new Date(result[i]._id);
+                        midnightDate.setHours(0, 0, 0, 0);
+                        const midnightTimeSec = midnightDate.getTime() / 1000;
+                        // Gets the SHR prices in USD from midnight to midnight for each day in the dailyTx result
                         const shrPricesResult = CoinStats.find(
                             {
-                                $and: [ //Between midday and 1300
-                                    {last_updated_at: { $gt: middayTimeSec }},
-                                    {last_updated_at: { $lt: middayTimeSec + hourInSec }}
+                                $and: [ //Between 0000 and 2359.59
+                                    { last_updated_at: { $gt: midnightTimeSec } },
+                                    { last_updated_at: { $lt: midnightTimeSec + dayInSec } }
                                 ]
                             },
                             {
                                 fields: { usd: 1 },
-                                sort: { last_updated_at: 1 },
-                                limit: 1
+                                sort: { last_updated_at: 1 }
                             },
                         ).fetch();
+
+                        let sumShrPriceUsd = 0;
+                        for(let j = 0; j < shrPricesResult.length; j++) {
+                            sumShrPriceUsd += shrPricesResult[j].usd;
+                        }
+                        const avgShrPriceUsd = sumShrPriceUsd > 0 ? sumShrPriceUsd / shrPricesResult.length : 0;
                         shrPrices.push({
                             date: result[i]._id,
-                            usd: shrPricesResult && shrPricesResult.length === 1 ? shrPricesResult[0].usd : 0
+                            usd: avgShrPriceUsd
                         });
                     }
-                }
+                } 
                 for(let i = 0; i < result.length; i++) {
                     const dailyTxRecord = result[i];
                     const shrPriceObj = shrPrices.find(shrPriceObj => {
