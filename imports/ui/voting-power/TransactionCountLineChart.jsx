@@ -22,7 +22,16 @@ export default class TransactionCountBarChart extends Component{
     transactionsLineColor = 'rgba(0, 158, 115, 0.7)';
     feeShrColor = 'rgba(71, 131, 196, 1)';
     feeShrLineColor = 'rgba(71, 131, 196, 0.7)';
-    labelFontFamily = '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sa';
+    fontFamily = '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sa';
+    colorScheme = {
+        fontColor: 'rgb(0, 0, 0)',
+        tooltipBackgroundColor: 'rgba(255,255,255, 0.8)',
+        tooltipBorderColor: 'rgb(0, 0, 0)',
+        tooltipTitleFontColor: 'rgba(23, 24, 27, 0.85)',
+        tooltipBodyFontColor: 'rgb(0, 0, 0)',
+        gridLinesColor: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: 'rgb(255, 255, 255)'
+    }
 
     constructor(props){
         super(props);
@@ -32,30 +41,26 @@ export default class TransactionCountBarChart extends Component{
         }
     }
 
-    componentWillMount() {
+    setupCustomChartSettings() {
+        //register custome positioner
+        Chart.Tooltip.positioners.custom = function(elements, position) {
+            if (!elements.length) {
+                return false;
+            }
+            let offset = 0;
+            //adjust the offset left or right depending on the event position
+            if (elements[0]._chart.width / 2 > position.x) {
+                offset = 15;
+            } else {
+                offset = -15;
+            }
+            return {
+                x: position.x + offset,
+                y: position.y
+            }
+        }
+
         Chart.pluginService.register({
-            beforeRender: function (chart) {
-              if (chart.config.options.showMultipleTooltips) {
-                    resetTooltips(chart);
-          
-                  // turn off normal tooltips
-                  // chart.options.tooltips.enabled = false;
-              }
-            },
-            afterDraw: function (chart, easing) {
-              if (chart.config.options.showMultipleTooltips) {
-                  // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
-                  if (!chart.allTooltipsOnce) {
-                      if (easing !== 1) {
-                          return;
-                      }
-                      chart.allTooltipsOnce = true;
-                  }
-                  // turn on tooltips
-                  chart.options.tooltips.enabled = true;
-                  // chart.options.tooltips.enabled = false;
-              }
-            },
             posX: null,
             isMouseOut: false,
             drawLine(chart, posX) {
@@ -123,17 +128,11 @@ export default class TransactionCountBarChart extends Component{
                 }
              },
              afterDatasetsDraw(chart, ease) {
-                if (!this.posX) {
-                  return;
-                } else if (!this.isMouseOut) {
+                 if (this.posX && !this.isMouseOut) {
                   this.drawLine(chart, this.posX);
                 }
              }
           });
-    }
-
-    componentDidMount(){
-        this.getDailyTxData();
     }
 
     getDailyTxData = () => {
@@ -144,7 +143,6 @@ export default class TransactionCountBarChart extends Component{
                 self.isLoading = true;
             }
             else {
-                // const resultAsArray = Object.values(result);
                 const chartData = this.buildChart(result);
                 self.setState(chartData); // Simply used to kick off the render lifecycle function
             }
@@ -152,159 +150,13 @@ export default class TransactionCountBarChart extends Component{
     }
 
     buildChartData(data) {
-//         const txDataset = [];
-//         const feeShrDataset = [];
-//         const shrFeeBackgroundColors = [];
-//         const txsBackgroundColors = [];
-//         for(let i in txData) {
-//             txDataset.push(txData[i].txs);
-//             feeShrDataset.push(txData[i].sumFeeShr);
-//             shrFeeBackgroundColors.push('rgba(71, 131, 196,1)');
-//             txsBackgroundColors.push('rgba(71, 131, 196,1)');
-//         }
-// // make this a time chart
-// // make it have two axis, one for txs and the other for shr fees 
-// // dont fill
-// // have seperate scales
-// // use my coinstats blockchains as an exmaple but probs use a simple example from the internet
-// // break it right down to the basics and build it up slowly
-// // first thing to add is two datasets, with serpeate axis, google how
-// // or look at how the validors chart on home page does it
-//         console.log(txDataset)
-//         const a =  [{
-//             label: 'Transactions',
-//             // yAxisID: 'transactionsId',
-//             data: txDataset,
-//             fill: false,
-//             radius: 0,
-//             lineTension: 2,
-//             // pointHitRadius: this.pointHitRadiusValue,
-//             // pointHitRadius: 1,
-//             borderWidth: 2,//this.lineBorderWith,
-//             pointRadius: 0,
-//             pointHoverRadius: 5,
-//             // pointHoverBackgroundColor: 'white',
-//             pointHoverBorderWidth: 0,
-//             backgroundColor: txsBackgroundColors,
-//             borderColor: txsBackgroundColors
-//           },
-//           {
-//             label: 'Fee SHR',
-//             // yAxisID: 'transactionsId',
-//             data: feeShrDataset,
-//             fill: false,
-//             radius: 0,
-//             lineTension: 0,
-//             // pointHitRadius: this.pointHitRadiusValue,
-//             // pointHitRadius: 1,
-//             borderWidth: 2,//this.lineBorderWith,
-//             pointRadius: 0,
-//             pointHoverRadius: 5,
-//             // pointHoverBackgroundColor: 'white',
-//             pointHoverBorderWidth: 0,
-//             backgroundColor: shrFeeBackgroundColors,
-//             borderColor: shrFeeBackgroundColors
-//           },
-//         //   {
-//         //     label: 'Transfer Volume',
-//         //     yAxisID: 'transferVolumeUsdsId',
-//         //     data: graphData.transferVolumeUsds,
-//         //     fill: false,
-//         //     radius: 0,
-//         //     lineTension: 0,
-//         //     // pointHitRadius: this.pointHitRadiusValue,
-//         //     // pointHitRadius: 1,
-//         //     borderWidth: this.lineBorderWith,
-//         //     pointRadius: 0,
-//         //     pointHoverRadius: 5,
-//         //     // pointHoverBackgroundColor: 'white',
-//         //     pointHoverBorderWidth: 0
-//         //   },
-//         //   {
-//         //     label: 'Tx Adoption Score',
-//         //     yAxisID: 'txAdoptionScoresId',
-//         //     data: graphData.txAdoptionScores,
-//         //     fill: false,
-//         //     radius: 0,
-//         //     lineTension: 0,
-//         //     // pointHitRadius: this.pointHitRadiusValue,
-//         //     // pointHitRadius: 1,
-//         //     borderWidth: this.lineBorderWith,
-//         //     pointRadius: 0,
-//         //     pointHoverRadius: 5,
-//         //     // pointHoverBackgroundColor: 'white',
-//         //     pointHoverBorderWidth: 0
-//         //   }
-//         //   // {
-//         //   //   data: temp_min,
-//         //   //   borderColor: '#ffcc00',
-//         //   //   fill: false
-//         //   // },
-//         ];
-
-//         const b = [   
-      
-//             {
-//               label: "Maximo",
-//               data: [165, 159, 180, 181, 156, 155, 140],
-//               type: 'line',
-//               borderColor:'#eddb1c',
-//               backgroundColor:'#FFF3D6',
-//               fill: false
-//             },
-//             {
-//               label: "Promedio",
-//               data: [115, 109, 130, 131, 106, 105, 90],
-//               type: 'line',
-//               borderColor:'#FF7A96',
-//               backgroundColor:'#EAC3CC',
-//               fill: false
-//             },
-//             {
-//               label: "Minimo",
-//               data: [65, 59, 80, 81, 56, 55, 40],
-//               type: 'line',
-//               borderColor:'#4BB7FF',
-//               backgroundColor:'#CDEBFF',
-//               fill: false
-//             }
-//             ,{
-//               label: "Error",
-//               data: [65, 59, 80, 81, 56, 55, 40],
-//               borderColor:'#FF7A96',
-//               borderWidth: 1,
-//               backgroundColor:'#EAC3CC'
-//             },
-//             {
-//               label: "NOK",
-//               data: [5, 9, 10, 11,6, 5, 10],
-//               borderColor:'#4BB7FF',
-//               borderWidth: 1,
-//               backgroundColor:'#CDEBFF'
-//             },
-//             {
-//               label: "PROCESING",
-//               data: [51, 19, 110, 111,16, 15, 110],
-//               borderColor:'#FFD36C',
-//               borderWidth: 1,
-//               backgroundColor:'#FFF3D6'
-//             }
-//           ];
-
-          const chartData = {
-              labels: [],
-              datasets: [],
-          };
           const txData = [];
-          const txBackgroundColorArray = [];
           const feeShrData = [];
           const chartLabels = [];
           for (let i in data){
             chartLabels.push(new Date(data[i]._id));
             txData.push(data[i].txs);
             feeShrData.push(data[i].sumFeeShr);
-            // let alpha = (txData.length+1-i)/txData.length*0.8+0.2;
-            // backgroundColors.push('rgba(71, 131, 196,'+alpha+')');
         }
 
         return {
@@ -317,7 +169,15 @@ export default class TransactionCountBarChart extends Component{
                     fill: false,
                     borderColor: this.transactionsLineColor,
                     backgroundColor: this.transactionsColor,
-                    pointRadius: 1.5
+                    pointRadius: 1.5,
+                    pointHitRadius: 1,
+                    gridLines: {
+                        drawBorder: false,
+                        display: true,
+                        color: this.colorScheme.gridLinesColor,
+                        zeroLineColor: this.colorScheme.gridLinesColor
+                        // tickMarkLength: 8
+                    },
                 },
                 {
                     label: 'Fee SHR',
@@ -326,14 +186,20 @@ export default class TransactionCountBarChart extends Component{
                     fill: false,
                     borderColor: this.feeShrLineColor,
                     backgroundColor: this.feeShrColor,
-                    pointRadius: 1.5
+                    pointRadius: 1.5,
+                    pointHitRadius: 1,
+                    gridLines: {
+                        drawBorder: false,
+                        display: true,
+                        color: this.colorScheme.gridLinesColor,
+                        zeroLineColor: this.colorScheme.gridLinesColor
+                    },
                 }
             ]
         }
       }
 
       buildChartOptions() {
-        //   add the hover over line which brings up the tooltip
           return {
             responsive: true,
             // These two together allow you to change the height of the chart
@@ -343,15 +209,37 @@ export default class TransactionCountBarChart extends Component{
                 enabled: true,
                 lineColor: '#bbb',
                 lineWidth: 0.5
-              },
+            },
+            legend: {
+                onClick: (e) => e.stopPropagation()
+            },
             tooltips: {
+                mode: 'x',
+                position: 'custom',
                 displayColors: false,
+                intersect: false,
+                backgroundColor: this.colorScheme.tooltipBackgroundColor,
+                borderColor: this.colorScheme.tooltipBorderColor,
+                borderWidth: 0.3,
+                cornerRadius: 2,
+                caretSize: 0,
+                titleFontSize: 10,
+                titleFontColor: this.colorScheme.tooltipTitleFontColor,
+                bodyFontColor: this.colorScheme.tooltipBodyFontColor,
+                bodyFontSize: 13,
+                titleFontFamily: this.fontFamily,
+                bodyFontFamily: this.fontFamily,
                 callbacks: {
                     title: function(tooltipItem, data) {
                         const dateString = tooltipItem[0].label;
                         return dateString.substring(0, dateString.lastIndexOf(','));
                     },
                     label: function(tooltipItem, data) {
+                        // Ensures this is only called once for the first dataset (0)
+                        if(tooltipItem.datasetIndex === 1) {
+                            return;
+                        }
+                        this.tooltipCalledAlready = true;
                         const dataIndex = tooltipItem.index;
                         const primaryValue = data.datasets[0].data[dataIndex];
                         const secondaryValue = data.datasets[1].data[dataIndex];
@@ -377,6 +265,9 @@ export default class TransactionCountBarChart extends Component{
                         ticks: {
                             beginAtZero: false,
                             maxTicksLimit: 10
+                        },
+                        gridLines: {
+                            drawOnChartArea: false
                         }
                     }
                 ],
@@ -385,13 +276,16 @@ export default class TransactionCountBarChart extends Component{
                             id: 'Transactions',
                             type: 'linear',
                             position: 'left',
+                            gridLines: {
+                                drawBorder: false
+                            },
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Transactions',
                                 fontColor: this.transactionsColor,
                                 fontSize: 12,
                                 fontStyle: 'bold',
-                                fontFamily: this.labelFontFamily,
+                                fontFamily: this.fontFamily,
                             },
                             ticks: {
                                 maxTicksLimit: 5,
@@ -405,13 +299,16 @@ export default class TransactionCountBarChart extends Component{
                             id: 'Fee-SHR',
                             type: 'linear',
                             position: 'right',
+                            gridLines: {
+                                drawBorder: false
+                            },
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Fee SHR',
                                 fontColor: this.feeShrColor,
                                 fontSize: 12,
                                 fontStyle: 'bold',
-                                fontFamily: this.labelFontFamily,
+                                fontFamily: this.fontFamily,
                             },
                             ticks: {
                                 maxTicksLimit: 5,
@@ -429,53 +326,20 @@ export default class TransactionCountBarChart extends Component{
     buildChart(txData){
         const chartData = this.buildChartData(txData);
         const chartOptions = this.buildChartOptions();
-
-
-        // const datasets = buildBlockchainDatasets(txData, false);
-        // const chartColors = [{ borderColor: 'rgba(86, 180, 233, 1)' },
-        //                     { borderColor: 'rgba(0, 158, 115, 1)' },
-        //                     { borderColor: 'rgba(255, 159, 0, 1)' },
-        //                     { borderColor: 'rgba(213, 94, 0, 1)' }];
-        // const options = buildBlockchainOptions(0, 1, 2, true,
-        //                                        chartColors, false, true);
-
-        // $("#transaction-count-bar-chart").height(16*data.length);
         this.isLoading = false;
 
         return {
             data: chartData,
             options: chartOptions,
         };
+    }
 
-        // scales: {
-        //     xAxes: [{
-        //       gridLines: {
-        //         display: false,
-        //       },
-        //       type: 'time',
-        //       // ticks: {
-        //       //   padding: 50,
-        //       // },
-        //       // ticks: {
-        //       //   tickMarkLength: 10
-        //       // },
-        //       ticks: {
-        //         fontColor: colorScheme.fontColor,
-        //       },
-        //       afterUpdate: (chart: Chart) => {
-        //         this.afterZoomUpdate(chart);
-        //       },
-        //     }],
-        //     yAxes: this.getYAxesScales(yAxesScales, false, mirrorTicks, colorScheme.gridLinesColor)
-        //   },
+    componentDidMount() {
+        this.setupCustomChartSettings();
+        this.getDailyTxData();
     }
 
     render(){
-        let aStyle = {
-            position: 'relative',
-            height: '40vh',
-            width:'80vw'
-        }
         if (this.isLoading){
             return <Spinner type="grow" color="primary" />
         }

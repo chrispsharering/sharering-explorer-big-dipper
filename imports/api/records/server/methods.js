@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { ValidatorRecords, Analytics, AverageData, AverageValidatorData, DailyTransactionData } from '../records.js';
+import { CoinStats } from '../../coin-stats/coin-stats.js';
 import { Validators } from '../../validators/validators.js';
 import { ValidatorSets } from '/imports/api/validator-sets/validator-sets.js';
 import { Transactions } from '../../transactions/transactions.js';
@@ -12,9 +13,8 @@ import { Chain } from '../../chain/chain.js';
 import _ from 'lodash';
 const BULKUPDATEMAXSIZE = 1000;
 
-const getTodaysDateString = () => {
-    var d = new Date(),
-        month = '' + (d.getMonth() + 1),
+const getDateString = (d) => {
+    var month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();
 
@@ -414,7 +414,7 @@ Meteor.methods({
         return true;
     },
     'Analytics.getAggregateTransactionData'(){
-        const todaysDateString = getTodaysDateString();
+        const todaysDateString = getDateString(new Date());
         // Get the most recent date of DailyTransactions persisted
         const lastDailyTransactionData = DailyTransactionData.find(
             {
@@ -428,7 +428,34 @@ Meteor.methods({
         ).fetch();
 
         const lastDailyTransactionDataDate = lastDailyTransactionData.length > 0 ? lastDailyTransactionData[0]._id : '';
-
+        // if(lastDailyTransactionDataDate !== '') {
+        //     console.log(lastDailyTransactionDataDate)
+        //     const lastDate = new Date(lastDailyTransactionDataDate);
+        //     const middayNextDay = new Date(lastDate.setDate(lastDate.getDate() + 1));
+        //     middayNextDay.setHours(13, 0, 0, 0);
+        //     const midnightJustGone = new Date();
+        //     midnightJustGone.setHours(0, 0, 0, 0);
+        //     const midnightJustGoneSeconds = midnightJustGone.getTime() / 1000;
+        //     console.log(midnightJustGoneSeconds)
+        //     const shrPrices = [];
+        //     for(let middaySeconds = middayNextDay.getTime() / 1000; middaySeconds < midnightJustGoneSeconds; middaySeconds += 86400) {
+        //         console.log(middaySeconds)
+        //         const shrPricesResult = CoinStats.find(
+        //             {
+        //                 last_updated_at: { $gt: middaySeconds }
+        //             },
+        //             {
+        //                 fields: { usd:1 },
+        //                 sort: { _id: -1 },
+        //                 limit: 1
+        //             },
+        //         ).fetch();
+        //         shrPrices.push({date: new Date(middaySeconds * 1000), usd: shrPricesResult[0].usd});
+        //         console.log(shrPricesResult)
+        //         // middayNextDay.setDate(middayNextDay.getDate() + 1);
+        //     }
+        //     console.log(shrPrices)
+        // }
         const transactions = Transactions.rawCollection();
 
         const stringToDateConversionStage = {
@@ -543,8 +570,56 @@ Meteor.methods({
             else {
                 console.log("getting aggregate transaction data ok:" + result);
                 this.unblock();
+                console.log(result)
+                DailyTransactionData.remove({});
+                const shrPrices = [];
+                if(result.length > 0 && result[result.length - 1]._id) {
+                    // console.log(result[result.length - 1]._id)
+                    const lastDate = new Date(result[result.length - 1]._id);
+                    const middayNextDay = new Date(lastDate.setDate(lastDate.getDate() + 1));
+                    middayNextDay.setHours(13, 0, 0, 0);
+                    const midnightJustGone = new Date();
+                    midnightJustGone.setHours(0, 0, 0, 0);
+                    const midnightJustGoneSeconds = midnightJustGone.getTime() / 1000;
+                    // console.log(midnightJustGoneSeconds)
+                    for(let middaySeconds = middayNextDay.getTime() / 1000; middaySeconds < midnightJustGoneSeconds; middaySeconds += 86400) {
+                        console.log(middaySeconds)
+                        const shrPricesResult = CoinStats.find(
+                            {
+                                last_updated_at: { $gt: middaySeconds }
+                            },
+                            {
+                                fields: { usd:1 },
+                                sort: { _id: -1 },
+                                limit: 1
+                            },
+                        ).fetch();
+                        shrPrices.push({
+                            date: getDateString(new Date(middaySeconds * 1000)),
+                            usd: shrPricesResult[0].usd
+                        });
+                        // console.log(shrPricesResult)
+                    }
+                    // console.log(shrPrices)
+                }
+                console.log(result)
                 for(let i = 0; i < result.length; i++) {
-                    DailyTransactionData.insert(result[i])
+                    const dailyTxRecord = result[i];
+                    console.log(shrPrices)
+                    console.log(dailyTxRecord)
+                    const shrPriceObj = shrPrices.find(shrPriceObj => {
+                        return shrPriceObj.date === dailyTxRecord._id;
+                    })
+                    if(shrPriceObj) {
+                        const shrPriceUsd = shrPriceObj.usd;
+                        dailyTxRecord.shrPriceUsd = shrPriceUsd;
+                        dailyTxRecord.sumFeeUsd = dailyTxRecord.sumFeeShr * shrPriceUsd;
+                        for(txType in dailyTxRecord.txTypes) {
+                            txType.sumFeeUsd = txType.sumFeeShr * shrPriceUsd;
+                        }
+                    }
+                    console.log(dailyTxRecord)
+                    DailyTransactionData.insert(dailyTxRecord);
                 }
             }
         }); 
