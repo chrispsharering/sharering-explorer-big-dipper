@@ -72,6 +72,7 @@ analytics:
     averageBlockTime: 'Tiempo medio de bloque'
     blockInterval: 'Intervalo de bloque'
     noOfValidators: 'No. de validadores'
+    transactionHistory: 'Historial de transacciones'
 validators:
     randomValidators: 'Validadores aleatorios'
     moniker: 'Moniker'

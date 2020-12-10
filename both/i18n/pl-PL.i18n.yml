@@ -73,6 +73,7 @@ analytics:
     averageBlockTime: 'Średni Czas Bloku'
     blockInterval: 'Interwał Bloku'
     noOfValidators: 'Liczba Walidatorów'
+    transactionHistory: 'Historia transakcji'
 validators:
     randomValidators: 'Losowo Wybrani Walidatorzy'
     moniker: 'Moniker'

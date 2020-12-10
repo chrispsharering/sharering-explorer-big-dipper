@@ -72,6 +72,7 @@ analytics:
     averageBlockTime: 'Average Block Time'
     blockInterval: 'Block Interval'
     noOfValidators: 'No. of Validators'
+    transactionHistory: '交易記錄'
 validators:
     randomValidators: '隨機驗證人'
     moniker: '驗證人代號'

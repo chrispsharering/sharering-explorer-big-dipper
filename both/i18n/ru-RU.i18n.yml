@@ -73,6 +73,7 @@ analytics:
     averageBlockTime: 'Среднее Время Блока'
     blockInterval: 'Интервал Блока'
     noOfValidators: 'количество валидаторов'
+    transactionHistory: 'История транзакций'
 validators:
     randomValidators: 'Случайные Валидаторы'
     moniker: 'Кличка'
