@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {Container, Row, Col, Card, CardBody, NavLink } from 'reactstrap';
 import ChainStatus from './ChainStatusContainer.js';
 import ChainInfo from '../components/ChainInfo.jsx'
-import TransactionCountLineChart from '../transaction-history/TransactionCountLineChart.jsx';
+import TransactionCountLineChart from '../charts/TransactionCountLineChart.jsx';
 import Consensus from './ConsensusContainer.js';
 import TopValidators from './TopValidatorsContainer.js';
 import Chart from './ChartContainer.js';

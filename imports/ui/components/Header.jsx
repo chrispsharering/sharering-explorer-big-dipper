@@ -188,7 +188,15 @@ export default class Header extends Component {
                             <NavLink tag={Link} to="/transactions"><T>navbar.transactions</T></NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></NavLink>
+                            <UncontrolledDropdown inNavbar>
+                                <DropdownToggle nav caret>
+                                    <T>charts.charts</T>
+                                </DropdownToggle>
+                                <DropdownMenu right>
+                                    <DropdownItem tag={Link} to="/charts"><T>charts.charts</T></DropdownItem>
+                                    <DropdownItem tag={Link} to="/voting-power-distribution"><T>navbar.votingPower</T></DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
                         </NavItem>
                         {/* Removed temporarily until we add logging in, in */}
                         {/* <NavItem id="user-acconut-icon">

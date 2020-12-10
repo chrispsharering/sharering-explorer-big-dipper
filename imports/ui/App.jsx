@@ -13,6 +13,7 @@ import BlocksTable from '/imports/ui/blocks/BlocksTable.jsx';
 import ValidatorDetails from '/imports/ui/validators/ValidatorDetails.jsx';
 import Transactions from '/imports/ui/transactions/TransactionsList.jsx';
 import Distribution from '/imports/ui/voting-power/Distribution.jsx';
+import Charts from '/imports/ui/charts/Charts.jsx';
 import SearchBar from '/imports/ui/components/SearchBar.jsx';
 import moment from 'moment';
 import SentryBoundary from '/imports/ui/components/SentryBoundary.jsx';
@@ -89,6 +90,7 @@ class App extends Component {
                             <Route path="/validators/inactive" render={(props) => <Validators {...props} inactive={true} />} />
                             <Route path="/voting-power-distribution" component={Distribution} />
                             <Route path="/(validator|validators)" component={ValidatorDetails} />
+                            <Route path="/charts" component={Charts} />
                             <Route component={NotFound} />
                         </Switch>
                     </SentryBoundary>

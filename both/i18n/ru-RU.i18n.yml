@@ -236,3 +236,6 @@ messageTypes:
 flowbacks:
     flowbacks: 'Flowbacks'
     dailyFlowbacks: 'Daily Flowbacks'
+charts:
+    charts: 'Диаграммы'
+    shareledgerCharts: 'Графики ShareLedger'
