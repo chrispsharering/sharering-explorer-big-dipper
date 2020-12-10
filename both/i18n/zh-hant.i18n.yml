@@ -136,7 +136,9 @@ transactions:
     txHash: '交易哈希'
     valid: '有效'
     fee: '費用'
-    noFee: 'No fee' 
+    noFee: '不收費'
+    dailyFee: '每日費用'
+    dailyTx: '每日發送'
     gasUsedWanted: '瓦斯 (已用 / 要求)'
     noTxFound: '沒有這筆交易。'
     noValidatorTxsFound: '沒有跟這個驗證人有關的交易'
@@ -239,3 +241,6 @@ messageTypes:
     unjail: '赦免'
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
+flowbacks:
+    flowbacks: 'Flowbacks'
+    dailyFlowbacks: 'Daily Flowbacks'

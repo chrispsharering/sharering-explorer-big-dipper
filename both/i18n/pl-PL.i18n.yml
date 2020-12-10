@@ -138,6 +138,8 @@ transactions:
     valid: 'Ważna'
     fee: 'Opłata'
     noFee: 'Bezpłatnie' 
+    dailyFee: 'Opłata dzienna'
+    dailyTx: 'Daily Tx'
     gasUsedWanted: 'Gaz (użyty/ wymagany)'
     noTxFound: 'Nie znaleziono podanej transakcji.'
     noValidatorTxsFound: 'Nie znaleziono żadnej transakcji dla podanego Walidatora'
@@ -240,3 +242,6 @@ messageTypes:
     unjail: 'Unjail'
     IBCTransfer: 'Wyślij IBC'
     IBCReceive: 'Odbierz IBC'
+flowbacks:
+    flowbacks: 'Flowbacks'
+    dailyFlowbacks: 'Daily Flowbacks'

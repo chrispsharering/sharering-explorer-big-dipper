@@ -138,7 +138,9 @@ transactions:
     txHash: 'Tx Hash'
     valid: 'Valid'
     fee: 'Fee'
-    noFee: 'No fee' 
+    noFee: 'No fee'
+    dailyFee: 'Daily Fee'
+    dailyTx: 'Daily Tx'
     gasUsedWanted: 'Gas (used / wanted)'
     noTxFound: 'No such transaction found.'
     noValidatorTxsFound: 'No transaction related to this validator was found.'
@@ -340,3 +342,6 @@ messageTypes:
     IBCTransfer: 'IBC Transfer'
     IBCReceive: 'IBC Receive'
     placeBid: 'Place Bid'
+flowbacks:
+    flowbacks: 'Flowbacks'
+    dailyFlowbacks: 'Daily Flowbacks'

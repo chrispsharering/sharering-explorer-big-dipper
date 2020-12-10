@@ -137,6 +137,8 @@ transactions:
     txHash: 'хэш сделки'
     valid: 'Действительны'
     fee: 'Плата'
+    dailyFee: 'Ежедневная плата'
+    dailyTx: 'Ежедневный Tx'
     gasUsedWanted: 'Газ (используется / хотел)'
     noTxFound: 'Сделка не найдена'
     noValidatorTxsFound: 'Сделка связанной с этом валидатором не найдена.'
@@ -231,4 +233,6 @@ messageTypes:
     unjail: 'Un-Джейл'
     IBCTransfer: 'IBC Трансферт'
     IBCReceive: 'IBC Получение'
-
+flowbacks:
+    flowbacks: 'Flowbacks'
+    dailyFlowbacks: 'Daily Flowbacks'

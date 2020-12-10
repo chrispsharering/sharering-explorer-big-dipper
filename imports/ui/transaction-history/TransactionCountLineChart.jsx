@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {HorizontalBar, Line, Chart } from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress, Spinner } from 'reactstrap';
+    CardTitle, CardSubtitle, Button, Progress, Spinner, CardFooter} from 'reactstrap';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
@@ -35,6 +35,12 @@ export default class TransactionCountBarChart extends Component{
         gridLinesColor: 'rgba(0, 0, 0, 0.1)',
         backgroundColor: 'rgb(255, 255, 255)'
     }
+    sumTotalTx = 0;
+    dailyAverageTx = 0;
+    sumTotalFeeShr = 0;
+    dailyAverageFeeShr = 0;
+    sumTotalFeeUsd = 0;
+    dailyAverageFeeUsd = 0;
 
     constructor(props){
         super(props);
@@ -157,12 +163,18 @@ export default class TransactionCountBarChart extends Component{
           const feeShrData = [];
           const flowbacksUsdData = [];
           const chartLabels = [];
-          for (let i in data){
+          for (let i in data) {
             chartLabels.push(new Date(data[i]._id));
             txData.push(data[i].txs);
             feeShrData.push(data[i].sumFeeShr);
             flowbacksUsdData.push(data[i].sumFeeUsd);
+            this.sumTotalTx += data[i].txs;
+            this.sumTotalFeeShr += data[i].sumFeeShr;
+            this.sumTotalFeeUsd += data[i].sumFeeUsd;
         }
+        this.dailyAverageTx = this.sumTotalTx / data.length;
+        this.dailyAverageFeeShr = this.sumTotalFeeShr / data.length;
+        this.dailyAverageFeeUsd = this.sumTotalFeeUsd / data.length;
 
         return {
             labels: chartLabels,
@@ -200,22 +212,22 @@ export default class TransactionCountBarChart extends Component{
                         zeroLineColor: this.colorScheme.gridLinesColor
                     },
                 },
-                {
-                    label: 'Flowbacks USD',
-                    yAxisID: 'Flowbacks-USD',
-                    data: flowbacksUsdData,
-                    fill: false,
-                    borderColor: this.flowbacksUsdLineColor,
-                    backgroundColor: this.flowbacksUsdColor,
-                    pointRadius: 1.5,
-                    pointHitRadius: 1,
-                    gridLines: {
-                        drawBorder: false,
-                        display: true,
-                        color: this.colorScheme.gridLinesColor,
-                        zeroLineColor: this.colorScheme.gridLinesColor
-                    },
-                }
+                // {
+                //     label: 'Flowbacks USD',
+                //     yAxisID: 'Flowbacks-USD',
+                //     data: flowbacksUsdData,
+                //     fill: false,
+                //     borderColor: this.flowbacksUsdLineColor,
+                //     backgroundColor: this.flowbacksUsdColor,
+                //     pointRadius: 1.5,
+                //     pointHitRadius: 1,
+                //     gridLines: {
+                //         drawBorder: false,
+                //         display: true,
+                //         color: this.colorScheme.gridLinesColor,
+                //         zeroLineColor: this.colorScheme.gridLinesColor
+                //     },
+                // }
             ]
         }
       }
@@ -264,10 +276,10 @@ export default class TransactionCountBarChart extends Component{
                         const dataIndex = tooltipItem.index;
                         const primaryValue = data.datasets[0].data[dataIndex];
                         const secondaryValue = data.datasets[1].data[dataIndex];
-                        const ternaryValue = data.datasets[2].data[dataIndex];
+                        // const ternaryValue = data.datasets[2].data[dataIndex];
                         const primaryMantissa = primaryValue >= 1000 ? 2 : 0;
                         const secondaryMantissa = secondaryValue >= 1000 ? 2 : 0;
-                        const ternaryMantissa = ternaryValue >= 1000 ? 2 : 0;
+                        // const ternaryMantissa = ternaryValue >= 1000 ? 2 : 0;
                         const primaryValueFormatted = numbro(primaryValue).format({
                             average: true,
                             mantissa: primaryMantissa,
@@ -276,13 +288,13 @@ export default class TransactionCountBarChart extends Component{
                             average: true,
                             mantissa: secondaryMantissa,
                         });
-                        const ternaryValueFormatted = numbro(ternaryValue).format({
-                            average: true,
-                            mantissa: ternaryMantissa,
-                        });
+                        // const ternaryValueFormatted = numbro(ternaryValue).format({
+                        //     average: true,
+                        //     mantissa: ternaryMantissa,
+                        // });
                         return [`• TXs:             ${primaryValueFormatted}`,
-                                `• Fee:             ${secondaryValueFormatted} SHR`,
-                                `• Flowbacks:  $${ternaryValueFormatted}`];
+                                `• Fee:             ${secondaryValueFormatted} SHR`,];
+                                //`• Flowbacks:  $${ternaryValueFormatted}`];
                     }
                 },
             },
@@ -346,29 +358,29 @@ export default class TransactionCountBarChart extends Component{
                                 }
                             }
                         },
-                        {
-                            id: 'Flowbacks-USD',
-                            type: 'linear',
-                            position: 'right',
-                            gridLines: {
-                                drawBorder: false
-                            },
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Flowbacks USD',
-                                fontColor: this.flowbacksUsdColor,
-                                fontSize: 12,
-                                fontStyle: 'bold',
-                                fontFamily: this.fontFamily,
-                            },
-                            ticks: {
-                                maxTicksLimit: 5,
-                                fontColor: this.flowbacksUsdColor,
-                                callback: function(value, index, values) {
-                                    return yAxesTickCallback(value, index, values, true);
-                                }
-                            }
-                        }
+                        // {
+                        //     id: 'Flowbacks-USD',
+                        //     type: 'linear',
+                        //     position: 'right',
+                        //     gridLines: {
+                        //         drawBorder: false
+                        //     },
+                        //     scaleLabel: {
+                        //         display: true,
+                        //         labelString: 'Flowbacks USD',
+                        //         fontColor: this.flowbacksUsdColor,
+                        //         fontSize: 12,
+                        //         fontStyle: 'bold',
+                        //         fontFamily: this.fontFamily,
+                        //     },
+                        //     ticks: {
+                        //         maxTicksLimit: 5,
+                        //         fontColor: this.flowbacksUsdColor,
+                        //         callback: function(value, index, values) {
+                        //             return yAxesTickCallback(value, index, values, true);
+                        //         }
+                        //     }
+                        // }
                     ]
                 }
             }
@@ -390,18 +402,32 @@ export default class TransactionCountBarChart extends Component{
         this.getDailyTxData();
     }
 
-    render(){
-        if (this.isLoading){
+    render() {
+        if (this.isLoading) {
             return <Spinner type="grow" color="primary" />
         }
-        else{
+        else {
             return (                    
                 <Card>
-                    <div className="card-header"><T>Transaction History</T></div>
+                    <div className="card-header"><T>analytics.transactionHistory</T></div>
                     <CardBody id="transaction-count-bar-chart">
                         {/* <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary> */}
                         <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
+                    <CardFooter>
+                        <Row>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>Tx</T>:</span> <strong>{numbro(this.sumTotalTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={7} md={6}><small><span><T>transactions.dailyTx</T>:</span> <strong>{numbro(this.dailyAverageTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                        </Row>
+                        <Row>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.fee</T>:</span> <strong>{numbro(this.sumTotalFeeShr).format({average: true, mantissa: 2})}</strong> SHR</small></Col>
+                            <Col xs={7} md={6}><small><span><T>transactions.dailyFee</T>:</span> <strong>{numbro(this.dailyAverageFeeShr).format({average: true, mantissa: 2})}</strong> SHR</small></Col>
+                        </Row>
+                        <Row>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>flowbacks.flowbacks</T>:</span> <strong>${numbro(this.sumTotalFeeUsd).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={7} md={6}><small><span><T>flowbacks.dailyFlowbacks</T>:</span> <strong>${numbro(this.dailyAverageFeeUsd).format({average: true, mantissa: 2})}</strong></small></Col>
+                        </Row>
+                    </CardFooter>
                 </Card>
             );
         }
