@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {HorizontalBar, Line, Chart } from 'react-chartjs-2';
+import { Chart, Bar } from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner, CardFooter} from 'reactstrap';
 import numbro from 'numbro';
@@ -9,7 +9,7 @@ import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } fr
 
 const T = i18n.createComponent();
 
-export default class TransactionCountBarChart extends Component{
+export default class TransactionTypesBarChart extends Component{
     isLoading = true;
     transactionsColor = 'rgba(255, 159, 0, 1)';
     transactionsLineColor = 'rgba(255, 159, 0, 0.7)';
@@ -60,80 +60,6 @@ export default class TransactionCountBarChart extends Component{
                 y: position.y
             }
         }
-
-        Chart.pluginService.register({
-            posX: null,
-            isMouseOut: false,
-            drawLine(chart, posX) {
-              const ctx = chart.ctx,
-                  x_axis = chart.scales['x-axis-0'],
-                  y_axis = chart.scales['Transactions'],
-                  x = posX,
-                  topY = y_axis.top,
-                  bottomY = y_axis.bottom;
-              if (posX < x_axis.left || posX > x_axis.right) {
-                return;
-              }
-              // draw line
-              ctx.save();
-              ctx.beginPath();
-              ctx.moveTo(x, topY);
-              ctx.lineTo(x, bottomY);
-              ctx.lineWidth = chart.options.lineOnHover.lineWidth;
-              ctx.strokeStyle = chart.options.lineOnHover.lineColor;
-              ctx.stroke();
-              ctx.restore();
-             },
-             beforeInit(chart) {
-                chart.options.events.push('mouseover');
-             },
-             afterEvent(chart, event) {
-                if (!chart.options.lineOnHover || !chart.options.lineOnHover.enabled) {
-                  return;
-                }
-                if (event.type !== 'mousemove' && event.type !== 'mouseover') {
-                   if (event.type === 'mouseout') {
-                     this.isMouseOut = true;
-                   }
-                   chart.clear();
-                   chart.draw();
-                   return;
-                }
-                this.posX = event.x;
-                this.isMouseOut = false;
-                chart.clear();
-                chart.draw();
-                this.drawLine(chart, this.posX);
-                // This drags the tooltip for the first dataset which is displayed
-                let dataSetIndex = -1;
-                if (!chart.getDatasetMeta(0).hidden) {
-                  dataSetIndex = 0;
-                } else if (!chart.getDatasetMeta(1).hidden) {
-                  dataSetIndex = 1;
-                } else if (!chart.getDatasetMeta(2).hidden) {
-                  dataSetIndex = 2;
-                }
-                if (dataSetIndex > -1) {
-                  const metaData = chart.getDatasetMeta(dataSetIndex).data,
-                    radius = chart.data.datasets[dataSetIndex].pointHoverRadius,
-                    posX = metaData.map(e => e._model.x);
-                  posX.forEach(function(pos, posIndex) {
-                    if (this.posX < pos + radius && this.posX > pos - radius) {
-                        // chart.updateHoverStyle([metaData[posIndex]], null, true);
-                        chart.tooltip._active = [metaData[posIndex]];
-                    } else {
-                      //  chart.updateHoverStyle([metaData[posIndex]], null, false);
-                    }
-                  }.bind(this));
-                  chart.tooltip.update();
-                }
-             },
-             afterDatasetsDraw(chart, ease) {
-                 if (this.posX && !this.isMouseOut) {
-                  this.drawLine(chart, this.posX);
-                }
-             }
-          });
     }
 
     getDailyTxData = () => {
@@ -150,12 +76,83 @@ export default class TransactionCountBarChart extends Component{
         })
     }
 
+    getTxTypeGroup(txType) { // Change this to return a group for the tx, such as 'Booking', 'ID', 'Standard Tx'...
+        switch(txType) {
+            case 'asset/msgCreateAsset':
+                return 'asset';
+            case 'asset/msgDeleteAsset':
+                return 'asset';
+            case 'asset/msgUpdateAsset':
+                return 'asset';
+            case 'booking/msgBookBook':
+                return 'booking';
+            case 'booking/msgBookComplete':
+                return 'booking';
+            case 'gentlemint/msgLoadSHR':
+                return 'payment';
+            case 'gentlemint/msgLoadSHRP':
+                return 'payment';
+            case 'gentlemint/msgSendSHR':
+                return 'payment';
+            case 'gentlemint/msgSendSHRP':
+                return 'pament';
+            case 'id/msgCreateId':
+                return 'id';
+            case 'id/msgDeleteId':
+                return 'id';
+            case 'id/msgUpdateId':
+                return 'id';
+            default:
+                // if(txType.includes('/')) {
+                //     return txType.substring(txType.indexOf('/') + 1, txType.length);
+                // }
+                return 'standard';
+        }
+    }
+
     buildChartData(data) {
           const txData = [];
           const feeShrData = [];
           const flowbacksUsdData = [];
           const chartLabels = [];
+
+          const txAsset = [];
+          const txBooking = [];
+          const txPayment = [];
+          const txId = [];
+          const txStandard = [];
           for (let i in data) {
+              for(let j in data[i].txTypes) {
+                  const txType = data[i].txTypes[j];
+                  const txTypeGroup = this.getTxTypeGroup(txType.txType);
+                  switch(txTypeGroup) {
+                    case 'standard':
+                        txStandard.push(txType.txs);
+                        break;
+                    case 'asset':
+                        txAsset.push(txType.txs);
+                        break;
+                    case 'booking':
+                        txBooking.push(txType.txs);
+                        break;
+                    case 'payment':
+                        txPayment.push(txType.txs);
+                        break;
+                    case 'id':
+                        txId.push(txType.txs);
+                        break;
+                    default: // Standard Tx
+                        txStandard.push(txType.txs)
+                  }
+              }
+            // if any txTypes array hasnt got the same numbe rof elements as i currently is, add 0 to each one to show
+            // 0 transactions of that type for this day
+            txStandard.length <= parseInt(i) ? txStandard.push(0) : null;
+            txAsset.length <= parseInt(i) ? txAsset.push(0) : null;
+            txBooking.length <= parseInt(i) ? txBooking.push(0) : null;
+            txPayment.length <= parseInt(i) ? txPayment.push(0) : null;
+            txId.length <= parseInt(i) ? txId.push(0) : null;
+
             chartLabels.push(new Date(data[i]._id));
             txData.push(data[i].txs);
             feeShrData.push(data[i].sumFeeShr);
@@ -167,6 +164,42 @@ export default class TransactionCountBarChart extends Component{
         this.dailyAverageTx = this.sumTotalTx / data.length;
         this.dailyAverageFeeShr = this.sumTotalFeeShr / data.length;
         this.dailyAverageFeeUsd = this.sumTotalFeeUsd / data.length;
+        console.log(txId)
+
+        return {
+            labels: chartLabels,
+            datasets:[
+              {
+                label: 'ID',
+                data:  txId,
+                borderColor: 'yellow',
+                backgroundColor: 'yellow',
+              },
+              {
+                label: 'Asset',
+                data:  txAsset,
+                borderColor: this.feeShrLineColor,
+                backgroundColor: this.feeShrColor,
+              },
+              {
+                label: 'Booking',
+                data:  txBooking,
+                borderColor: 'red',
+                backgroundColor: 'red',
+              },
+              {
+                label: 'Payment',
+                data:  txPayment,
+                borderColor: 'green',
+                backgroundColor: 'green',
+              },
+              {
+                label: 'Standard',
+                data: txStandard,
+                borderColor: this.transactionsLineColor,
+                backgroundColor: this.transactionsColor,
+              }]
+        };
 
         return {
             labels: chartLabels,
@@ -225,6 +258,114 @@ export default class TransactionCountBarChart extends Component{
       }
 
       buildChartOptions() {
+          return {
+            responsive: true,
+            // These two together allow you to change the height of the chart
+            maintainAspectRatio: false,
+            aspectRatio: 0.75,
+            scales: {
+                 xAxes: [{
+                     stacked: true,
+                    //  type: 'time',
+                     ticks: {
+                        beginAtZero: false,
+                        // maxTicksLimit: 10
+                    },
+                    gridLines: {
+                        drawOnChartArea: false
+                    }
+                 }],
+                 yAxes: [{
+                    stacked: true,
+                    id: 'Transactions',
+                    type: 'linear',
+                    position: 'left',
+                    gridLines: {
+                        drawBorder: false
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Transactions',
+                        fontSize: 12,
+                        fontStyle: 'bold',
+                        fontFamily: this.fontFamily,
+                    },
+                    ticks: {
+                        maxTicksLimit: 5,
+                        callback: function(value, index, values) {
+                            return yAxesTickCallback(value, index, values);
+                        }
+                    }
+                },]
+            },
+            tooltips: {
+                mode: 'x',
+                position: 'custom',
+                displayColors: false,
+                intersect: false,
+                backgroundColor: this.colorScheme.tooltipBackgroundColor,
+                borderColor: this.colorScheme.tooltipBorderColor,
+                borderWidth: 0.3,
+                cornerRadius: 2,
+                caretSize: 0,
+                titleFontSize: 10,
+                titleFontColor: this.colorScheme.tooltipTitleFontColor,
+                bodyFontColor: this.colorScheme.tooltipBodyFontColor,
+                bodyFontSize: 13,
+                titleFontFamily: this.fontFamily,
+                bodyFontFamily: this.fontFamily,
+                callbacks: {
+                    title: function(tooltipItem, data) {
+                        console.log(tooltipItem);
+                        const dateString = tooltipItem[0].label;
+                        return dateString.substring(0, dateString.lastIndexOf(','));
+                    },
+                    label: function(tooltipItem, data) {
+                        // Ensures this is only called once for the first dataset (0)
+                        if(tooltipItem.datasetIndex !== 0) {
+                            return;
+                        }
+                        this.tooltipCalledAlready = true;
+                        const dataIndex = tooltipItem.index;
+                        const primaryValue = data.datasets[0].data[dataIndex];
+                        const secondaryValue = data.datasets[1].data[dataIndex];
+                        const ternaryValue = data.datasets[2].data[dataIndex];
+                        const fourthValue = data.datasets[3].data[dataIndex];
+                        const fifthValue = data.datasets[4].data[dataIndex];
+                        const primaryMantissa = primaryValue >= 1000 ? 2 : 0;
+                        const secondaryMantissa = secondaryValue >= 1000 ? 2 : 0;
+                        const ternaryMantissa = ternaryValue >= 1000 ? 2 : 0;
+                        const fourthMantissa = fourthValue >= 1000 ? 2 : 0;
+                        const fifthMantissa = fifthValue >= 1000 ? 2 : 0;
+                        const primaryValueFormatted = numbro(primaryValue).format({
+                            average: true,
+                            mantissa: primaryMantissa,
+                        });
+                        const secondaryValueFormatted = numbro(secondaryValue).format({
+                            average: true,
+                            mantissa: secondaryMantissa,
+                        });
+                        const ternaryValueFormatted = numbro(ternaryValue).format({
+                            average: true,
+                            mantissa: ternaryMantissa,
+                        });
+                        const fourthValueFormatted = numbro(fourthValue).format({
+                            average: true,
+                            mantissa: fourthMantissa,
+                        });
+                        const fifthValueFormatted = numbro(fifthValue).format({
+                            average: true,
+                            mantissa: fifthMantissa,
+                        });
+                        return [`• ID:             ${primaryValueFormatted}`,
+                                `• Asset:        ${secondaryValueFormatted}`,
+                                `• Booking:    ${ternaryValueFormatted}`,
+                                `• Payment:   ${fourthValueFormatted}`,
+                                `• Standard:  ${fifthValueFormatted}`];
+                    }
+                },
+            }
+          };
           return {
             responsive: true,
             // These two together allow you to change the height of the chart
@@ -327,29 +468,29 @@ export default class TransactionCountBarChart extends Component{
                                 }
                             }
                         },
-                        {
-                            id: 'Fee-SHR',
-                            type: 'linear',
-                            position: 'right',
-                            gridLines: {
-                                drawBorder: false
-                            },
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Fee SHR',
-                                fontColor: this.feeShrColor,
-                                fontSize: 12,
-                                fontStyle: 'bold',
-                                fontFamily: this.fontFamily,
-                            },
-                            ticks: {
-                                maxTicksLimit: 5,
-                                fontColor: this.feeShrColor,
-                                callback: function(value, index, values) {
-                                    return yAxesTickCallback(value, index, values);
-                                }
-                            }
-                        },
+                        // {
+                        //     id: 'Fee-SHR',
+                        //     type: 'linear',
+                        //     position: 'right',
+                        //     gridLines: {
+                        //         drawBorder: false
+                        //     },
+                        //     scaleLabel: {
+                        //         display: true,
+                        //         labelString: 'Fee SHR',
+                        //         fontColor: this.feeShrColor,
+                        //         fontSize: 12,
+                        //         fontStyle: 'bold',
+                        //         fontFamily: this.fontFamily,
+                        //     },
+                        //     ticks: {
+                        //         maxTicksLimit: 5,
+                        //         fontColor: this.feeShrColor,
+                        //         callback: function(value, index, values) {
+                        //             return yAxesTickCallback(value, index, values);
+                        //         }
+                        //     }
+                        // },
                         // {
                         //     id: 'Flowbacks-USD',
                         //     type: 'linear',
@@ -403,8 +544,8 @@ export default class TransactionCountBarChart extends Component{
                 <Card>
                     <div className="card-header"><T>analytics.transactionHistory</T></div>
                     <CardBody id="transaction-count-bar-chart">
-                        {/* <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary> */}
-                        <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
+                        <SentryBoundary><Bar data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
+                        {/* <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary> */}
                     </CardBody>
                     <CardFooter>
                         <Row>

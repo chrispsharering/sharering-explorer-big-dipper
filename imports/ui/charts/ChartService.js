@@ -1,3 +1,13 @@
+import numbro from 'numbro';
+
+export function yAxesTickCallback(value, index, values, prependUsd) {
+  const number = numbro(value).format({
+      spaceSeparated: false,
+      average: true
+  });
+  return prependUsd ? `$${number}` : number;
+}
+
 export function buildBlockchainDatasets(txData, isMobile) {
     const lineBorderWith = isMobile ? 1 : 2;
     const txDataset = [];

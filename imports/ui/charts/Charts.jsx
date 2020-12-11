@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'reactstrap';
 import ChainStates from '../components/ChainStatesContainer.js';
 import TransactionCountLineChart from './TransactionCountLineChart.jsx';
+import TransactionTypesBarChart from './TransactionTypesBarChart.jsx';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
@@ -16,7 +17,7 @@ export default class Charts extends Component{
         return <div id="charts">
             <Helmet>
                 <title>Charts for ShareLedger | ShareLedger Explorer</title>
-                <meta name="description" content="We would like to keep track how voting power are distributed over time among validators." />
+                <meta name="description" content="Displaying ShareLedger statistics via charts" />
             </Helmet>
             <Row>
                 <Col md={3} xs={12}><h1 className="d-none d-lg-block"><T>charts.shareledgerCharts</T></h1></Col>
@@ -31,7 +32,11 @@ export default class Charts extends Component{
                     <TransactionCountLineChart />
                 </Col>
             </Row>
-
+            {/* <Row>
+                <Col>
+                    <TransactionTypesBarChart />
+                </Col>
+            </Row> */}
         </div>
     }
 }
