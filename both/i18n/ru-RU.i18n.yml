@@ -74,6 +74,7 @@ analytics:
     blockInterval: 'Интервал Блока'
     noOfValidators: 'количество валидаторов'
     transactionHistory: 'История транзакций'
+    transactionTypeHistory: 'История типов транзакций'
 validators:
     randomValidators: 'Случайные Валидаторы'
     moniker: 'Кличка'
@@ -149,6 +150,11 @@ transactions:
     distribution: 'Распределение'
     governance: 'Управление'
     slashing: 'Сокращение'
+    idTx: 'Идентичность'
+    assetTx: 'Актив'
+    bookingTx: 'Бронирование'
+    paymentTx: 'Оплата'
+    standardTx: 'Стандарт'
 proposals:
     notFound: 'Ни одно предложение не найдено.'
     listOfProposals: 'список предложений по управлению'

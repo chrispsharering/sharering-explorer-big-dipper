@@ -73,6 +73,7 @@ analytics:
     blockInterval: 'Intervalo de bloque'
     noOfValidators: 'No. de validadores'
     transactionHistory: 'Historial de transacciones'
+    transactionTypeHistory: 'Historial del tipo de transacción'
 validators:
     randomValidators: 'Validadores aleatorios'
     moniker: 'Moniker'
@@ -149,6 +150,11 @@ transactions:
     distribution: 'Distribución'
     governance: 'Governanza'
     slashing: 'Recorte'
+    idTx: 'Identidad'
+    assetTx: 'Activo'
+    bookingTx: 'Reserva'
+    paymentTx: 'Pago'
+    standardTx: 'Estándar'
 proposals:
     notFound: 'No se ha encontrado el proposal.'
     listOfProposals: 'Here is a list of governance proposals.'

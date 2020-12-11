@@ -402,7 +402,7 @@ export default class TransactionCountBarChart extends Component{
             return (                    
                 <Card>
                     <div className="card-header"><T>analytics.transactionHistory</T></div>
-                    <CardBody id="transaction-count-bar-chart">
+                    <CardBody id="transaction-count-line-chart">
                         {/* <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary> */}
                         <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>

@@ -74,6 +74,7 @@ analytics:
     blockInterval: 'Interwał Bloku'
     noOfValidators: 'Liczba Walidatorów'
     transactionHistory: 'Historia transakcji'
+    transactionTypeHistory: 'Historia typów transakcji'
 validators:
     randomValidators: 'Losowo Wybrani Walidatorzy'
     moniker: 'Moniker'
@@ -150,6 +151,11 @@ transactions:
     distribution: 'Dystrybucja'
     governance: 'Administracja'
     slashing: 'Cięcia'
+    idTx: 'Tożsamość'
+    assetTx: 'Kapitał'
+    bookingTx: 'Rezerwować'
+    paymentTx: 'Zapłata'
+    standardTx: 'Standard'
 proposals:
     notFound:  Nie znaleziono propozycji.'
     listOfProposals: 'Poniżej znajduje się lista propozycji administracyjnych.'

@@ -75,6 +75,7 @@ analytics:
     blockInterval: 'Block Interval'
     noOfValidators: 'No. of Validators'
     transactionHistory: 'Transaction History'
+    transactionTypeHistory: 'Transaction Type History'
 validators:
     randomValidators: 'Random Validators'
     moniker: 'Moniker'
@@ -157,7 +158,11 @@ transactions:
     info: 'More Info'
     address: 'Address'
     amount: 'Amount'
-
+    idTx: 'ID'
+    assetTx: 'Asset'
+    bookingTx: 'Booking'
+    paymentTx: 'Payment'
+    standardTx: 'Standard'
 
 bep3:
     swap:

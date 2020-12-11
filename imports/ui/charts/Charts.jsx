@@ -32,11 +32,11 @@ export default class Charts extends Component{
                     <TransactionCountLineChart />
                 </Col>
             </Row>
-            {/* <Row>
+            <Row>
                 <Col>
                     <TransactionTypesBarChart />
                 </Col>
-            </Row> */}
+            </Row>
         </div>
     }
 }

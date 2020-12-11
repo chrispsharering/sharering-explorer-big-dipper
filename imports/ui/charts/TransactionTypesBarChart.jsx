@@ -13,10 +13,10 @@ export default class TransactionTypesBarChart extends Component{
     isLoading = true;
     transactionsColor = 'rgba(255, 159, 0, 1)';
     transactionsLineColor = 'rgba(255, 159, 0, 0.7)';
-    feeShrColor = 'rgba(71, 131, 196, 1)';
-    feeShrLineColor = 'rgba(71, 131, 196, 0.7)';
-    flowbacksUsdColor = 'rgba(0, 158, 115, 1)';
-    flowbacksUsdLineColor = 'rgba(0, 158, 115, 0.7)';
+    idTxColor = 'rgba(71, 131, 196, 1)';
+    idTxLineColor = 'rgba(71, 131, 196, 0.7)';
+    paymentTxColor = 'rgba(0, 158, 115, 1)';
+    paymentTxLineColor = 'rgba(0, 158, 115, 0.7)';
     fontFamily = '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sa';
     colorScheme = {
         fontColor: 'rgb(0, 0, 0)',
@@ -27,12 +27,11 @@ export default class TransactionTypesBarChart extends Component{
         gridLinesColor: 'rgba(0, 0, 0, 0.1)',
         backgroundColor: 'rgb(255, 255, 255)'
     }
-    sumTotalTx = 0;
-    dailyAverageTx = 0;
-    sumTotalFeeShr = 0;
-    dailyAverageFeeShr = 0;
-    sumTotalFeeUsd = 0;
-    dailyAverageFeeUsd = 0;
+    sumTotalIdTx = 0;
+    sumTotalAssetTx = 0;
+    sumTotalBookingTx = 0;
+    sumTotalPaymentTx = 0;
+    sumTotalStandardTx = 0;
 
     constructor(props){
         super(props);
@@ -78,29 +77,29 @@ export default class TransactionTypesBarChart extends Component{
 
     getTxTypeGroup(txType) { // Change this to return a group for the tx, such as 'Booking', 'ID', 'Standard Tx'...
         switch(txType) {
-            case 'asset/msgCreateAsset':
+            case 'asset/Create':
                 return 'asset';
-            case 'asset/msgDeleteAsset':
+            case 'asset/Delete':
                 return 'asset';
-            case 'asset/msgUpdateAsset':
+            case 'asset/Update':
                 return 'asset';
-            case 'booking/msgBookBook':
+            case 'book/Book':
                 return 'booking';
-            case 'booking/msgBookComplete':
+            case 'book/Complete':
                 return 'booking';
-            case 'gentlemint/msgLoadSHR':
+            case 'gentlemint/LoadSHR':
                 return 'payment';
-            case 'gentlemint/msgLoadSHRP':
+            case 'gentlemint/LoadSHRP':
                 return 'payment';
-            case 'gentlemint/msgSendSHR':
+            case 'gentlemint/SendSHR':
                 return 'payment';
-            case 'gentlemint/msgSendSHRP':
+            case 'gentlemint/SendSHRP':
                 return 'pament';
-            case 'id/msgCreateId':
+            case 'identity/CreateId':
                 return 'id';
-            case 'id/msgDeleteId':
+            case 'identity/DeleteId':
                 return 'id';
-            case 'id/msgUpdateId':
+            case 'identity/UpdateId':
                 return 'id';
             default:
                 // if(txType.includes('/')) {
@@ -111,150 +110,96 @@ export default class TransactionTypesBarChart extends Component{
     }
 
     buildChartData(data) {
-          const txData = [];
-          const feeShrData = [];
-          const flowbacksUsdData = [];
           const chartLabels = [];
-
-          const txAsset = [];
-          const txBooking = [];
-          const txPayment = [];
-          const txId = [];
-          const txStandard = [];
+          const txAssetData = [];
+          const txBookingData = [];
+          const txPaymentData = [];
+          const txIdData = [];
+          const txStandardData = [];
+          const txTypes = [];
           for (let i in data) {
+              const date = new Date(data[i]._id);
+              txStandardData.push({x: date, y: 0});
+              txAssetData.push({x: date, y: 0});
+              txBookingData.push({x: date, y: 0});
+              txPaymentData.push({x: date, y: 0});
+              txIdData.push({x: date, y: 0});
               for(let j in data[i].txTypes) {
                   const txType = data[i].txTypes[j];
+                  txTypes.push(txType.txType) //used for testing to log out later
                   const txTypeGroup = this.getTxTypeGroup(txType.txType);
+                  console.log('tx types')
+                  console.log(txType)
+                  console.log(txTypeGroup)
                   switch(txTypeGroup) {
                     case 'standard':
-                        txStandard.push(txType.txs);
+                        txStandardData[i].y += txType.txs;
+                        this.sumTotalStandardTx += txType.txs;
                         break;
                     case 'asset':
-                        txAsset.push(txType.txs);
+                        txAssetData[i].y += txType.txs;
+                        this.sumTotalAssetTx += txType.txs;
                         break;
                     case 'booking':
-                        txBooking.push(txType.txs);
+                        txBookingData[i].y += txType.txs;
+                        this.sumTotalBookingTx += txType.txs;
                         break;
                     case 'payment':
-                        txPayment.push(txType.txs);
+                        txPaymentData[i].y += txType.txs;
+                        this.sumTotalPaymentTx += txType.txs;
                         break;
                     case 'id':
-                        txId.push(txType.txs);
+                        txIdData[i].y += txType.txs;
+                        this.sumTotalIdTx += txType.txs;
                         break;
                     default: // Standard Tx
-                        txStandard.push(txType.txs)
-                  }
+                        txStandardData[i].y += txType.txs;
+                        this.sumTotalStandardTx += txType.txs;
+                }
               }
-            // if any txTypes array hasnt got the same numbe rof elements as i currently is, add 0 to each one to show
-            // 0 transactions of that type for this day
-            txStandard.length <= parseInt(i) ? txStandard.push(0) : null;
-            txAsset.length <= parseInt(i) ? txAsset.push(0) : null;
-            txBooking.length <= parseInt(i) ? txBooking.push(0) : null;
-            txPayment.length <= parseInt(i) ? txPayment.push(0) : null;
-            txId.length <= parseInt(i) ? txId.push(0) : null;
 
             chartLabels.push(new Date(data[i]._id));
-            txData.push(data[i].txs);
-            feeShrData.push(data[i].sumFeeShr);
-            flowbacksUsdData.push(data[i].sumFeeUsd);
-            this.sumTotalTx += data[i].txs;
-            this.sumTotalFeeShr += data[i].sumFeeShr;
-            this.sumTotalFeeUsd += data[i].sumFeeUsd;
         }
-        this.dailyAverageTx = this.sumTotalTx / data.length;
-        this.dailyAverageFeeShr = this.sumTotalFeeShr / data.length;
-        this.dailyAverageFeeUsd = this.sumTotalFeeUsd / data.length;
-        console.log(txId)
+        const distinctTxTypes = [...new Set(txTypes)];
+        console.log('distincttxtypes: ')
+        console.log(distinctTxTypes)
+        console.log(txTypes.filter.distinct)
 
         return {
             labels: chartLabels,
             datasets:[
               {
                 label: 'ID',
-                data:  txId,
+                data:  txIdData,
+                borderColor: this.idTxLineColor,
+                backgroundColor: this.idTxColor,
+              },
+              {
+                label: 'Asset',
+                data:  txAssetData,
                 borderColor: 'yellow',
                 backgroundColor: 'yellow',
               },
               {
-                label: 'Asset',
-                data:  txAsset,
-                borderColor: this.feeShrLineColor,
-                backgroundColor: this.feeShrColor,
-              },
-              {
                 label: 'Booking',
-                data:  txBooking,
+                data:  txBookingData,
                 borderColor: 'red',
                 backgroundColor: 'red',
               },
               {
                 label: 'Payment',
-                data:  txPayment,
-                borderColor: 'green',
-                backgroundColor: 'green',
+                data:  txPaymentData,
+                borderColor: this.paymentTxLineColor,
+                backgroundColor: this.paymentTxColor,
               },
               {
                 label: 'Standard',
-                data: txStandard,
-                borderColor: this.transactionsLineColor,
-                backgroundColor: this.transactionsColor,
-              }]
-        };
-
-        return {
-            labels: chartLabels,
-            datasets: [
-                {
-                    label: 'Transactions',
-                    yAxisID: 'Transactions',
-                    data: txData,
-                    fill: false,
-                    borderColor: this.transactionsLineColor,
-                    backgroundColor: this.transactionsColor,
-                    pointRadius: 1.5,
-                    pointHitRadius: 1,
-                    gridLines: {
-                        drawBorder: false,
-                        display: true,
-                        color: this.colorScheme.gridLinesColor,
-                        zeroLineColor: this.colorScheme.gridLinesColor
-                        // tickMarkLength: 8
-                    },
-                },
-                {
-                    label: 'Fee SHR',
-                    yAxisID: 'Fee-SHR',
-                    data: feeShrData,
-                    fill: false,
-                    borderColor: this.feeShrLineColor,
-                    backgroundColor: this.feeShrColor,
-                    pointRadius: 1.5,
-                    pointHitRadius: 1,
-                    gridLines: {
-                        drawBorder: false,
-                        display: true,
-                        color: this.colorScheme.gridLinesColor,
-                        zeroLineColor: this.colorScheme.gridLinesColor
-                    },
-                },
-                // {
-                //     label: 'Flowbacks USD',
-                //     yAxisID: 'Flowbacks-USD',
-                //     data: flowbacksUsdData,
-                //     fill: false,
-                //     borderColor: this.flowbacksUsdLineColor,
-                //     backgroundColor: this.flowbacksUsdColor,
-                //     pointRadius: 1.5,
-                //     pointHitRadius: 1,
-                //     gridLines: {
-                //         drawBorder: false,
-                //         display: true,
-                //         color: this.colorScheme.gridLinesColor,
-                //         zeroLineColor: this.colorScheme.gridLinesColor
-                //     },
-                // }
+                data: txStandardData,
+                borderColor: 'purple',
+                backgroundColor: 'purple',
+              }
             ]
-        }
+        };
       }
 
       buildChartOptions() {
@@ -264,18 +209,24 @@ export default class TransactionTypesBarChart extends Component{
             maintainAspectRatio: false,
             aspectRatio: 0.75,
             scales: {
-                 xAxes: [{
-                     stacked: true,
-                    //  type: 'time',
-                     ticks: {
-                        beginAtZero: false,
-                        // maxTicksLimit: 10
-                    },
+                xAxes: [{
+                    stacked: true,
+                    title: 'time',
+                    type: 'time',
                     gridLines: {
                         drawOnChartArea: false
+                    },
+                    time: {
+                        unit: 'day',
+                        unitStepSize: 1
+                    },
+                    ticks: {
+                        maxRotation: 0,
+                        beginAtZero: false,
+                        maxTicksLimit: 10
                     }
-                 }],
-                 yAxes: [{
+                }],
+                yAxes: [{
                     stacked: true,
                     id: 'Transactions',
                     type: 'linear',
@@ -292,11 +243,12 @@ export default class TransactionTypesBarChart extends Component{
                     },
                     ticks: {
                         maxTicksLimit: 5,
+                        beginAtZero: true,
                         callback: function(value, index, values) {
                             return yAxesTickCallback(value, index, values);
                         }
                     }
-                },]
+                }]
             },
             tooltips: {
                 mode: 'x',
@@ -316,7 +268,6 @@ export default class TransactionTypesBarChart extends Component{
                 bodyFontFamily: this.fontFamily,
                 callbacks: {
                     title: function(tooltipItem, data) {
-                        console.log(tooltipItem);
                         const dateString = tooltipItem[0].label;
                         return dateString.substring(0, dateString.lastIndexOf(','));
                     },
@@ -327,11 +278,11 @@ export default class TransactionTypesBarChart extends Component{
                         }
                         this.tooltipCalledAlready = true;
                         const dataIndex = tooltipItem.index;
-                        const primaryValue = data.datasets[0].data[dataIndex];
-                        const secondaryValue = data.datasets[1].data[dataIndex];
-                        const ternaryValue = data.datasets[2].data[dataIndex];
-                        const fourthValue = data.datasets[3].data[dataIndex];
-                        const fifthValue = data.datasets[4].data[dataIndex];
+                        const primaryValue = data.datasets[0].data[dataIndex].y;
+                        const secondaryValue = data.datasets[1].data[dataIndex].y;
+                        const ternaryValue = data.datasets[2].data[dataIndex].y;
+                        const fourthValue = data.datasets[3].data[dataIndex].y;
+                        const fifthValue = data.datasets[4].data[dataIndex].y;
                         const primaryMantissa = primaryValue >= 1000 ? 2 : 0;
                         const secondaryMantissa = secondaryValue >= 1000 ? 2 : 0;
                         const ternaryMantissa = ternaryValue >= 1000 ? 2 : 0;
@@ -365,159 +316,8 @@ export default class TransactionTypesBarChart extends Component{
                     }
                 },
             }
-          };
-          return {
-            responsive: true,
-            // These two together allow you to change the height of the chart
-            maintainAspectRatio: false,
-            aspectRatio: 0.75,
-            lineOnHover: {
-                enabled: true,
-                lineColor: '#bbb',
-                lineWidth: 0.5
-            },
-            legend: {
-                onClick: (e) => e.stopPropagation()
-            },
-            tooltips: {
-                mode: 'x',
-                position: 'custom',
-                displayColors: false,
-                intersect: false,
-                backgroundColor: this.colorScheme.tooltipBackgroundColor,
-                borderColor: this.colorScheme.tooltipBorderColor,
-                borderWidth: 0.3,
-                cornerRadius: 2,
-                caretSize: 0,
-                titleFontSize: 10,
-                titleFontColor: this.colorScheme.tooltipTitleFontColor,
-                bodyFontColor: this.colorScheme.tooltipBodyFontColor,
-                bodyFontSize: 13,
-                titleFontFamily: this.fontFamily,
-                bodyFontFamily: this.fontFamily,
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        const dateString = tooltipItem[0].label;
-                        return dateString.substring(0, dateString.lastIndexOf(','));
-                    },
-                    label: function(tooltipItem, data) {
-                        // Ensures this is only called once for the first dataset (0)
-                        if(tooltipItem.datasetIndex !== 0) {
-                            return;
-                        }
-                        this.tooltipCalledAlready = true;
-                        const dataIndex = tooltipItem.index;
-                        const primaryValue = data.datasets[0].data[dataIndex];
-                        const secondaryValue = data.datasets[1].data[dataIndex];
-                        // const ternaryValue = data.datasets[2].data[dataIndex];
-                        const primaryMantissa = primaryValue >= 1000 ? 2 : 0;
-                        const secondaryMantissa = secondaryValue >= 1000 ? 2 : 0;
-                        // const ternaryMantissa = ternaryValue >= 1000 ? 2 : 0;
-                        const primaryValueFormatted = numbro(primaryValue).format({
-                            average: true,
-                            mantissa: primaryMantissa,
-                        });
-                        const secondaryValueFormatted = numbro(secondaryValue).format({
-                            average: true,
-                            mantissa: secondaryMantissa,
-                        });
-                        // const ternaryValueFormatted = numbro(ternaryValue).format({
-                        //     average: true,
-                        //     mantissa: ternaryMantissa,
-                        // });
-                        return [`• TXs:             ${primaryValueFormatted}`,
-                                `• Fee:             ${secondaryValueFormatted} SHR`,];
-                                //`• Flowbacks:  $${ternaryValueFormatted}`];
-                    }
-                },
-            },
-            scales: {
-                xAxes: [
-                    {
-                        type: 'time',
-                        ticks: {
-                            beginAtZero: false,
-                            maxTicksLimit: 10
-                        },
-                        gridLines: {
-                            drawOnChartArea: false
-                        }
-                    }
-                ],
-                    yAxes: [
-                            {
-                            id: 'Transactions',
-                            type: 'linear',
-                            position: 'left',
-                            gridLines: {
-                                drawBorder: false
-                            },
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'Transactions',
-                                fontColor: this.transactionsColor,
-                                fontSize: 12,
-                                fontStyle: 'bold',
-                                fontFamily: this.fontFamily,
-                            },
-                            ticks: {
-                                maxTicksLimit: 5,
-                                fontColor: this.transactionsColor,
-                                callback: function(value, index, values) {
-                                    return yAxesTickCallback(value, index, values);
-                                }
-                            }
-                        },
-                        // {
-                        //     id: 'Fee-SHR',
-                        //     type: 'linear',
-                        //     position: 'right',
-                        //     gridLines: {
-                        //         drawBorder: false
-                        //     },
-                        //     scaleLabel: {
-                        //         display: true,
-                        //         labelString: 'Fee SHR',
-                        //         fontColor: this.feeShrColor,
-                        //         fontSize: 12,
-                        //         fontStyle: 'bold',
-                        //         fontFamily: this.fontFamily,
-                        //     },
-                        //     ticks: {
-                        //         maxTicksLimit: 5,
-                        //         fontColor: this.feeShrColor,
-                        //         callback: function(value, index, values) {
-                        //             return yAxesTickCallback(value, index, values);
-                        //         }
-                        //     }
-                        // },
-                        // {
-                        //     id: 'Flowbacks-USD',
-                        //     type: 'linear',
-                        //     position: 'right',
-                        //     gridLines: {
-                        //         drawBorder: false
-                        //     },
-                        //     scaleLabel: {
-                        //         display: true,
-                        //         labelString: 'Flowbacks USD',
-                        //         fontColor: this.flowbacksUsdColor,
-                        //         fontSize: 12,
-                        //         fontStyle: 'bold',
-                        //         fontFamily: this.fontFamily,
-                        //     },
-                        //     ticks: {
-                        //         maxTicksLimit: 5,
-                        //         fontColor: this.flowbacksUsdColor,
-                        //         callback: function(value, index, values) {
-                        //             return yAxesTickCallback(value, index, values, true);
-                        //         }
-                        //     }
-                        // }
-                    ]
-                }
-            }
-      }
+        };
+    }
 
     buildChart(txData){
         const chartData = this.buildChartData(txData);
@@ -542,24 +342,22 @@ export default class TransactionTypesBarChart extends Component{
         else {
             return (                    
                 <Card>
-                    <div className="card-header"><T>analytics.transactionHistory</T></div>
+                    <div className="card-header"><T>analytics.transactionTypeHistory</T></div>
                     <CardBody id="transaction-count-bar-chart">
                         <SentryBoundary><Bar data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
-                        {/* <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary> */}
                     </CardBody>
                     <CardFooter>
                         <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>Tx</T>:</span> <strong>{numbro(this.sumTotalTx).format({average: true, mantissa: 2})}</strong></small></Col>
-                            <Col xs={7} md={6}><small><span><T>transactions.dailyTx</T>:</span> <strong>{numbro(this.dailyAverageTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.idTx</T>:</span> <strong>{numbro(this.sumTotalIdTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={7} md={6}><small><span><T>transactions.assetTx</T>:</span> <strong>{numbro(this.sumTotalAssetTx).format({average: true, mantissa: 2})}</strong></small></Col>
                         </Row>
                         <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.fee</T>:</span> <strong>{numbro(this.sumTotalFeeShr).format({average: true, mantissa: 2})}</strong> SHR</small></Col>
-                            <Col xs={7} md={6}><small><span><T>transactions.dailyFee</T>:</span> <strong>{numbro(this.dailyAverageFeeShr).format({average: true, mantissa: 2})}</strong> SHR</small></Col>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.bookingTx</T>:</span> <strong>{numbro(this.sumTotalBookingTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={7} md={6}><small><span><T>transactions.paymentTx</T>:</span> <strong>{numbro(this.sumTotalPaymentTx).format({average: true, mantissa: 2})}</strong></small></Col>
                         </Row>
-                        {/* <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>flowbacks.flowbacks</T>:</span> <strong>${numbro(this.sumTotalFeeUsd).format({average: true, mantissa: 2})}</strong></small></Col>
-                            <Col xs={7} md={6}><small><span><T>flowbacks.dailyFlowbacks</T>:</span> <strong>${numbro(this.dailyAverageFeeUsd).format({average: true, mantissa: 2})}</strong></small></Col>
-                        </Row> */}
+                        <Row>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.standardTx</T>:</span> <strong>{numbro(this.sumTotalStandardTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                        </Row>
                     </CardFooter>
                 </Card>
             );

@@ -73,6 +73,7 @@ analytics:
     blockInterval: 'Block Interval'
     noOfValidators: 'No. of Validators'
     transactionHistory: '交易記錄'
+    transactionTypeHistory: '交易類型歷史'
 validators:
     randomValidators: '隨機驗證人'
     moniker: '驗證人代號'
@@ -149,6 +150,11 @@ transactions:
     distribution: '收益分配'
     governance: '鏈上治理'
     slashing: '削減'
+    idTx: '身分識別'
+    assetTx: '資產'
+    bookingTx: '訂票'
+    paymentTx: '付款'
+    standardTx: '標準'
 proposals:
     notFound: '沒有治理提案'
     listOfProposals: '這名單顯示所有治理提案'
