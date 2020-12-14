@@ -11,6 +11,7 @@ const T = i18n.createComponent();
 
 export default class TransactionCountBarChart extends Component {
     isLoading = true;
+    originalState;
     transactionsColor = 'rgba(255, 159, 0, 1)';
     transactionsLineColor = 'rgba(255, 159, 0, 0.7)';
     feeShrColor = 'rgba(71, 131, 196, 1)';
@@ -364,11 +365,22 @@ export default class TransactionCountBarChart extends Component {
         const chartData = this.buildChartData(txData);
         const chartOptions = this.buildChartOptions();
         this.isLoading = false;
-
-        return {
+        this.originalState = {
             data: chartData,
             options: chartOptions,
         };
+        return JSON.parse(JSON.stringify(this.originalState));
+    }
+
+    changeTimeRange(days) {
+        if(days < 0 || this.originalState.data.labels.length <= days) {
+            this.setState(JSON.parse(JSON.stringify(this.originalState)));
+            return;
+        }
+        this.state.data.datasets[0].data = this.originalState.data.datasets[0].data.slice(this.originalState.data.datasets[0].data.length - days);
+        this.state.data.datasets[1].data = this.originalState.data.datasets[1].data.slice(this.originalState.data.datasets[1].data.length - days);
+        this.state.data.labels = this.originalState.data.labels.slice(this.originalState.data.labels.length - days);
+        this.setState(this.state);
     }
 
     componentDidMount() {
@@ -382,9 +394,35 @@ export default class TransactionCountBarChart extends Component {
             return <Spinner type="grow" color="primary" />
         }
         else {
-            return (                    
+            const timeButtonStyling = {padding: "5px", color: "rgba(1, 1, 1, 0.55)", textTransform: "none", boxShadow: "0 1px 1px rgba(0, 0, 0, 0.4)"};
+            return (
                 <Card>
-                    <div className="card-header"><T>analytics.transactionHistory</T></div>
+                    <div className="card-header">
+                        <T>analytics.transactionHistory</T>
+                    </div>
+                    <Row style={{paddingTop: "0.5em"}}>
+                        <Col xs={3} sm={{size: 3, offset: 1}} md={{size: 1, offset: 4}}>
+                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(-1)}>All Time</Button>
+                        </Col>
+                        <Col xs={3} sm={2} md={1}>
+                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(365)}>1 Year</Button>
+                        </Col>
+                        <Col xs={3} md={1}>
+                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(90)}>90 Days</Button>
+                        </Col>
+                        <Col xs={3} md={1}>
+                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(2)}>30 Days</Button>
+                        </Col>
+                    </Row>
+                    {/* <div>
+                            <Button secondary style={{padding: "5px"}} onClick={() => this.changeTimeRange(-1)}>All Time</Button>{' '}
+                        
+                            <Button style={{padding: "5px"}} onClick={() => this.changeTimeRange(365)}>1 Year</Button>{' '}
+                        
+                            <Button style={{padding: "5px"}} onClick={() => this.changeTimeRange(90)}>90 Days</Button>{' '}
+                        
+                            <Button style={{padding: "5px"}} onClick={() => this.changeTimeRange(2)}>30 Days</Button>
+                    </div> */}
                     <CardBody id="transaction-count-line-chart">
                         {/* <SentryBoundary><HorizontalBar data={this.state.data} options={this.state.options} /></SentryBoundary> */}
                         <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>

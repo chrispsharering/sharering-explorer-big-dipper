@@ -61,7 +61,7 @@ export default class Charts extends Component{
                             <TransactionCountLineChart dailyTxData={this.state.dailyTxData} />
                         </Col>
                     </Row>
-                    <Row>
+                    {/* <Row>
                         <Col>
                             <TransactionTypesBarChart dailyTxData={this.state.dailyTxData} />
                         </Col>
@@ -70,7 +70,7 @@ export default class Charts extends Component{
                         <Col>
                             <FlowbacksBarChart dailyTxData={this.state.dailyTxData} />
                         </Col>
-                    </Row>
+                    </Row> */}
                 </div>
             }
         </div>
