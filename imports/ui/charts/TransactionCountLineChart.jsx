@@ -63,13 +63,13 @@ export default class TransactionCountBarChart extends Component {
             drawLine(chart, posX) {
               const ctx = chart.ctx,
                   x_axis = chart.scales['x-axis-0'],
-                  y_axis = chart.scales['Transactions'],
-                  x = posX,
-                  topY = y_axis.top,
-                  bottomY = y_axis.bottom;
-              if (posX < x_axis.left || posX > x_axis.right) {
+                  y_axis = chart.scales['Transactions'];
+              let x = posX, topY, bottomY;
+              if (!y_axis || !x_axis || posX < x_axis.left || posX > x_axis.right
+                  || !chart.options.lineOnHover) {
                 return;
               }
+              topY = y_axis.top, bottomY = y_axis.bottom;
               // draw line
               ctx.save();
               ctx.beginPath();

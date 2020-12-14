@@ -39,7 +39,7 @@ export default class Charts extends Component{
     render(){
         return <div id="charts">
             <Helmet>
-                <title>Charts for ShareLedger | ShareLedger Explorer</title>
+                <title>ShareLedger Charts | ShareLedger Explorer</title>
                 <meta name="description" content="Displaying ShareLedger statistics via charts" />
             </Helmet>
             <Row>
