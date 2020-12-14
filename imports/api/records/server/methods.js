@@ -13,20 +13,6 @@ import { Chain } from '../../chain/chain.js';
 import _ from 'lodash';
 const BULKUPDATEMAXSIZE = 1000;
 
-const getTodaysDateString = () => {
-    var d = new Date(),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
-
-    return [year, month, day].join('-');
-}
-
 const getBlockStats = (startHeight, latestHeight) => {
     let blockStats = {};
     const cond = {$and: [
@@ -414,15 +400,25 @@ Meteor.methods({
 
         return true;
     },
-    'Analytics.getAggregateTransactionData'(){
-        const todaysDateString = getTodaysDateString();
-        // Get the most recent date of DailyTransactions persisted
+    'Analytics.getAggregateTransactionData'() {
+        // Get the most recent Transaction date in db
+        const lastTransactionData = Transactions.find(
+            {},
+            {
+                fields: { timestamp: 1 },
+                sort: { timestamp: -1 },
+                limit: 1
+            },
+        ).fetch();
+
+        const lastTransactionDataDate = lastTransactionData.length > 0 ? lastTransactionData[0].timestamp.substring(0, 10) : '';
+        // Get the most recent date of DailyTransactions persisted before the most recent Transaction
         const lastDailyTransactionData = DailyTransactionData.find(
             {
-                _id: { $lt: todaysDateString }
+                _id: { $lt: lastTransactionDataDate }
             },
             {
-                fields: { _id:1 },
+                fields: { _id: 1 },
                 sort: { _id: -1 },
                 limit: 1
             },
@@ -469,7 +465,7 @@ Meteor.methods({
                 $match: {
                     $and: [
                         { date : { $gt: lastDailyTransactionDataDate } },
-                        { date : { $lt: todaysDateString } } 
+                        { date : { $lt: lastTransactionDataDate } } 
                     ]
                 }
             },
@@ -486,7 +482,7 @@ Meteor.methods({
 
           // This gets daily: txs, txTypes + breakdown, sumFeeShr, date...
           // Only gets daily data after the last DailyTransactions persisted
-          // and before todays date
+          // and before the day before the latest persisted Transaction date
           const aggregateDailyTxDataPipeline = [
             getFeeShrAmountAsString,
             getTxMsgObj,
@@ -502,7 +498,7 @@ Meteor.methods({
                 $match: {
                     $and: [
                         { date : { $gt: lastDailyTransactionDataDate } },
-                        { date : { $lt: todaysDateString } }
+                        { date : { $lt: lastTransactionDataDate } }
                     ]
                 }
             },
@@ -536,7 +532,7 @@ Meteor.methods({
           ];
         return Promise.await(transactions.aggregate(aggregateDailyTxDataPipeline).toArray());
     },
-    'Analytics.persistAggregateTransactionData': function(){
+    'Analytics.persistAggregateTransactionData': function() {
         Meteor.call('Analytics.getAggregateTransactionData', (error, result) => {
             if (error) {
                 console.log("getting aggregate transaction data error:" + error)
