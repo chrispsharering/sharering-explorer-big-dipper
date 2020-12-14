@@ -6,8 +6,23 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } from './ChartService.js';
+import cosmos from '@lunie/cosmos-js';
 
 const T = i18n.createComponent();
+
+customLegendClickHandler = function (e, legendItem) {
+    const index = legendItem.datasetIndex;
+    const datasetsAvailable = this.chart.data.datasetsAvailable;
+    const indexOfLegendItem = datasetsAvailable.indexOf(index);
+    if(indexOfLegendItem >= 0) {
+        datasetsAvailable.splice(indexOfLegendItem, 1);
+    } else {
+        datasetsAvailable.push(index);
+    }
+    const meta = this.chart.getDatasetMeta(index);
+    meta.hidden = meta.hidden === null ? !this.chart.data.datasets[index].hidden : null;
+    this.chart.update();
+};
 
 export default class TransactionTypesBarChart extends Component{
     isLoading = true;
@@ -148,6 +163,7 @@ export default class TransactionTypesBarChart extends Component{
         console.log(txTypes.filter.distinct)
 
         return {
+            datasetsAvailable: [0, 1, 2, 3, 4],
             labels: chartLabels,
             datasets:[
               {
@@ -190,6 +206,9 @@ export default class TransactionTypesBarChart extends Component{
             // These two together allow you to change the height of the chart
             maintainAspectRatio: false,
             aspectRatio: 0.75,
+            legend: {
+                onClick: customLegendClickHandler
+            },
             scales: {
                 xAxes: [{
                     stacked: true,
@@ -254,8 +273,8 @@ export default class TransactionTypesBarChart extends Component{
                         return dateString.substring(0, dateString.lastIndexOf(','));
                     },
                     label: function(tooltipItem, data) {
-                        // Ensures this is only called once for the first dataset (0)
-                        if(tooltipItem.datasetIndex !== 0) {
+                        // Ensures this is only called once for one dataset (the first in the datasetsAvailable array)
+                        if(tooltipItem.datasetIndex !== data.datasetsAvailable[0]) {
                             return;
                         }
                         this.tooltipCalledAlready = true;

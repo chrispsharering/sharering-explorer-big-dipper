@@ -250,6 +250,8 @@ messageTypes:
 flowbacks:
     flowbacks: 'Flowbacks'
     dailyFlowbacks: 'Daily Flowbacks'
+    bought: '購買'
+    dailyBought: '每日購買'
 charts:
     charts: '圖表'
     shareledgerCharts: 'ShareLedger圖表'

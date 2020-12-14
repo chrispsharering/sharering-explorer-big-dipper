@@ -251,6 +251,8 @@ messageTypes:
 flowbacks:
     flowbacks: 'Flowbacks'
     dailyFlowbacks: 'Daily Flowbacks'
+    bought: 'Kupiony'
+    dailyBought: 'Codziennie kupowane'
 charts:
     charts: 'Wykresy'
     shareledgerCharts: 'Wykresy ShareLedger'

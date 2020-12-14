@@ -251,6 +251,8 @@ messageTypes:
 flowbacks:
     flowbacks: 'Flowbacks'
     dailyFlowbacks: 'Daily Flowbacks'
+    bought: 'Acquistato'
+    dailyBought: 'Giornaliero acquistato'
 charts:
     charts: 'Grafici'
     shareledgerCharts: 'Grafici ShareLedger'

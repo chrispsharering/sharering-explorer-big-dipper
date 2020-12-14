@@ -242,6 +242,8 @@ messageTypes:
 flowbacks:
     flowbacks: 'Flowbacks'
     dailyFlowbacks: 'Daily Flowbacks'
+    bought: 'Купил'
+    dailyBought: 'Куплено ежедневно'
 charts:
     charts: 'Диаграммы'
     shareledgerCharts: 'Графики ShareLedger'

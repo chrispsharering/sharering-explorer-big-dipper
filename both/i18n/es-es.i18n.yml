@@ -250,6 +250,8 @@ messageTypes:
 flowbacks:
     flowbacks: 'Flowbacks'
     dailyFlowbacks: 'Flowbacks diarios'
+    bought: 'Comprado'
+    dailyBought: 'Comprado diariamente'
 charts:
     charts: 'Gráficos'
     shareledgerCharts: 'Gráficos de ShareLedger'

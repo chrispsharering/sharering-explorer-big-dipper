@@ -11,12 +11,8 @@ const T = i18n.createComponent();
 
 export default class FlowbacksBarChart extends Component{
     isLoading = true;
-    transactionsColor = 'rgba(255, 159, 0, 1)';
-    transactionsLineColor = 'rgba(255, 159, 0, 0.7)';
-    idTxColor = 'rgba(71, 131, 196, 1)';
-    idTxLineColor = 'rgba(71, 131, 196, 0.7)';
-    paymentTxColor = 'rgba(0, 158, 115, 1)';
-    paymentTxLineColor = 'rgba(0, 158, 115, 0.7)';
+    flowbacksColor = 'rgba(0, 158, 115, 1)';
+    flowbacksLineColor = 'rgba(0, 158, 115, 0.7)';
     fontFamily = '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sa';
     colorScheme = {
         fontColor: 'rgb(0, 0, 0)',
@@ -27,11 +23,10 @@ export default class FlowbacksBarChart extends Component{
         gridLinesColor: 'rgba(0, 0, 0, 0.1)',
         backgroundColor: 'rgb(255, 255, 255)'
     }
-    sumTotalIdTx = 0;
-    sumTotalAssetTx = 0;
-    sumTotalBookingTx = 0;
-    sumTotalPaymentTx = 0;
-    sumTotalStandardTx = 0;
+    sumTotalFlowbacks = 0;
+    sumTotalFeeShr = 0;
+    dailyAverageFlowbacks;
+    dailyAverageFeeShr;
 
     constructor(props) {
         super(props);
@@ -57,128 +52,29 @@ export default class FlowbacksBarChart extends Component{
         }
     }
 
-    getTxTypeGroup(txType) { // Change this to return a group for the tx, such as 'Booking', 'ID', 'Standard Tx'...
-        switch(txType) {
-            case 'asset/Create':
-                return 'asset';
-            case 'asset/Delete':
-                return 'asset';
-            case 'asset/Update':
-                return 'asset';
-            case 'book/Book':
-                return 'booking';
-            case 'book/Complete':
-                return 'booking';
-            case 'gentlemint/LoadSHR':
-                return 'payment';
-            case 'gentlemint/LoadSHRP':
-                return 'payment';
-            case 'gentlemint/SendSHR':
-                return 'payment';
-            case 'gentlemint/SendSHRP':
-                return 'pament';
-            case 'identity/CreateId':
-                return 'id';
-            case 'identity/DeleteId':
-                return 'id';
-            case 'identity/UpdateId':
-                return 'id';
-            default:
-                // if(txType.includes('/')) {
-                //     return txType.substring(txType.indexOf('/') + 1, txType.length);
-                // }
-                return 'standard';
-        }
-    }
-
     buildChartData(data) {
           const chartLabels = [];
-          const txAssetData = [];
-          const txBookingData = [];
-          const txPaymentData = [];
-          const txIdData = [];
-          const txStandardData = [];
-          const txTypes = [];
+          const flowbacksData = [];
+          const feeShrData = [];
           for (let i in data) {
-              const date = new Date(data[i]._id);
-              txStandardData.push({x: date, y: 0});
-              txAssetData.push({x: date, y: 0});
-              txBookingData.push({x: date, y: 0});
-              txPaymentData.push({x: date, y: 0});
-              txIdData.push({x: date, y: 0});
-              for(let j in data[i].txTypes) {
-                  const txType = data[i].txTypes[j];
-                  txTypes.push(txType.txType) //used for testing to log out later
-                  const txTypeGroup = this.getTxTypeGroup(txType.txType);
-                  console.log('tx types')
-                  console.log(txType)
-                  console.log(txTypeGroup)
-                  switch(txTypeGroup) {
-                    case 'standard':
-                        txStandardData[i].y += txType.txs;
-                        this.sumTotalStandardTx += txType.txs;
-                        break;
-                    case 'asset':
-                        txAssetData[i].y += txType.txs;
-                        this.sumTotalAssetTx += txType.txs;
-                        break;
-                    case 'booking':
-                        txBookingData[i].y += txType.txs;
-                        this.sumTotalBookingTx += txType.txs;
-                        break;
-                    case 'payment':
-                        txPaymentData[i].y += txType.txs;
-                        this.sumTotalPaymentTx += txType.txs;
-                        break;
-                    case 'id':
-                        txIdData[i].y += txType.txs;
-                        this.sumTotalIdTx += txType.txs;
-                        break;
-                    default: // Standard Tx
-                        txStandardData[i].y += txType.txs;
-                        this.sumTotalStandardTx += txType.txs;
-                }
-              }
-
+            flowbacksData.push(data[i].sumFeeUsd);
+            feeShrData.push(data[i].sumFeeShr);
+            this.sumTotalFlowbacks += data[i].sumFeeUsd;
+            this.sumTotalFeeShr += data[i].sumFeeShr;
             chartLabels.push(new Date(data[i]._id));
         }
-        const distinctTxTypes = [...new Set(txTypes)];
-        console.log('distincttxtypes: ')
-        console.log(distinctTxTypes)
-        console.log(txTypes.filter.distinct)
+        this.dailyAverageFlowbacks = this.sumTotalFlowbacks / flowbacksData.length;
+        this.dailyAverageFeeShr = this.sumTotalFeeShr / flowbacksData.length;
 
         return {
             labels: chartLabels,
             datasets:[
               {
-                label: 'ID',
-                data:  txIdData,
-                borderColor: this.idTxLineColor,
-                backgroundColor: this.idTxColor,
-              },
-              {
-                label: 'Asset',
-                data:  txAssetData,
-                borderColor: 'yellow',
-                backgroundColor: 'yellow',
-              },
-              {
-                label: 'Booking',
-                data:  txBookingData,
-                borderColor: 'red',
-                backgroundColor: 'red',
-              },
-              {
-                label: 'Payment',
-                data:  txPaymentData,
-                borderColor: this.paymentTxLineColor,
-                backgroundColor: this.paymentTxColor,
-              },
-              {
-                label: 'Standard',
-                data: txStandardData,
-                borderColor: 'purple',
-                backgroundColor: 'purple',
+                label: 'Flowbacks',
+                data:  flowbacksData,
+                feeShr: feeShrData,
+                borderColor: this.flowbacksColor,
+                backgroundColor: this.flowbacksLineColor,
               }
             ]
         };
@@ -192,8 +88,6 @@ export default class FlowbacksBarChart extends Component{
             aspectRatio: 0.75,
             scales: {
                 xAxes: [{
-                    stacked: true,
-                    title: 'time',
                     type: 'time',
                     gridLines: {
                         drawOnChartArea: false
@@ -209,8 +103,7 @@ export default class FlowbacksBarChart extends Component{
                     }
                 }],
                 yAxes: [{
-                    stacked: true,
-                    id: 'Transactions',
+                    id: 'Flowbacks',
                     type: 'linear',
                     position: 'left',
                     gridLines: {
@@ -218,7 +111,7 @@ export default class FlowbacksBarChart extends Component{
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: 'Transactions',
+                        labelString: 'Flowbacks USD',
                         fontSize: 12,
                         fontStyle: 'bold',
                         fontFamily: this.fontFamily,
@@ -227,7 +120,7 @@ export default class FlowbacksBarChart extends Component{
                         maxTicksLimit: 5,
                         beginAtZero: true,
                         callback: function(value, index, values) {
-                            return yAxesTickCallback(value, index, values);
+                            return yAxesTickCallback(value, index, values, true);
                         }
                     }
                 }]
@@ -254,22 +147,12 @@ export default class FlowbacksBarChart extends Component{
                         return dateString.substring(0, dateString.lastIndexOf(','));
                     },
                     label: function(tooltipItem, data) {
-                        // Ensures this is only called once for the first dataset (0)
-                        if(tooltipItem.datasetIndex !== 0) {
-                            return;
-                        }
                         this.tooltipCalledAlready = true;
                         const dataIndex = tooltipItem.index;
-                        const primaryValue = data.datasets[0].data[dataIndex].y;
-                        const secondaryValue = data.datasets[1].data[dataIndex].y;
-                        const ternaryValue = data.datasets[2].data[dataIndex].y;
-                        const fourthValue = data.datasets[3].data[dataIndex].y;
-                        const fifthValue = data.datasets[4].data[dataIndex].y;
+                        const primaryValue = data.datasets[0].data[dataIndex];
+                        const secondaryValue = data.datasets[0].feeShr[dataIndex];
                         const primaryMantissa = primaryValue >= 1000 ? 2 : 0;
                         const secondaryMantissa = secondaryValue >= 1000 ? 2 : 0;
-                        const ternaryMantissa = ternaryValue >= 1000 ? 2 : 0;
-                        const fourthMantissa = fourthValue >= 1000 ? 2 : 0;
-                        const fifthMantissa = fifthValue >= 1000 ? 2 : 0;
                         const primaryValueFormatted = numbro(primaryValue).format({
                             average: true,
                             mantissa: primaryMantissa,
@@ -278,23 +161,8 @@ export default class FlowbacksBarChart extends Component{
                             average: true,
                             mantissa: secondaryMantissa,
                         });
-                        const ternaryValueFormatted = numbro(ternaryValue).format({
-                            average: true,
-                            mantissa: ternaryMantissa,
-                        });
-                        const fourthValueFormatted = numbro(fourthValue).format({
-                            average: true,
-                            mantissa: fourthMantissa,
-                        });
-                        const fifthValueFormatted = numbro(fifthValue).format({
-                            average: true,
-                            mantissa: fifthMantissa,
-                        });
-                        return [`• ID:             ${primaryValueFormatted}`,
-                                `• Asset:        ${secondaryValueFormatted}`,
-                                `• Booking:    ${ternaryValueFormatted}`,
-                                `• Payment:   ${fourthValueFormatted}`,
-                                `• Standard:  ${fifthValueFormatted}`];
+                        return [`• Flowbacks:             $${primaryValueFormatted}`,
+                                `• Bought:                  ${secondaryValueFormatted} SHR`];
                     }
                 },
             }
@@ -325,21 +193,18 @@ export default class FlowbacksBarChart extends Component{
         else {
             return (                    
                 <Card>
-                    <div className="card-header"><T>analytics.transactionTypeHistory</T></div>
+                    <div className="card-header"><T>flowbacks.flowbacks</T></div>
                     <CardBody id="flowbacks-bar-chart">
                         <SentryBoundary><Bar data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
                     <CardFooter>
                         <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.idTx</T>:</span> <strong>{numbro(this.sumTotalIdTx).format({average: true, mantissa: 2})}</strong></small></Col>
-                            <Col xs={7} md={6}><small><span><T>transactions.assetTx</T>:</span> <strong>{numbro(this.sumTotalAssetTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>flowbacks.flowbacks</T>:</span> <strong>${numbro(this.sumTotalFlowbacks).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={7} md={6}><small><span><T>flowbacks.dailyFlowbacks</T>:</span> <strong>${numbro(this.dailyAverageFlowbacks).format({average: true, mantissa: 2})}</strong></small></Col>
                         </Row>
                         <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.bookingTx</T>:</span> <strong>{numbro(this.sumTotalBookingTx).format({average: true, mantissa: 2})}</strong></small></Col>
-                            <Col xs={7} md={6}><small><span><T>transactions.paymentTx</T>:</span> <strong>{numbro(this.sumTotalPaymentTx).format({average: true, mantissa: 2})}</strong></small></Col>
-                        </Row>
-                        <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>transactions.standardTx</T>:</span> <strong>{numbro(this.sumTotalStandardTx).format({average: true, mantissa: 2})}</strong></small></Col>
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>flowbacks.bought</T>:</span> <strong>{numbro(this.sumTotalFeeShr).format({average: true, mantissa: 2})}</strong> SHR</small></Col>
+                            <Col xs={7} md={6}><small><span><T>flowbacks.dailyBought</T>:</span> <strong>{numbro(this.dailyAverageFeeShr).format({average: true, mantissa: 2})}</strong> SHR</small></Col>
                         </Row>
                     </CardFooter>
                 </Card>
