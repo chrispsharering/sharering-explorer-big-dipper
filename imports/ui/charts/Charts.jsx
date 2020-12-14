@@ -3,14 +3,40 @@ import { Row, Col } from 'reactstrap';
 import ChainStates from '../components/ChainStatesContainer.js';
 import TransactionCountLineChart from './TransactionCountLineChart.jsx';
 import TransactionTypesBarChart from './TransactionTypesBarChart.jsx';
+import FlowbacksBarChart from './FlowbacksBarChart.jsx';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
 
 const T = i18n.createComponent();
 
 export default class Charts extends Component{
+    isLoading = true;
     constructor(props){
         super(props);
+        this.state = {
+            dailyTxData: {}
+        }
+    }
+
+    getDailyTxData = () => {
+        const self = this;
+        Meteor.call('Transactions.getDailyTxData', (error, result) => {
+            if (error) {
+                console.error("Transactions.getDailyTxData: " + error);
+                self.isLoading = true;
+            }
+            else {
+                console.log('the result is:')
+                console.log(result)
+                self.isLoading = false;
+                // const chartData = this.buildChart(result);
+                self.setState({dailyTxData: result}); // Simply used to kick off the render lifecycle function
+            }
+        });
+    }
+
+    componentDidMount() {
+        this.getDailyTxData();
     }
 
     render(){
@@ -27,16 +53,29 @@ export default class Charts extends Component{
                 <Col md={6}><TwentyEighty /></Col>
                 <Col md={6}><ThirtyFour /></Col>
             </Row> */}
-            <Row>
-                <Col>
-                    <TransactionCountLineChart />
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <TransactionTypesBarChart />
-                </Col>
-            </Row>
+            {/* <div>state:</div>
+            <div>{this.state}</div> */}
+            {this.isLoading ?
+                <div>Loading data from database</div>
+                :
+                <div>
+                    <Row>
+                        <Col>
+                            <TransactionCountLineChart dailyTxData={this.state.dailyTxData} />
+                        </Col>
+                    </Row>
+                        <Row>
+                        <Col>
+                            <TransactionTypesBarChart dailyTxData={this.state.dailyTxData} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <FlowbacksBarChart dailyTxData={this.state.dailyTxData} />
+                        </Col>
+                    </Row>
+                </div>
+            }
         </div>
     }
 }

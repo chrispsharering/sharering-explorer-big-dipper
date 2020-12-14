@@ -9,7 +9,7 @@ import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } fr
 
 const T = i18n.createComponent();
 
-export default class TransactionTypesBarChart extends Component{
+export default class FlowbacksBarChart extends Component{
     isLoading = true;
     transactionsColor = 'rgba(255, 159, 0, 1)';
     transactionsLineColor = 'rgba(255, 159, 0, 0.7)';
@@ -326,7 +326,7 @@ export default class TransactionTypesBarChart extends Component{
             return (                    
                 <Card>
                     <div className="card-header"><T>analytics.transactionTypeHistory</T></div>
-                    <CardBody id="transaction-count-bar-chart">
+                    <CardBody id="flowbacks-bar-chart">
                         <SentryBoundary><Bar data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
                     <CardFooter>

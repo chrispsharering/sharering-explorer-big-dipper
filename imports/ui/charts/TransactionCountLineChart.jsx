@@ -9,7 +9,7 @@ import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } fr
 
 const T = i18n.createComponent();
 
-export default class TransactionCountBarChart extends Component{
+export default class TransactionCountBarChart extends Component {
     isLoading = true;
     transactionsColor = 'rgba(255, 159, 0, 1)';
     transactionsLineColor = 'rgba(255, 159, 0, 0.7)';
@@ -34,12 +34,8 @@ export default class TransactionCountBarChart extends Component{
     sumTotalFeeUsd = 0;
     dailyAverageFeeUsd = 0;
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state = {
-            data: {},
-            options: {}
-        }
     }
 
     setupCustomChartSettings() {
@@ -134,20 +130,6 @@ export default class TransactionCountBarChart extends Component{
                 }
              }
           });
-    }
-
-    getDailyTxData = () => {
-        const self = this;
-        Meteor.call('Transactions.getDailyTxData', (error, result) => {
-            if (error) {
-                console.error("Transactions.getDailyTxData: " + error);
-                self.isLoading = true;
-            }
-            else {
-                const chartData = this.buildChart(result);
-                self.setState(chartData); // Simply used to kick off the render lifecycle function
-            }
-        })
     }
 
     buildChartData(data) {
@@ -391,7 +373,8 @@ export default class TransactionCountBarChart extends Component{
 
     componentDidMount() {
         this.setupCustomChartSettings();
-        this.getDailyTxData();
+        const chartData = this.buildChart(this.props.dailyTxData);
+        this.setState(chartData); // Simply used to kick off the render lifecycle function
     }
 
     render() {
