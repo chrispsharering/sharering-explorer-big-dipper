@@ -146,9 +146,9 @@ export default class TransactionCountBarChart extends Component {
             this.sumTotalFeeShr += data[i].sumFeeShr;
             this.sumTotalFeeUsd += data[i].sumFeeUsd;
         }
-        this.dailyAverageTx = this.sumTotalTx / data.length;
-        this.dailyAverageFeeShr = this.sumTotalFeeShr / data.length;
-        this.dailyAverageFeeUsd = this.sumTotalFeeUsd / data.length;
+        this.dailyAverageTx = this.sumTotalTx / chartLabels.length;
+        this.dailyAverageFeeShr = this.sumTotalFeeShr / chartLabels.length;
+        this.dailyAverageFeeUsd = this.sumTotalFeeUsd / chartLabels.length;
 
         return {
             labels: chartLabels,

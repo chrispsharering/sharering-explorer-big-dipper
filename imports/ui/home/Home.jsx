@@ -15,12 +15,32 @@ import i18n from 'meteor/universe:i18n';
 import { Link } from 'react-router-dom';
 
 const T = i18n.createComponent();
-export default class Home extends Component{
+export default class Home extends Component {
+    isLoadingDailyTxData = true;
     constructor(props){
         super(props);
         this.state = {
-            limit: Meteor.settings.public.homePageBlockCount
+            limit: Meteor.settings.public.homePageBlockCount,
+            dailyTxData: {}
         };
+    }
+
+    getDailyTxData = () => {
+        const self = this;
+        Meteor.call('Transactions.getDailyTxData', (error, result) => {
+            if (error) {
+                console.error("Transactions.getDailyTxData: " + error);
+                self.isLoadingDailyTxData = true;
+            }
+            else {
+                self.isLoadingDailyTxData = false;
+                self.setState({dailyTxData: result}); // Simply used to kick off the render lifecycle function
+            }
+        });
+    }
+
+    componentDidMount() {
+        this.getDailyTxData();
     }
 
     render() {
@@ -32,11 +52,15 @@ export default class Home extends Component{
             <ChainInfo/>
             <Consensus />
             <ChainStatus />
-            <Row>
-                <Col>
-                    <TransactionCountLineChart />
-                </Col>
-            </Row>
+            {this.isLoadingDailyTxData ?
+                <div>Loading data from database</div>
+                :
+                <Row>
+                    <Col>
+                        <TransactionCountLineChart dailyTxData={this.state.dailyTxData} />
+                    </Col>
+                </Row>
+            }
             <Row>
                 <Col md={6}>
                     <Card>

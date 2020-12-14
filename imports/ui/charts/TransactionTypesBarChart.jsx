@@ -6,7 +6,6 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } from './ChartService.js';
-import cosmos from '@lunie/cosmos-js';
 
 const T = i18n.createComponent();
 

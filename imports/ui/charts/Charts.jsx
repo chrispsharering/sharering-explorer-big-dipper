@@ -10,7 +10,7 @@ import i18n from 'meteor/universe:i18n';
 const T = i18n.createComponent();
 
 export default class Charts extends Component{
-    isLoading = true;
+    isLoadingDailyTxData = true;
     constructor(props){
         super(props);
         this.state = {
@@ -23,10 +23,10 @@ export default class Charts extends Component{
         Meteor.call('Transactions.getDailyTxData', (error, result) => {
             if (error) {
                 console.error("Transactions.getDailyTxData: " + error);
-                self.isLoading = true;
+                self.isLoadingDailyTxData = true;
             }
             else {
-                self.isLoading = false;
+                self.isLoadingDailyTxData = false;
                 self.setState({dailyTxData: result}); // Simply used to kick off the render lifecycle function
             }
         });
@@ -52,7 +52,7 @@ export default class Charts extends Component{
             </Row> */}
             {/* <div>state:</div>
             <div>{this.state}</div> */}
-            {this.isLoading ?
+            {this.isLoadingDailyTxData ?
                 <div>Loading data from database</div>
                 :
                 <div>
