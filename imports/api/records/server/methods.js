@@ -13,6 +13,20 @@ import { Chain } from '../../chain/chain.js';
 import _ from 'lodash';
 const BULKUPDATEMAXSIZE = 1000;
 
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 const getBlockStats = (startHeight, latestHeight) => {
     let blockStats = {};
     const cond = {$and: [
@@ -539,14 +553,20 @@ Meteor.methods({
             }
             else {
                 console.log("getting aggregate transaction data ok:" + result);
+                console.log(result)
                 this.unblock();
                 const shrPrices = [];
                 if(result.length > 0 && result[0]._id) {
                     const dayInSec = 86400;
-                    for(let i = 0; i < result.length; i++) {
-                        const midnightDate = new Date(result[i]._id);
-                        midnightDate.setHours(0, 0, 0, 0);
-                        const midnightTimeSec = midnightDate.getTime() / 1000;
+                    let midnightTimeMilli = new Date(result[0]._id);
+                    midnightTimeMilli.setHours(0, 0, 0, 0);
+                    midnightTimeMilli = midnightTimeMilli.getTime();
+                    const midnightOfLastTxResult = new Date(result[result.length - 1]._id);
+                    midnightOfLastTxResult.setHours(0, 0, 0, 0);
+                    for(let i = 0; midnightTimeMilli <= midnightOfLastTxResult.getTime(); i++) {
+                    // for(let i = 0; i < result.length; i++) {
+                        midnightTimeMilli += dayInSec * 1000;
+                        const midnightTimeSec = midnightTimeMilli / 1000;
                         // Gets the SHR prices in USD from midnight to midnight for each day in the dailyTx result
                         const shrPricesResult = CoinStats.find(
                             {
@@ -566,12 +586,13 @@ Meteor.methods({
                             sumShrPriceUsd += shrPricesResult[j].usd;
                         }
                         const avgShrPriceUsd = sumShrPriceUsd > 0 ? sumShrPriceUsd / shrPricesResult.length : 0;
+                        console.log(formatDate(new Date(midnightTimeMilli)))
                         shrPrices.push({
-                            date: result[i]._id,
+                            date: formatDate(new Date(midnightTimeMilli)),
                             usd: avgShrPriceUsd
                         });
                     }
-                } 
+                }
                 for(let i = 0; i < result.length; i++) {
                     const dailyTxRecord = result[i];
                     const shrPriceObj = shrPrices.find(shrPriceObj => {
@@ -585,7 +606,32 @@ Meteor.methods({
                             dailyTxRecord.txTypes[j].sumFeeUsd = dailyTxRecord.txTypes[j].sumFeeShr * shrPriceUsd;
                         }
                     }
-                    DailyTransactionData.insert(dailyTxRecord); 
+                    console.log('dailyTxRecord persisting')
+                    console.log(dailyTxRecord)
+                    DailyTransactionData.insert(dailyTxRecord);
+                }
+                    console.log(shrPrices)
+
+                // Inserts a record with 0 txs for each day missing from the api call result
+                for(let i = 0; i < shrPrices.length; i++) {
+                    console.log(i)
+                    const dailyTxRecord = result.find(dailyTxRecord => {
+                        return shrPrices[i].date === dailyTxRecord._id;
+                    });
+                    console.log(dailyTxRecord)
+                    if(!dailyTxRecord) {
+                        const noTxDayToPersist = {
+                            _id: shrPrices[i].date,
+                            txTypes: [],
+                            txs: 0,
+                            sumFeeShr: 0,
+                            shrPriceUsd: 0,
+                            sumFeeUsd: 0
+                        };
+                        console.log('date for no data')
+                        console.log(shrPrices[i].date)
+                        DailyTransactionData.insert(noTxDayToPersist);
+                    }
                 }
             }
         }); 

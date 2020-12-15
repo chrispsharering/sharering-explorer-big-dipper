@@ -89,6 +89,6 @@ Meteor.methods({
     },
     'Transactions.getDailyTxData': function(){
         console.log('inside getTxhistory')
-        return DailyTransactionData.find().fetch();
+        return DailyTransactionData.find({}, {sort: {_id: 1}, limit: 999999999}).fetch();
     },
 });

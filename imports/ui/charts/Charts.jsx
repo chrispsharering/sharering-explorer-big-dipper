@@ -27,6 +27,7 @@ export default class Charts extends Component{
             }
             else {
                 self.isLoadingDailyTxData = false;
+                console.log(result)
                 self.setState({dailyTxData: result}); // Simply used to kick off the render lifecycle function
             }
         });
@@ -61,7 +62,7 @@ export default class Charts extends Component{
                             <TransactionCountLineChart dailyTxData={this.state.dailyTxData} />
                         </Col>
                     </Row>
-                    {/* <Row>
+                    <Row>
                         <Col>
                             <TransactionTypesBarChart dailyTxData={this.state.dailyTxData} />
                         </Col>
@@ -70,7 +71,7 @@ export default class Charts extends Component{
                         <Col>
                             <FlowbacksBarChart dailyTxData={this.state.dailyTxData} />
                         </Col>
-                    </Row> */}
+                    </Row>
                 </div>
             }
         </div>
