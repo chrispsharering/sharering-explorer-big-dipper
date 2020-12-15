@@ -6,6 +6,7 @@ import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
 import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } from './ChartService.js';
+import cloneDeep from 'lodash/cloneDeep';
 
 const T = i18n.createComponent();
 
@@ -369,12 +370,12 @@ export default class TransactionCountBarChart extends Component {
             data: chartData,
             options: chartOptions,
         };
-        return JSON.parse(JSON.stringify(this.originalState));
+        return cloneDeep(this.originalState);
     }
 
     changeTimeRange(days) {
         if(days < 0 || this.originalState.data.labels.length <= days) {
-            this.setState(JSON.parse(JSON.stringify(this.originalState)));
+            this.setState(cloneDeep(this.originalState));
             return;
         }
         this.state.data.datasets[0].data = this.originalState.data.datasets[0].data.slice(this.originalState.data.datasets[0].data.length - days);
