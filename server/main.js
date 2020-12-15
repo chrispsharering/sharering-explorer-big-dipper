@@ -171,14 +171,6 @@ aggregateDaily = () => {
 
 
 Meteor.startup(function () {
-    Meteor.call('Analytics.persistAggregateTransactionData', (error, result) => {
-        if (error) {
-            console.log("persisting aggregate transaction data error:" + error)
-        }
-        else {
-            console.log("persisting aggregate transaction data ok:" + result);
-        }
-    });
     if (Meteor.isDevelopment) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
         import DEFAULTSETTINGSJSON from '../default_settings.json'

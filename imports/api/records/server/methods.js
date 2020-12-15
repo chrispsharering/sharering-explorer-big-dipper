@@ -553,7 +553,6 @@ Meteor.methods({
             }
             else {
                 console.log("getting aggregate transaction data ok:" + result);
-                console.log(result)
                 this.unblock();
                 const shrPrices = [];
                 if(result.length > 0 && result[0]._id) {
@@ -563,11 +562,11 @@ Meteor.methods({
                     midnightTimeMilli = midnightTimeMilli.getTime();
                     const midnightOfLastTxResult = new Date(result[result.length - 1]._id);
                     midnightOfLastTxResult.setHours(0, 0, 0, 0);
-                    for(let i = 0; midnightTimeMilli <= midnightOfLastTxResult.getTime(); i++) {
-                    // for(let i = 0; i < result.length; i++) {
+                    for(let i = 0; midnightTimeMilli < midnightOfLastTxResult.getTime(); i++) {
                         midnightTimeMilli += dayInSec * 1000;
                         const midnightTimeSec = midnightTimeMilli / 1000;
-                        // Gets the SHR prices in USD from midnight to midnight for each day in the dailyTx result
+                        // Gets the SHR prices in USD from midnight to midnight for each the range of the dailyTx result
+                        // from the start date to last
                         const shrPricesResult = CoinStats.find(
                             {
                                 $and: [ //Between 0000 and 2359.59
@@ -586,13 +585,13 @@ Meteor.methods({
                             sumShrPriceUsd += shrPricesResult[j].usd;
                         }
                         const avgShrPriceUsd = sumShrPriceUsd > 0 ? sumShrPriceUsd / shrPricesResult.length : 0;
-                        console.log(formatDate(new Date(midnightTimeMilli)))
                         shrPrices.push({
                             date: formatDate(new Date(midnightTimeMilli)),
                             usd: avgShrPriceUsd
                         });
                     }
                 }
+                const docsToPersist = [];
                 for(let i = 0; i < result.length; i++) {
                     const dailyTxRecord = result[i];
                     const shrPriceObj = shrPrices.find(shrPriceObj => {
@@ -606,19 +605,14 @@ Meteor.methods({
                             dailyTxRecord.txTypes[j].sumFeeUsd = dailyTxRecord.txTypes[j].sumFeeShr * shrPriceUsd;
                         }
                     }
-                    console.log('dailyTxRecord persisting')
-                    console.log(dailyTxRecord)
-                    DailyTransactionData.insert(dailyTxRecord);
+                    docsToPersist.push(dailyTxRecord);
                 }
-                    console.log(shrPrices)
 
-                // Inserts a record with 0 txs for each day missing from the api call result
+                // Adds a record with 0 txs for each day missing from the api call result
                 for(let i = 0; i < shrPrices.length; i++) {
-                    console.log(i)
                     const dailyTxRecord = result.find(dailyTxRecord => {
                         return shrPrices[i].date === dailyTxRecord._id;
                     });
-                    console.log(dailyTxRecord)
                     if(!dailyTxRecord) {
                         const noTxDayToPersist = {
                             _id: shrPrices[i].date,
@@ -628,11 +622,14 @@ Meteor.methods({
                             shrPriceUsd: 0,
                             sumFeeUsd: 0
                         };
-                        console.log('date for no data')
-                        console.log(shrPrices[i].date)
-                        DailyTransactionData.insert(noTxDayToPersist);
+                        docsToPersist.push(noTxDayToPersist);
                     }
                 }
+                //This ensure the docs are persisted in the correct order
+                const docsOrderedByDate = docsToPersist.sort((a, b) => (a._id > b._id) ? 1 : -1);
+                docsOrderedByDate.forEach((doc => {
+                    DailyTransactionData.insert(doc);
+                }));
             }
         }); 
         return true;
