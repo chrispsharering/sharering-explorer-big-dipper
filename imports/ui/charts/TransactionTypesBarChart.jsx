@@ -124,9 +124,9 @@ export default class TransactionTypesBarChart extends Component{
                   const txType = data[i].txTypes[j];
                   txTypes.push(txType.txType) //used for testing to log out later
                   const txTypeGroup = this.getTxTypeGroup(txType.txType);
-                  console.log('tx types')
-                  console.log(txType)
-                  console.log(txTypeGroup)
+                //   console.log('tx types')
+                //   console.log(txType)
+                //   console.log(txTypeGroup)
                   switch(txTypeGroup) {
                     case 'standard':
                         txStandardData[i].y += txType.txs;
@@ -157,9 +157,9 @@ export default class TransactionTypesBarChart extends Component{
             chartLabels.push(new Date(data[i]._id));
         }
         const distinctTxTypes = [...new Set(txTypes)];
-        console.log('distincttxtypes: ')
-        console.log(distinctTxTypes)
-        console.log(txTypes.filter.distinct)
+        // console.log('distincttxtypes: ')
+        // console.log(distinctTxTypes)
+        // console.log(txTypes.filter.distinct)
 
         return {
             datasetsAvailable: [0, 1, 2, 3, 4],

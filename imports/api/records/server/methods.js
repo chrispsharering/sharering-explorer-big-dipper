@@ -557,13 +557,13 @@ Meteor.methods({
                 const shrPrices = [];
                 if(result.length > 0 && result[0]._id) {
                     const dayInSec = 86400;
+                    const dayInMilli = dayInSec * 1000;
                     let midnightTimeMilli = new Date(result[0]._id);
                     midnightTimeMilli.setHours(0, 0, 0, 0);
                     midnightTimeMilli = midnightTimeMilli.getTime();
                     const midnightOfLastTxResult = new Date(result[result.length - 1]._id);
                     midnightOfLastTxResult.setHours(0, 0, 0, 0);
-                    for(let i = 0; midnightTimeMilli < midnightOfLastTxResult.getTime(); i++) {
-                        midnightTimeMilli += dayInSec * 1000;
+                    for(let i = 0; midnightTimeMilli <= midnightOfLastTxResult.getTime(); i++, midnightTimeMilli += dayInMilli) {
                         const midnightTimeSec = midnightTimeMilli / 1000;
                         // Gets the SHR prices in USD from midnight to midnight for each the range of the dailyTx result
                         // from the start date to last
