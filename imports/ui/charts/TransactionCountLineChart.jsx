@@ -411,7 +411,7 @@ export default class TransactionCountBarChart extends Component {
                             <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(90)}>90 Days</Button>
                         </Col>
                         <Col xs={3} md={1}>
-                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(2)}>30 Days</Button>
+                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(30)}>30 Days</Button>
                         </Col>
                     </Row>
                     {/* <div>
