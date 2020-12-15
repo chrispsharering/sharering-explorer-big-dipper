@@ -5,12 +5,13 @@ import { Row, Col, Card, CardImg, CardText, CardBody,
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
-import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } from './ChartService.js';
+import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback, changeDataForNewTimeRange } from './ChartService.js';
 import cloneDeep from 'lodash/cloneDeep';
 
 const T = i18n.createComponent();
 
 export default class TransactionCountBarChart extends Component {
+    timeButtonStyling = {padding: "5px", color: "rgba(1, 1, 1, 0.55)", textTransform: "none", boxShadow: "0 1px 1px rgba(0, 0, 0, 0.4)"};
     isLoading = true;
     originalState;
     transactionsColor = 'rgba(255, 159, 0, 1)';
@@ -374,14 +375,7 @@ export default class TransactionCountBarChart extends Component {
     }
 
     changeTimeRange(days) {
-        if(days < 0 || this.originalState.data.labels.length <= days) {
-            this.setState(cloneDeep(this.originalState));
-            return;
-        }
-        this.state.data.datasets[0].data = this.originalState.data.datasets[0].data.slice(this.originalState.data.datasets[0].data.length - days);
-        this.state.data.datasets[1].data = this.originalState.data.datasets[1].data.slice(this.originalState.data.datasets[1].data.length - days);
-        this.state.data.labels = this.originalState.data.labels.slice(this.originalState.data.labels.length - days);
-        this.setState(this.state);
+        this.setState(changeDataForNewTimeRange(days, this.originalState, this.state));
     }
 
     componentDidMount() {
@@ -395,24 +389,21 @@ export default class TransactionCountBarChart extends Component {
             return <Spinner type="grow" color="primary" />
         }
         else {
-            const timeButtonStyling = {padding: "5px", color: "rgba(1, 1, 1, 0.55)", textTransform: "none", boxShadow: "0 1px 1px rgba(0, 0, 0, 0.4)"};
             return (
                 <Card>
-                    <div className="card-header">
-                        <T>analytics.transactionHistory</T>
-                    </div>
+                    <div className="card-header"><T>analytics.transactionHistory</T></div>
                     <Row style={{paddingTop: "0.5em"}}>
                         <Col xs={3} sm={{size: 3, offset: 1}} md={{size: 1, offset: 4}}>
-                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(-1)}>All Time</Button>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(-1)}>All Time</Button>
                         </Col>
                         <Col xs={3} sm={2} md={1}>
-                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(365)}>1 Year</Button>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(365)}>1 Year</Button>
                         </Col>
                         <Col xs={3} md={1}>
-                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(90)}>90 Days</Button>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(90)}>90 Days</Button>
                         </Col>
                         <Col xs={3} md={1}>
-                            <Button style={timeButtonStyling} onClick={() => this.changeTimeRange(30)}>30 Days</Button>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(30)}>30 Days</Button>
                         </Col>
                     </Row>
                     {/* <div>

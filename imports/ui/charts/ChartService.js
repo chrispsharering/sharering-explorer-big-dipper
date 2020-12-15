@@ -1,11 +1,23 @@
 import numbro from 'numbro';
+import cloneDeep from 'lodash/cloneDeep';
 
 export function yAxesTickCallback(value, index, values, prependUsd) {
-  const number = numbro(value).format({
-      spaceSeparated: false,
-      average: true
-  });
-  return prependUsd ? `$${number}` : number;
+    const number = numbro(value).format({
+        spaceSeparated: false,
+        average: true
+    });
+    return prependUsd ? `$${number}` : number;
+}
+
+export function changeDataForNewTimeRange(days, originalState, state) {
+    if(days < 0 || originalState.data.labels.length <= days) {
+        return cloneDeep(originalState);
+    }
+    for(let i in state.data.datasets) {
+        state.data.datasets[i].data = originalState.data.datasets[i].data.slice(originalState.data.datasets[i].data.length - days);
+    }
+    state.data.labels = originalState.data.labels.slice(originalState.data.labels.length - days);
+    return state;
 }
 
 export function buildBlockchainDatasets(txData, isMobile) {

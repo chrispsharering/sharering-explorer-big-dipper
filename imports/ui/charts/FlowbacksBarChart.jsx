@@ -5,12 +5,15 @@ import { Row, Col, Card, CardImg, CardText, CardBody,
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
-import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback } from './ChartService.js';
+import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback, changeDataForNewTimeRange } from './ChartService.js';
+import cloneDeep from 'lodash/cloneDeep';
 
 const T = i18n.createComponent();
 
-export default class FlowbacksBarChart extends Component{
+export default class FlowbacksBarChart extends Component {
+    timeButtonStyling = {padding: "5px", color: "rgba(1, 1, 1, 0.55)", textTransform: "none", boxShadow: "0 1px 1px rgba(0, 0, 0, 0.4)"};
     isLoading = true;
+    originalState;
     flowbacksColor = 'rgba(0, 158, 115, 1)';
     flowbacksLineColor = 'rgba(0, 158, 115, 0.7)';
     fontFamily = '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sa';
@@ -174,10 +177,16 @@ export default class FlowbacksBarChart extends Component{
         const chartOptions = this.buildChartOptions();
         this.isLoading = false;
 
-        return {
+        this.originalState = {
             data: chartData,
             options: chartOptions,
         };
+
+        return cloneDeep(this.originalState);
+    }
+
+    changeTimeRange(days) {
+        this.setState(changeDataForNewTimeRange(days, this.originalState, this.state));
     }
 
     componentDidMount() {
@@ -194,6 +203,20 @@ export default class FlowbacksBarChart extends Component{
             return (                    
                 <Card>
                     <div className="card-header"><T>flowbacks.flowbacks</T></div>
+                    <Row style={{paddingTop: "0.5em"}}>
+                        <Col xs={3} sm={{size: 3, offset: 1}} md={{size: 1, offset: 4}}>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(-1)}>All Time</Button>
+                        </Col>
+                        <Col xs={3} sm={2} md={1}>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(365)}>1 Year</Button>
+                        </Col>
+                        <Col xs={3} md={1}>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(90)}>90 Days</Button>
+                        </Col>
+                        <Col xs={3} md={1}>
+                            <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(30)}>30 Days</Button>
+                        </Col>
+                    </Row>
                     <CardBody id="flowbacks-bar-chart">
                         <SentryBoundary><Bar data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
