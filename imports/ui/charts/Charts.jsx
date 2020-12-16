@@ -3,6 +3,7 @@ import { Row, Col } from 'reactstrap';
 import ChainStates from '../components/ChainStatesContainer.js';
 import TransactionCountLineChart from './TransactionCountLineChart.jsx';
 import TransactionTypesBarChart from './TransactionTypesBarChart.jsx';
+import TransactionTypesStackedLineChart from './TransactionTypesStackedLineChart.jsx';
 import FlowbacksBarChart from './FlowbacksBarChart.jsx';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
@@ -64,6 +65,11 @@ export default class Charts extends Component{
                     <Row>
                         <Col>
                             <TransactionTypesBarChart dailyTxData={this.state.dailyTxData} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <TransactionTypesStackedLineChart dailyTxData={this.state.dailyTxData} />
                         </Col>
                     </Row>
                     {/* <Row>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Chart, Bar } from 'react-chartjs-2';
+import { Chart, Bar, Line } from 'react-chartjs-2';
 import { Row, Col, Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle, Button, Progress, Spinner, CardFooter} from 'reactstrap';
 import numbro from 'numbro';
@@ -24,7 +24,7 @@ customLegendClickHandler = function (e, legendItem) {
     this.chart.update();
 };
 
-export default class TransactionTypesBarChart extends Component {
+export default class TransactionTypesStackedLineChart extends Component {
     timeButtonStyling = {padding: "5px", color: "rgba(1, 1, 1, 0.55)", textTransform: "none", boxShadow: "0 1px 1px rgba(0, 0, 0, 0.4)"};
     isLoading = true;
     originalState;
@@ -72,6 +72,80 @@ export default class TransactionTypesBarChart extends Component {
                 y: position.y
             }
         }
+
+        Chart.pluginService.register({
+            posX: null,
+            isMouseOut: false,
+            drawLine(chart, posX) {
+              const ctx = chart.ctx,
+                  x_axis = chart.scales['x-axis-0'],
+                  y_axis = chart.scales['Transactions'];
+              let x = posX, topY, bottomY;
+              if (!y_axis || !x_axis || posX < x_axis.left || posX > x_axis.right
+                  || !chart.options.lineOnHover) {
+                return;
+              }
+              topY = y_axis.top, bottomY = y_axis.bottom;
+              // draw line
+              ctx.save();
+              ctx.beginPath();
+              ctx.moveTo(x, topY);
+              ctx.lineTo(x, bottomY);
+              ctx.lineWidth = chart.options.lineOnHover.lineWidth;
+              ctx.strokeStyle = chart.options.lineOnHover.lineColor;
+              ctx.stroke();
+              ctx.restore();
+             },
+             beforeInit(chart) {
+                chart.options.events.push('mouseover');
+             },
+             afterEvent(chart, event) {
+                if (!chart.options.lineOnHover || !chart.options.lineOnHover.enabled) {
+                  return;
+                }
+                if (event.type !== 'mousemove' && event.type !== 'mouseover') {
+                   if (event.type === 'mouseout') {
+                     this.isMouseOut = true;
+                   }
+                   chart.clear();
+                   chart.draw();
+                   return;
+                }
+                this.posX = event.x;
+                this.isMouseOut = false;
+                chart.clear();
+                chart.draw();
+                this.drawLine(chart, this.posX);
+                // This drags the tooltip for the first dataset which is displayed
+                let dataSetIndex = -1;
+                if (!chart.getDatasetMeta(0).hidden) {
+                  dataSetIndex = 0;
+                } else if (!chart.getDatasetMeta(1).hidden) {
+                  dataSetIndex = 1;
+                } else if (!chart.getDatasetMeta(2).hidden) {
+                  dataSetIndex = 2;
+                }
+                if (dataSetIndex > -1) {
+                  const metaData = chart.getDatasetMeta(dataSetIndex).data,
+                    radius = chart.data.datasets[dataSetIndex].pointHoverRadius,
+                    posX = metaData.map(e => e._model.x);
+                  posX.forEach(function(pos, posIndex) {
+                    if (this.posX < pos + radius && this.posX > pos - radius) {
+                        // chart.updateHoverStyle([metaData[posIndex]], null, true);
+                        chart.tooltip._active = [metaData[posIndex]];
+                    } else {
+                      //  chart.updateHoverStyle([metaData[posIndex]], null, false);
+                    }
+                  }.bind(this));
+                  chart.tooltip.update();
+                }
+             },
+             afterDatasetsDraw(chart, ease) {
+                 if (this.posX && !this.isMouseOut) {
+                  this.drawLine(chart, this.posX);
+                }
+             }
+          });
     }
 
     getTxTypeGroup(txType) { // Change this to return a group for the tx, such as 'Booking', 'ID', 'Standard Tx'...
@@ -123,6 +197,11 @@ export default class TransactionTypesBarChart extends Component {
               txBookingData.push({x: date, y: 0});
               txPaymentData.push({x: date, y: 0});
               txIdData.push({x: date, y: 0});
+            // txStandardData[i].y += Math.random() * (20 - 1) + 1;
+            // txAssetData[i].y += Math.random() * (20 - 1) + 1;
+            // txBookingData[i].y += Math.random() * (20 - 1) + 1;
+            // txPaymentData[i].y += Math.random() * (20 - 1) + 1;
+            // txIdData[i].y += Math.random() * (20 - 1) + 1;
               for(let j in data[i].txTypes) {
                   const txType = data[i].txTypes[j];
                   txTypes.push(txType.txType) //used for testing to log out later
@@ -171,32 +250,67 @@ export default class TransactionTypesBarChart extends Component {
               {
                 label: 'ID',
                 data:  txIdData,
-                borderColor: this.idTxLineColor,
+                borderWidth: 0,
                 backgroundColor: this.idTxColor,
+                fill: true,
+                pointRadius: 1,
+                pointHitRadius: 1,
+                gridLines: {
+                    drawBorder: false,
+                    display: false
+                },
               },
               {
                 label: 'Asset',
                 data:  txAssetData,
-                borderColor: 'yellow',
+                borderWidth: 0,
                 backgroundColor: 'yellow',
+                fill: true,
+                pointRadius: 1,
+                pointHitRadius: 1,
+                gridLines: {
+                    drawBorder: false,
+                    display: false
+                },
               },
               {
                 label: 'Booking',
                 data:  txBookingData,
-                borderColor: 'red',
+                borderWidth: 0,
                 backgroundColor: 'red',
+                fill: true,
+                pointRadius: 1,
+                pointHitRadius: 1,
+                gridLines: {
+                    drawBorder: false,
+                    display: false
+                },
               },
               {
                 label: 'Payment',
                 data:  txPaymentData,
-                borderColor: this.paymentTxLineColor,
+                borderWidth: 0,
                 backgroundColor: this.paymentTxColor,
+                fill: true,
+                pointRadius: 1,
+                pointHitRadius: 1,
+                gridLines: {
+                    drawBorder: false,
+                    display: false
+                },
               },
               {
                 label: 'Standard',
                 data: txStandardData,
-                borderColor: 'purple',
+                borderWidth: 0,
                 backgroundColor: 'purple',
+                fill: true,
+                pointRadius: 1,
+                pointHitRadius: 1,
+                gridLines: {
+                    drawBorder: false,
+                    display: false
+                },
               }
             ]
         };
@@ -208,6 +322,11 @@ export default class TransactionTypesBarChart extends Component {
             // These two together allow you to change the height of the chart
             maintainAspectRatio: false,
             aspectRatio: 0.75,
+            lineOnHover: {
+                enabled: true,
+                lineColor: '#bbb',
+                lineWidth: 0.5
+            },
             legend: {
                 onClick: customLegendClickHandler
             },
@@ -375,8 +494,8 @@ export default class TransactionTypesBarChart extends Component {
                             <Button style={this.timeButtonStyling} onClick={() => this.changeTimeRange(30)}>30 Days</Button>
                         </Col>
                     </Row>
-                    <CardBody id="transaction-types-bar-chart">
-                        <SentryBoundary><Bar data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
+                    <CardBody id="transaction-types-stacked-line-chart">
+                        <SentryBoundary><Line data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
                     <CardFooter>
                         <Row>
