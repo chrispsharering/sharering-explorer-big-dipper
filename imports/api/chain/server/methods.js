@@ -18,9 +18,16 @@ Meteor.methods({
     'chain.getConsensusState': function(){
         this.unblock();
         let url = RPC+'/dump_consensus_state';
-        try{
+        try {
             let response = HTTP.get(url);
-            let consensus = JSON.parse(response.content);
+            let consensus;
+            try {
+                consensus = JSON.parse(response.content);
+            } catch(e) {
+                console.error(url);
+                console.error('Error parsing response\nLikely due to RPC not responding fast enough and with only half the json object');
+                return;
+            }
             consensus = consensus.result;
             let height = consensus.round_state.height;
             let round = consensus.round_state.round;
@@ -38,8 +45,8 @@ Meteor.methods({
             }});
         }
         catch(e){
-            console.log(url);
-            console.log(e);
+            console.error(url);
+            console.error(e);
         }
     },
     'chain.updateStatus': function(){
