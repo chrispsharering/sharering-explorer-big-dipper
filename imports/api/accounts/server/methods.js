@@ -90,8 +90,13 @@ Meteor.methods({
 
             }
         } catch (e) {
-            console.log(url);
-            console.log(e.response.content);
+            const bigStickNode = 'shareledger1pj0pptqq8zwzyr220m8mzyldcwcxw3suwcwr98';
+            if(url.includes(bigStickNode)) {
+                console.log('Failing to get distribution delegator rewards for node "the-big-stick"');
+            } else {
+                console.log(url);
+                console.log(e.response.content);
+            }
         }
 
         // get commission
@@ -117,8 +122,13 @@ Meteor.methods({
                 }
 
             } catch (e) {
-                console.log(url);
-                console.log(e.response.content)
+                const bigStickNode = 'shareledgervaloper1pj0pptqq8zwzyr220m8mzyldcwcxw3sux9txdv';
+                if(url.includes(bigStickNode)) {
+                    console.log('Failing to get distribution validators for node "the-big-stick"');
+                } else {
+                    console.log(url);
+                    console.log(e.response.content);
+                }
             }
         }
 

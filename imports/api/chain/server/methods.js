@@ -25,7 +25,7 @@ Meteor.methods({
                 consensus = JSON.parse(response.content);
             } catch(e) {
                 console.error(url);
-                console.error('Error parsing response\nLikely due to RPC not responding fast enough and with only half the json object');
+                console.error('Error parsing response content to JSON - Likely due to RPC not responding fast enough and with only half the json object');
                 return;
             }
             consensus = consensus.result;
@@ -131,9 +131,9 @@ Meteor.methods({
                         console.log(url);
                         console.log(e)
                     }
-            		}
+            	}
 
-                ChainStates.insert(chainStates);
+                ChainStates.upsert({"height": chainStates.height},{$set: chainStates});
             }
 
             // chain.totalVotingPower = totalVP;

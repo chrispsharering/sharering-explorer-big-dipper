@@ -139,10 +139,18 @@ Meteor.methods({
             let validatorSet = {}
             // get latest validator candidate information
             url = LCD+'/staking/validators';
-
-            try{
+            
+            stakingValidators: try{
                 response = HTTP.get(url);
-                JSON.parse(response.content).result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator);
+                let responseContent;
+                try {
+                    responseContent = JSON.parse(response.content);
+                } catch(e) {
+                    console.error(url);
+                    console.error('Error parsing response content to JSON - Likely due to LCD not responding fast enough and with only part of the json object');
+                    break stakingValidators;
+                }
+                responseContent.result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator);
             }
             catch(e){
                 console.log(url);
@@ -151,9 +159,17 @@ Meteor.methods({
 
             url = LCD+'/staking/validators?status=unbonding';
 
-            try{
+            stakingValidatorsUnbonding: try {
                 response = HTTP.get(url);
-                JSON.parse(response.content).result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
+                let responseContent;
+                try {
+                    responseContent = JSON.parse(response.content);
+                } catch(e) {
+                    console.error(url);
+                    console.error('Error parsing response content to JSON - Likely due to LCD not responding fast enough and with only part of the json object');
+                    break stakingValidatorsUnbonding;
+                }
+                responseContent.result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
             }
             catch(e){
                 console.log(url);
@@ -162,9 +178,17 @@ Meteor.methods({
 
             url = LCD+'/staking/validators?status=unbonded';
 
-            try{
+            stakingValidatorsUnbonded: try{
                 response = HTTP.get(url);
-                JSON.parse(response.content).result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
+                let responseContent;
+                try {
+                    responseContent = JSON.parse(response.content);
+                } catch(e) {
+                    console.error(url);
+                    console.error('Error parsing response content to JSON - Likely due to LCD not responding fast enough and with only part of the json object');
+                    break stakingValidatorsUnbonded;
+                }
+                responseContent.result.forEach((validator) => validatorSet[validator.consensus_pubkey] = validator)
             }
             catch(e){
                 console.log(url);
@@ -254,9 +278,9 @@ Meteor.methods({
 
                         blockData.validatorsCount = validators.result.validators.length;
                         let startBlockInsertTime = new Date();
-                        Blockscon.insert(blockData);
+                        Blockscon.upsert({"height": blockData.height},{$set: blockData});
                         let endBlockInsertTime = new Date();
-                        console.log("Block insert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
+                        console.log("Block upsert time: "+((endBlockInsertTime-startBlockInsertTime)/1000)+"seconds.");
 
                         // store valdiators exist records
                         let existingValidators = Validators.find({address:{$exists:true}}).fetch();
@@ -569,9 +593,9 @@ Meteor.methods({
 
                         // record for analytics
                         let startAnayticsInsertTime = new Date();
-                        Analytics.insert(analyticsData);
+                        Analytics.upsert({"height": analyticsData.height},{$set: analyticsData});
                         let endAnalyticsInsertTime = new Date();
-                        console.log("Analytics insert time: "+((endAnalyticsInsertTime-startAnayticsInsertTime)/1000)+"seconds.");
+                        console.log("Analytics upsert time: "+((endAnalyticsInsertTime-startAnayticsInsertTime)/1000)+"seconds.");
 
                         let startVUpTime = new Date();
                         if (bulkValidators.length > 0){

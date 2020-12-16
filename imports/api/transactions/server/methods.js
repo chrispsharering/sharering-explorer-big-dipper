@@ -21,8 +21,7 @@ Meteor.methods({
             console.log(hash);
     
             tx.height = parseInt(tx.height);
-    
-            let txId = Transactions.insert(tx);
+            const txId = Transactions.upsert({"txhash": tx.txhash},{$set: tx});
             if (txId){
                 return txId;
             }
