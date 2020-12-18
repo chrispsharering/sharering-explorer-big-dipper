@@ -338,7 +338,7 @@ Meteor.methods({
                                     }
                                 }
 
-                                bulkValidatorRecords.insert(record);
+                                bulkValidatorRecords.find({address:record.address, height: record.height}).upsert().updateOne({$set:record});
                                 // ValidatorRecords.update({height:height,address:record.address},record);
                             }
                         }
