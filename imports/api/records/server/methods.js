@@ -120,7 +120,7 @@ Meteor.methods({
                         _.update(proposerVoterStats, [proposerAddress, currentValidator, 'totalCount'], (n) => n+1);
                         if (!votedValidators.has(currentValidator)) {
                             _.update(proposerVoterStats, [proposerAddress, currentValidator, 'missCount'], (n) => n+1);
-                            bulkMissedStats.insert({
+                            const record = {
                                 voter: currentValidator,
                                 blockHeight: block.height,
                                 proposer: proposerAddress,
@@ -135,7 +135,13 @@ Meteor.methods({
                                 updatedAt: latestHeight,
                                 missCount: _.get(proposerVoterStats, [proposerAddress, currentValidator, 'missCount']),
                                 totalCount: _.get(proposerVoterStats, [proposerAddress, currentValidator, 'totalCount'])
-                            });
+                            };
+                            bulkMissedStats.find(
+                                {
+                                    voter: currentValidator,
+                                    blockHeight: block.height,
+                                    proposer: proposerAddress
+                                }).upsert().updateOne({$set:record});
                         }
                     })
                 });
