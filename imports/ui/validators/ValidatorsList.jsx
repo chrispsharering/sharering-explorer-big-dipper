@@ -77,8 +77,8 @@ export default class Validators extends Component{
 
         return <div id="validator-list">
             <Helmet>
-                <title>ShareLedger Validator List | The Big Dipper</title>
-                <meta name="description" content="Here is a list of Cosmos Validators" />
+                <title>ShareLedger Validator List | ShareRing Explorer</title>
+                <meta name="description" content="Here is a list of ShareLedger Validators" />
             </Helmet>
             <Row>
                 <Col lg={3} xs={12}><h1 className="d-none d-lg-block">{title}</h1></Col>
