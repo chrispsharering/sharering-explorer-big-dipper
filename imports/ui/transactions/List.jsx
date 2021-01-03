@@ -25,8 +25,8 @@ export default class Transactions extends Component{
                 this.setState({
                     txs: this.props.transactions.map((tx, i) => {
                         return <TransactionRow 
-                            key={i} 
-                            index={i} 
+                            key={i}
+                            index={i}
                             tx={tx}
                             isHomePage={this.props.isHomePage}
                         />
@@ -45,6 +45,8 @@ export default class Transactions extends Component{
             return <div><T>transactions.notFound</T></div>
         }
         else{
+            console.log('inside List.jsx:\nstate.txs:')
+            console.log(this.state.txs)
             return (this.props.isHomePage?
                 <div>
                     <Row className="header text-nowrap d-flex">

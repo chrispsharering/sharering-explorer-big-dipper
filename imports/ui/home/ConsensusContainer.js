@@ -10,7 +10,7 @@ export default ConsensusContainer = withTracker((curr) => {
 
     if (Meteor.isClient){
         consensusHandle = Meteor.subscribe('chain.status');
-        loading = !consensusHandle.ready();    
+        loading = !consensusHandle.ready();
     }
     
     let consensusExist;

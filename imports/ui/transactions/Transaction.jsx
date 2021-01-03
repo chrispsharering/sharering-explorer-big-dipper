@@ -67,7 +67,7 @@ export default class Transaction extends Component{
                                         <Col md={8} className="value"><Markdown markup={ tx.tx.value.memo } /></Col>
                                     </div>
                                 : null}
-                              
+
                             </Row>
                         </CardBody>
                     </Card>
