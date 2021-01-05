@@ -21,32 +21,10 @@ export default ValidatorDetailsContainer = withTracker((props) => {
 
         // Fetch the transactions fee for each tx
         if(transactions && transactions.length > 0) {
-            console.log('\n\n\nthere are transaction!\ntransactions for ListContainer are:')
-            console.log(transactions)
             transactions.forEach(t => {
-                console.log('\ntransaction')
-                console.log(t)
-                console.log('t.tx.value.fee.amount.length')
-                console.log(t.tx.value.fee.amount.length)
-                if(t.tx.value.fee.amount.length > 0) {
-                    console.log('fee amount > 0 is true')
-                    console.log('t.tx.value.fee.amount[0]:')
-                    console.log(t.tx.value.fee.amount[0])
-                    console.log('t.tx.value.fee.amount[0].amount:')
-                    console.log(t.tx.value.fee.amount[0].amount)
-                } else {
-                    console.log('fee amount > 0 is false')
-                }
                 t.feeShr = t.tx.value.fee.amount.length > 0 ? parseInt(t.tx.value.fee.amount[0].amount) : 0;
                 t.feeUsd = t.feeShr * coinStats.usd;
-                console.log('t.feeShr:')
-                console.log(t.feeShr)
-                console.log('type of t.feeShr')
-                console.log(typeof t.feeShr)
-                console.log('coinStats.usd')
-                console.log(coinStats.usd)
-            })
-            console.log('\n\n\n\n\n')
+            });
         }
 
         if (Meteor.isServer){

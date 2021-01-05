@@ -45,8 +45,6 @@ export default class Transactions extends Component{
             return <div><T>transactions.notFound</T></div>
         }
         else{
-            console.log('inside List.jsx:\nstate.txs:')
-            console.log(this.state.txs)
             return (this.props.isHomePage?
                 <div>
                     <Row className="header text-nowrap d-flex">
