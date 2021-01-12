@@ -18,7 +18,7 @@ export default class ChainStatus extends React.Component {
             votingPower: 0,
             numValidators: 0,
             totalNumValidators: 0,
-            avgBlockTimeType: "",
+            avgBlockTimeType: "d",
             avgVotingPowerType: "",
             blockTimeText: <T>chainStatus.all</T>,
             votingPowerText: <T>chainStatus.now</T>
@@ -35,7 +35,7 @@ export default class ChainStatus extends React.Component {
                 totalNumValidators: this.props.status.totalValidators,
                 bondedTokens: this.props.states.bondedTokens,
                 totalSupply: this.props.states.totalSupply
-            })
+            });
 
             switch (this.state.avgBlockTimeType){
             case "":
@@ -76,9 +76,7 @@ export default class ChainStatus extends React.Component {
                     votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a'),
                 });
                 break;
-
             }
-
         }
     }
 
@@ -113,7 +111,6 @@ export default class ChainStatus extends React.Component {
                 averageBlockTime: numbro(this.props.status.lastDayBlockTime/1000).format('0,0.00')
             })
             break;
-
         }
     }
 
@@ -141,7 +138,6 @@ export default class ChainStatus extends React.Component {
                 votingPower: numbro(this.props.status.lastDayVotingPower).format('0,0.00a')
             })
             break;
-
         }
     }
 
@@ -205,8 +201,7 @@ export default class ChainStatus extends React.Component {
                         </Col>
                     </Row>
                 )
-            }
-            else{
+            } else {
                 return <div></div>
             }
         }

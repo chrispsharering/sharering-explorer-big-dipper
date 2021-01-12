@@ -171,7 +171,7 @@ Meteor.methods({
                 beforeDate = new Date();
                 response = HTTP.get(url);
                 afterDate = new Date();
-                console.log("Height: " + height + ", HTTP call (" + url + ") took: "+((afterDate-beforeDate)/1000)+"seconds.");
+                console.log("HTTP call (" + url + ") took: "+((afterDate-beforeDate)/1000)+"seconds.");
                 let responseContent;
                 try {
                     responseContent = JSON.parse(response.content);
@@ -193,7 +193,7 @@ Meteor.methods({
                 beforeDate = new Date();
                 response = HTTP.get(url);
                 afterDate = new Date();
-                console.log("Height: " + height + ", HTTP call (" + url + ") took: "+((afterDate-beforeDate)/1000)+"seconds.");
+                console.log("HTTP call (" + url + ") took: "+((afterDate-beforeDate)/1000)+"seconds.");
                 let responseContent;
                 try {
                     responseContent = JSON.parse(response.content);
@@ -215,7 +215,7 @@ Meteor.methods({
                 beforeDate = new Date();
                 response = HTTP.get(url);
                 afterDate = new Date();
-                console.log("Height: " + height + ", HTTP call (" + url + ") took: "+((afterDate-beforeDate)/1000)+"seconds.");
+                console.log("HTTP call (" + url + ") took: "+((afterDate-beforeDate)/1000)+"seconds.");
                 let responseContent;
                 try {
                     responseContent = JSON.parse(response.content);
