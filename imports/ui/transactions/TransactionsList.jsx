@@ -89,7 +89,7 @@ export default class Transactions extends Component{
                 <meta name="description" content="See what is happening on ShareLedger" />
             </Helmet>
             <Row>
-                <Col md={6} xs={12}><h1 className="d-none d-inline"><T>transactions.transactions</T></h1> <span className="d-none d-inline">(beta Explorer Syncing...)</span></Col>
+                <Col md={6} xs={12}><h1 className="d-none d-inline"><T>transactions.transactions</T></h1> <span className="d-none d-inline"></span></Col>
                 <Col md={6} xs={12} className="text-md-right"><ChainStates /></Col>
             </Row>
             <Switch>

@@ -64,7 +64,7 @@ export default class Home extends Component {
             <Row>
                 <Col md={6}>
                     <Card>
-                        <div className="card-header"><T>blocks.latestBlocks</T> <span>(beta Explorer Syncing...)</span>
+                        <div className="card-header"><T>blocks.latestBlocks</T>
                             <span className="float-right">
                                 <NavLink tag={Link} to="/blocks" className="view-all-button"><T>common.viewAll</T> >></NavLink>
                             </span>
@@ -77,7 +77,7 @@ export default class Home extends Component {
                 </Col>
                 <Col md={6}>
                     <Card>
-                        <div className="card-header"><T>transactions.latestTransactions</T> <span>(beta Explorer Syncing...)</span>
+                        <div className="card-header"><T>transactions.latestTransactions</T>
                             <span className="float-right">
                                 <NavLink tag={Link} to="/transactions" className="view-all-button"><T>common.viewAll</T> >></NavLink>
                             </span>

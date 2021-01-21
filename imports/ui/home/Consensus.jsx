@@ -20,7 +20,6 @@ export default class Consensus extends Component{
     componentDidUpdate(prevProps){
         if (prevProps.consensus != this.props.consensus){
             if (this.props.consensus.latestBlockTime){
-                // console.log()
                 let lastSync = moment(this.props.consensus.latestBlockTime);
                 let current = moment();
                 let diff = current.diff(lastSync);
