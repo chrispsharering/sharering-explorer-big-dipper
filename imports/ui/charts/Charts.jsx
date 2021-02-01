@@ -7,15 +7,18 @@ import TransactionTypesStackedLineChart from './TransactionTypesStackedLineChart
 import FlowbacksBarChart from './FlowbacksBarChart.jsx';
 import { Helmet } from 'react-helmet';
 import i18n from 'meteor/universe:i18n';
+import CirculatingSupplyPieChart from './CirculatingSupplyPieChart.jsx';
 
 const T = i18n.createComponent();
 
 export default class Charts extends Component{
     isLoadingDailyTxData = true;
+    isLoadingChainSuppliesData = true;
     constructor(props){
         super(props);
         this.state = {
-            dailyTxData: {}
+            dailyTxData: {},
+            chainSuppliesData: {}
         }
     }
 
@@ -33,8 +36,23 @@ export default class Charts extends Component{
         });
     }
 
+    getChainSuppliesData = () => {
+        const self = this;
+        Meteor.call('chain.getChainSuppliesData', (error, result) => {
+            if (error) {
+                console.error("chain.getChainSuppliesData: " + error);
+                self.isLoadingChainSuppliesData = true;
+            }
+            else {
+                self.isLoadingChainSuppliesData = false;
+                self.setState({chainSuppliesData: result}); // Simply used to kick off the render lifecycle function
+            }
+        });
+    }
+
     componentDidMount() {
         this.getDailyTxData();
+        this.getChainSuppliesData();
     }
 
     render(){
@@ -54,7 +72,7 @@ export default class Charts extends Component{
             {/* <div>state:</div>
             <div>{this.state}</div> */}
             {this.isLoadingDailyTxData ?
-                <div>Loading data from database</div>
+                <div>Loading Transaction data from database</div>
                 :
                 <div>
                     <Row>
@@ -77,6 +95,17 @@ export default class Charts extends Component{
                             <FlowbacksBarChart dailyTxData={this.state.dailyTxData} />
                         </Col>
                     </Row> */}
+                </div>
+            }
+            {this.isLoadingChainSuppliesData ?
+                <div>Loading Chain Supplies data from database</div>
+                :
+                <div>
+                    <Row>
+                        <Col>
+                            <CirculatingSupplyPieChart chainSuppliesData={this.state.chainSuppliesData} />
+                        </Col>
+                    </Row>
                 </div>
             }
         </div>

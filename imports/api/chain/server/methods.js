@@ -330,10 +330,12 @@ Meteor.methods({
             }
             erc20Supply = parseInt(erc20Supply.result)/100; // 2 decimals
 
+            let bep2Supply = 0; // TODO get this data
+
             Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
-                nativeSupply: nativeSupply,
-                erc20Supply: erc20Supply,
-                //bep2Supply: bep2Supply TODO
+                "chainSupplies.circulating.native": nativeSupply,
+                "chainSupplies.circulating.erc20": erc20Supply,
+                "chainSupplies.circulating.bep2": bep2Supply
                 // stakedSupply: stakedSupply TODO
             }});
         }
@@ -341,5 +343,8 @@ Meteor.methods({
             console.error(url);
             console.error(e);
         }
-    }
+    },
+    'chain.getChainSuppliesData': function(){
+        return Chain.find({}, {fields: {'chainSupplies':1}}).fetch();
+    },
 })
