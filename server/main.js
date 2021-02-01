@@ -10,6 +10,8 @@ COUNTMISSEDBLOCKS = false;
 COUNTMISSEDBLOCKSSTATS = false;
 RPC = Meteor.settings.remote.rpc;
 LCD = Meteor.settings.remote.lcd;
+ETHERSCRANAPIKEY = Meteor.settings.apiKeys.etherscan;
+ERC20SUPPLY = Meteor.settings.remote.supply.erc20;
 timerBlocks = 0;
 timerChain = 0;
 timerConsensus = 0;
@@ -18,6 +20,7 @@ timerProposalsResults = 0;
 timerMissedBlock = 0;
 timerDelegation = 0;
 timerAggregate = 0;
+timerCrossChainSupplies = 0;
 
 const DEFAULTSETTINGS = '/default_settings.json';
 
@@ -47,6 +50,14 @@ getConsensusState = () => {
     Meteor.call('chain.getConsensusState', (error, result) => {
         if (error) {
             console.log("get consensus: " + error)
+        }
+    })
+}
+
+getCrossChainSupplies = () => {
+    Meteor.call('chain.getCrossChainSupplies', (error, result) => {
+        if (error) {
+            console.log("get cross chain supplies: " + error)
         }
     })
 }
@@ -238,6 +249,10 @@ Meteor.startup(function () {
                         aggregateDaily();
                     }
                 }, 1000)
+
+                timerCrossChainSupplies = Meteor.setInterval(function () {
+                    getCrossChainSupplies();
+                }, Meteor.settings.params.crossChainSuppliesInterval);
             }
         }
     });

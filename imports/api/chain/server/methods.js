@@ -300,5 +300,46 @@ Meteor.methods({
         }
 
         return true;
+    },
+    'chain.getCrossChainSupplies': function(){
+        this.unblock();
+        try {
+            let nativeSupply;
+            let url;
+            let response;
+            if ( Coin.StakingCoin.denom ) {
+                url = LCD + '/supply/total/'+ Coin.StakingCoin.denom;
+                try{
+                    response = HTTP.get(url);
+                    nativeSupply = parseInt(JSON.parse(response.content).result);
+                }
+                catch(e){
+                    console.log(url);
+                    console.log(e);
+                }
+            }
+
+            url = ERC20SUPPLY.replace('<etherscanApiKey>', ETHERSCRANAPIKEY);
+            response = HTTP.get(url);
+            let erc20Supply;
+            try {
+                erc20Supply = JSON.parse(response.content);
+            } catch(e) {
+                console.error(url);
+                console.error('Error parsing response content to JSON - URL: ' + url);
+            }
+            erc20Supply = parseInt(erc20Supply.result)/100; // 2 decimals
+
+            Chain.update({chainId:Meteor.settings.public.chainId}, {$set:{
+                nativeSupply: nativeSupply,
+                erc20Supply: erc20Supply,
+                //bep2Supply: bep2Supply TODO
+                // stakedSupply: stakedSupply TODO
+            }});
+        }
+        catch(e){
+            console.error(url);
+            console.error(e);
+        }
     }
 })
