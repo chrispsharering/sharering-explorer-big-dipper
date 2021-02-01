@@ -75,6 +75,8 @@ analytics:
     noOfValidators: 'Liczba Walidatorów'
     transactionHistory: 'Historia transakcji'
     transactionTypeHistory: 'Historia typów transakcji'
+    circulatingSupplies: "Materiały w obiegu"
+    native: "Ojczysty"
 validators:
     randomValidators: 'Losowo Wybrani Walidatorzy'
     moniker: 'Moniker'

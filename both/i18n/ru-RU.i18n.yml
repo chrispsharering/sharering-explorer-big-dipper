@@ -75,6 +75,8 @@ analytics:
     noOfValidators: 'количество валидаторов'
     transactionHistory: 'История транзакций'
     transactionTypeHistory: 'История типов транзакций'
+    circulatingSupplies: "Циркуляционные принадлежности"
+    native: "Родной"
 validators:
     randomValidators: 'Случайные Валидаторы'
     moniker: 'Кличка'

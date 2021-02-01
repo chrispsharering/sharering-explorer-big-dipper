@@ -76,6 +76,8 @@ analytics:
     noOfValidators: 'No. of Validators'
     transactionHistory: 'Transaction History'
     transactionTypeHistory: 'Transaction Type History'
+    circulatingSupplies: "Circulating Supplies"
+    native: "Native"
 validators:
     randomValidators: 'Random Validators'
     moniker: 'Moniker'

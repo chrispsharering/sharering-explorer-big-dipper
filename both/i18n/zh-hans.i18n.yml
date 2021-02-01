@@ -74,6 +74,8 @@ analytics:
     noOfValidators: 'No. of Validators'
     transactionHistory: '交易记录'
     transactionTypeHistory: '交易类型历史'
+    circulatingSupplies: "循環用品"
+    native: "本機"
 validators:
     randomValidators: '随机验证人'
     moniker: '验证人代号'

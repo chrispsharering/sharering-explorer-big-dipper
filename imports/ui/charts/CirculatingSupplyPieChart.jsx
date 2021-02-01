@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import {Pie, Chart } from 'react-chartjs-2';
-import { Row, Col, Card, CardImg, CardText, CardBody,
-    CardTitle, CardSubtitle, Button, Progress, Spinner, CardFooter} from 'reactstrap';
+import {Pie } from 'react-chartjs-2';
+import { Row, Col, Card, CardBody,Spinner, CardFooter} from 'reactstrap';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
-import { buildBlockchainDatasets, buildBlockchainOptions, yAxesTickCallback, changeDataForNewTimeRange } from './ChartService.js';
 import cloneDeep from 'lodash/cloneDeep';
 
 const T = i18n.createComponent();
@@ -52,39 +50,12 @@ export default class CirculatingSupplyPieChart extends Component {
       }
 
       buildChartOptions() {
-        let isMobile = false;
-        let paddingLeft;
-        let paddingRight;
-        let labelFontSize;
-        let labelFontStyle;
-    
-        if(isMobile) {
-          paddingLeft = 87;
-          paddingRight = 90;
-          labelFontSize = 12;
-          labelFontStyle = 'normal';
-        } else {
-          paddingLeft = 100;
-          paddingRight = 100;
-          labelFontSize = 14;
-          labelFontStyle = 500;
-        }
-    
+        let labelFontSize = 14;
+        let labelFontStyle = 500;
         return {
           maintainAspectRatio: false,
           responsive: true,
-          layout: { // provides padding for the labels to not get cut off/out
-            padding: {
-                left: paddingLeft,
-                right: paddingRight,
-                top: 0,
-                bottom: 0
-            }
-          },
-          toolTipsClicked: [],
-          showMultipleTooltips: true,
           tooltips: {
-            // position: 'cursor',
             backgroundColor: this.colorScheme.tooltipBackgroundColor,
             borderColor: this.colorScheme.tooltipBorderColor,
             borderWidth: 0.3,
@@ -132,9 +103,6 @@ export default class CirculatingSupplyPieChart extends Component {
             fontStyle: labelFontStyle, // fontWeight
             position: 'outside',
             segment: true,
-            // render: (args) => {
-            //   return this.renderCallback(args);
-            // },
           },
           title: {
             display: false
@@ -151,11 +119,6 @@ export default class CirculatingSupplyPieChart extends Component {
             },
           },
           animation: false,
-          hover: {
-            // onHover: (event, active) => {
-            //   this.chartHoveredCallback(event, active);
-            // }
-          },
           elements: {
             arc: {
                 borderWidth: 1,
@@ -176,10 +139,6 @@ export default class CirculatingSupplyPieChart extends Component {
             options: chartOptions,
         };
         return cloneDeep(this.originalState);
-    }
-
-    changeTimeRange(days) {
-        this.setState(changeDataForNewTimeRange(days, this.originalState, this.state));
     }
 
     componentDidMount() {
@@ -212,18 +171,16 @@ export default class CirculatingSupplyPieChart extends Component {
         else {
             return (
                 <Card>
-                    <div className="card-header"><T>analytics.transactionHistory</T>Circulating Supplies</div>
+                    <div className="card-header"><T>analytics.circulatingSupplies</T></div>
                     <CardBody id="circulating-supplies-pie-chart">
                         <SentryBoundary><Pie data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
                     <CardFooter>
                         <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>Native</T>:</span> <strong>{numbro(this.nativeCirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.nativeCirculating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col>
-                            {/* <Col xs={7} md={6}><small><span><T>transactions.dailyTx</T>:</span> <strong>{numbro(this.dailyAverageTx).format({average: true, mantissa: 2})}</strong></small></Col> */}
+                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>analytics.native</T>:</span> <strong>{numbro(this.nativeCirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.nativeCirculating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col>
                         </Row>
                         <Row>
                             <Col xs={5} md={{size: 2, offset: 4}}><small><span>ERC20:</span> <strong>{numbro(this.erc20CirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.erc20Circulating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col>
-                            {/* <Col xs={7} md={6}><small><span><T>transactions.dailyFee</T>:</span> <strong>{numbro(this.dailyAverageFeeShr).format({average: true, mantissa: 2})}</strong> SHR</small></Col> */}
                         </Row>
                         <Row>
                             {/* <Col xs={5} md={{size: 2, offset: 4}}><small><span>BEP2:</span> <strong>{numbro(this.bep2CirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.bep2Circulating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col> */}
