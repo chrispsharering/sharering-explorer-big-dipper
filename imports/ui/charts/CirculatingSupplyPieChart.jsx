@@ -177,14 +177,14 @@ export default class CirculatingSupplyPieChart extends Component {
                     </CardBody>
                     <CardFooter>
                         <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span><T>analytics.native</T>:</span> <strong>{numbro(this.nativeCirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.nativeCirculating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col>
+                            <Col xs={12} md={{size: 8, offset: 4}}><small><span><T>analytics.native</T>:</span> <strong>{numbro(this.nativeCirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.nativeCirculating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col>
                         </Row>
                         <Row>
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span>ERC20:</span> <strong>{numbro(this.erc20CirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.erc20Circulating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col>
+                            <Col xs={12} md={{size: 8, offset: 4}}><small><span>ERC20:</span> <strong>{numbro(this.erc20CirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.erc20Circulating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col>
                         </Row>
                         <Row>
-                            {/* <Col xs={5} md={{size: 2, offset: 4}}><small><span>BEP2:</span> <strong>{numbro(this.bep2CirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.bep2Circulating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col> */}
-                            <Col xs={5} md={{size: 2, offset: 4}}><small><span>BEP2:</span> COMING SOON</small></Col>
+                            {/* <Col xs={12} md={{size: 8, offset: 4}}><small><span>BEP2:</span> <strong>{numbro(this.bep2CirculatingPercentage).format({average: true, mantissa: 2})}</strong>% (<strong>{numbro(this.bep2Circulating).format({average: true, mantissa: 2})}</strong> SHR)</small></Col> */}
+                            <Col xs={12} md={{size: 8, offset: 4}}><small><span>BEP2:</span> COMING SOON</small></Col>
                         </Row>
                     </CardFooter>
                 </Card>
