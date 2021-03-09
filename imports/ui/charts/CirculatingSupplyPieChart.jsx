@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Pie } from 'react-chartjs-2';
-import { Row, Col, Card, CardBody,Spinner, CardFooter} from 'reactstrap';
+import { Row, Col, Card, CardBody, Spinner, CardFooter} from 'reactstrap';
 import numbro from 'numbro';
 import i18n from 'meteor/universe:i18n';
 import SentryBoundary from '../components/SentryBoundary.jsx';
@@ -142,8 +142,6 @@ export default class CirculatingSupplyPieChart extends Component {
     }
 
     componentDidMount() {
-        console.log('circulating supply')
-        console.log(this.props.chainSuppliesData[0].chainSupplies.circulating)
         if(this.props.chainSuppliesData && this.props.chainSuppliesData.length > 0 && this.props.chainSuppliesData[0].chainSupplies
             && this.props.chainSuppliesData[0].chainSupplies.circulating
             && this.props.chainSuppliesData[0].chainSupplies.circulating.native
@@ -172,7 +170,7 @@ export default class CirculatingSupplyPieChart extends Component {
             return (
                 <Card>
                     <div className="card-header"><T>analytics.circulatingSupplies</T></div>
-                    <CardBody id="circulating-supplies-pie-chart">
+                    <CardBody id="circulating-supplies-pie-chart" style={{minHeight:"35vh"}}>
                         <SentryBoundary><Pie data={this.state.data} options={this.state.options} height={null} width={null} /></SentryBoundary>
                     </CardBody>
                     <CardFooter>

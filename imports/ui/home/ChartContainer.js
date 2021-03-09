@@ -24,7 +24,6 @@ export default ChartContainer = withTracker((curr) => {
             historyExist = !loading && !!history;
         }
     }
-
     return {
         loading,
         historyExist,
