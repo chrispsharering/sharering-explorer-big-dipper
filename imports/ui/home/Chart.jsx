@@ -164,7 +164,8 @@ export default class Chart extends Component{
                             type: 'linear',
                             position: 'right',
                             ticks: {
-                                stepSize: 1
+                                stepSize: 1,
+                                fontColor: 'rgba(255,152,0,1)'
                             }
                         }, {
                             id: 'Time',
